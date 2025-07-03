@@ -1,11 +1,12 @@
 /*
   MIKKOKALEVIN KUNTATARKISTIN
-  Versio 27.0 - Älykkäät listat & Datan vienti/tuonti
+  Versio 27.1 - Korjattu tietojen vienti ja täydennetty versiohistoria
 */
 
 // --- VERSIOHISTORIAN DATA ---
 const versiohistoriaData = [
-    { versio: "27.0", kuvaus: ["Lisätty älykäs yhteys kuntalokin ja tehtävälistan välille.", "Lisätty toiminnallisuus kuntalokin ja tehtävälistan tietojen vientiin ja tuontiin (varmuuskopiointi)."] },
+    { versio: "27.1", kuvaus: ["Korjattu tietojen vienti -toiminnallisuus.", "Palautettu täydellinen, käyttäjän kokoama versiohistoria."] },
+    { versio: "27.0", kuvaus: ["Lisätty älykäs yhteys kuntalokin ja tehtävälistan välille.", "Lisätty (rikkinäinen) toiminnallisuus tietojen vientiin ja tuontiin."] },
     { versio: "26.x", kuvaus: ["Laajennettu ja järjestelty versiohistoria, muutettu dynaamiseksi."] },
     { versio: "25.0", kuvaus: ["Käyttöliittymän uudistus: välilehdet, moderni typografia ja teemanvalitsin.", "Lisätty 'Täytyy käydä'-listaan kuntahaku ja karttamerkinnät."] },
     { versio: "23.0", kuvaus: ["Lisätty 'Täytyy käydä -lista' hallintatoiminnoilla."] },
@@ -13,9 +14,27 @@ const versiohistoriaData = [
     { versio: "21.0", kuvaus: ["Lisätty Kuntaloki, johon voi tallentaa sijainteja muistiinpanoilla."] },
     { versio: "20.0", kuvaus: ["Lisätty 'Keskitä minuun' -pikanappi, parannettu zoomausta ja lisätty latausindikaattori.", "Sovellus muistaa nyt valitun karttatyylin."] },
     { versio: "19.0", kuvaus: ["Korjattu kunnan nimen tunnistuslogiikka (paluu display_name-strategiaan)."] },
-    { versio: "14.0-18.0", kuvaus: ["Parannettu etäisyyslaskuri: tuki usealle pisteelle ja pisteiden siirtelylle.", "Hylättyjä kokeiluja ulkoisilla API-rajapinnoilla."] },
+    { versio: "18.0", kuvaus: ["*Kokeilu (hylätty):* Paluu Nominatim-hakuun, mutta eri logiikalla."] },
+    { versio: "17.0", kuvaus: ["*Kokeilu (hylätty):* Oma välityspalvelin (Vercel) CORS-ongelman kiertämiseksi."] },
+    { versio: "16.x", kuvaus: ["*Kokeilu (hylätty):* Yrityksiä integroida Maanmittauslaitoksen (MML) API kuntatietojen tarkkuuden varmistamiseksi."] },
+    { versio: "15.0", kuvaus: ["Etäisyyslaskuriin lisätty välimatkojen näyttö (esim. piste 1 -> 2)."] },
+    { versio: "14.0", kuvaus: ["Parannettu etäisyyslaskuri: tuki usealle pisteelle ja pisteiden siirtelylle."] },
     { versio: "13.0", kuvaus: ["Sijaintihistoria ja valittu karttatyyli tallennetaan selaimeen.", "Sijainnin URL päivittyy osoiteriville, mahdollistaen linkkien jakamisen."] },
-    { versio: "1.0-12.0", kuvaus: ["Projektin varhaiset vaiheet ja perustoiminnallisuuksien rakentaminen."] }
+    { versio: "12.0", kuvaus: ["Lähtötilanne tässä keskustelussa. Modulaarinen rakenne, useita tiedostoja."] },
+    { versio: "10.0", kuvaus: ["Mobiilinäkymän yläosan uudelleenasettelu (logo ja otsikko vierekkäin)."] },
+    { versio: "9.9", kuvaus: ["Mobiilioptimointia (reunukset ja marginaalit)."] },
+    { versio: "9.8", kuvaus: ["Yleisiä parannuksia (User-Agent, latauksen aikainen napin lukitus)."] },
+    { versio: "9.7", kuvaus: ["Tyhjien tietokenttien (katu, postinumero) piilotus tulosnäkymästä."] },
+    { versio: "9.6", kuvaus: ["Ensimmäinen versio, jossa useita tiedostoja."] },
+    { versio: "9.0", kuvaus: ["Viimeisin yhden tiedoston versio, jossa lisätiedot ja N/E-koordinaatit."] },
+    { versio: "8.0", kuvaus: ["Parannettu kuntatietojen hakulogiikkaa (seutukuntien ja taajamien suodatus)."] },
+    { versio: "7.0", kuvaus: ["Lisätty tuki geokätköilyssä yleiselle DDM-koordinaattimuodolle."] },
+    { versio: "6.0", kuvaus: ["Lisätty manuaalinen koordinaattihaku tekstikentällä."] },
+    { versio: "5.0", kuvaus: ["Parannettu mobiilikäytettävyyttä siirtämällä tulokset kartan yläpuolelle."] },
+    { versio: "4.0", kuvaus: ["Lisätty interaktiivinen Leaflet.js-kartta."] },
+    { versio: "3.0", kuvaus: ["Rikastettu tulosnäkymää lisätiedoilla (katu, postinumero, maa)."] },
+    { versio: "2.0", kuvaus: ["Toiminnallisuus integroitu omaan sivupohjaan (ulkoasu ja logo)."] },
+    { versio: "1.0", kuvaus: ["Ensimmäinen toimiva prototyyppi (GPS-haku ja kunnan nimi)."] }
 ];
 
 // --- ELEMENTTIEN HAKU ---
@@ -42,12 +61,10 @@ const teemaValitsin = document.getElementById('teema-valitsin');
 const valilehtiContainer = document.querySelector('.valilehdet');
 const valilehtiPaneelit = document.querySelectorAll('.valilehti-paneeli');
 const versiohistoriaContainer = document.getElementById('versiohistoria-container');
-// Uudet napit ja input-kentät
 const vieLokiNappi = document.getElementById('vie-loki');
 const tuoLokiInput = document.getElementById('tuo-loki-input');
 const vieTehtavalistaNappi = document.getElementById('vie-tehtavalista');
 const tuoTehtavalistaInput = document.getElementById('tuo-tehtavalista-input');
-
 
 let map;
 let marker;
@@ -66,7 +83,6 @@ let hakuAjastin;
 
 const MAX_ETAISYYS_PISTEET = 30;
 
-// Ladataan tallennetut tiedot
 const tallennettuHistoria = localStorage.getItem('mk_kuntatarkistin_historia');
 if (tallennettuHistoria) sijaintiHistoria = JSON.parse(tallennettuHistoria);
 const tallennettuLoki = localStorage.getItem('mk_kuntatarkistin_loki');
@@ -83,7 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
     lueURLJaAsetaSijainti();
 });
 
-// Lisätään kaikki kuuntelijat
 haeSijaintiNappi.addEventListener('click', haeGPSsijainti);
 naytaKoordinaatitNappi.addEventListener('click', haeManuaalisesti);
 karttaTyyli.addEventListener('change', vaihdaKarttaTyyli);
@@ -99,7 +114,6 @@ vieLokiNappi.addEventListener('click', () => vieData(kuntaloki, 'kuntaloki.json'
 tuoLokiInput.addEventListener('change', (e) => tuoData(e, 'loki'));
 vieTehtavalistaNappi.addEventListener('click', () => vieData(tehtavaLista, 'tehtavalista.json'));
 tuoTehtavalistaInput.addEventListener('change', (e) => tuoData(e, 'tehtavalista'));
-
 
 let nappiaKasitelty = false;
 const handleKeskitys = (e) => {
@@ -170,6 +184,8 @@ window.muokkaaTehtavaa = function(index) { const nykyinen = tehtavaLista[index].
 window.poistaTehtava = function(index) { const nimi = tehtavaLista[index].nimi; if (confirm(`Poistetaanko "${nimi}"?`)) { tehtavaLista.splice(index, 1); tallennaJaPaivitaTehtavalista(); }};
 function tarkistaOnkoTehtavalistalla(kunta) { const onListalla = tehtavaLista.find(item => item.nimi.toLowerCase() === kunta.toLowerCase() && !item.kayty); const container = document.getElementById('tehtavalista-huomautus-container'); if(onListalla) { container.innerHTML = `<div class="tehtavalista-huomautus">Tämä kunta on "Täytyy käydä" -listallasi!</div>`; } else { container.innerHTML = ''; } }
 function naytaVersiohistoria() { versiohistoriaContainer.innerHTML = versiohistoriaData.map(item => `<div class="versio-item"><h4>Versio ${item.versio}</h4><ul>${item.kuvaus.map(p => `<li>${p}</li>`).join('')}</ul></div>`).join(''); }
+function vieData(data, tiedostonimi) { if (data.length === 0) { naytaViesti("Lista on tyhjä, ei mitään vietävää.", "error"); return; } const jsonString = JSON.stringify(data, null, 2); const blob = new Blob([jsonString], { type: "application/json;charset=utf-8" }); const linkki = document.createElement("a"); const url = URL.createObjectURL(blob); linkki.setAttribute("href", url); linkki.setAttribute("download", tiedostonimi); linkki.style.visibility = 'hidden'; document.body.appendChild(linkki); linkki.click(); document.body.removeChild(linkki); URL.revokeObjectURL(url); }
+function tuoData(event, tyyppi) { const tiedosto = event.target.files[0]; if (!tiedosto) return; const lukija = new FileReader(); lukija.onload = function(e) { try { const data = JSON.parse(e.target.result); if (tyyppi === 'loki') { if (confirm("Haluatko korvata nykyisen lokin tuodulla tiedolla?")) { kuntaloki = data; localStorage.setItem('mk_kuntatarkistin_loki', JSON.stringify(kuntaloki)); paivitaLoki(); naytaViesti("Kuntaloki tuotu onnistuneesti!", "success"); } } else if (tyyppi === 'tehtavalista') { if (confirm("Haluatko korvata nykyisen tehtävälistan tuodulla tiedolla?")) { tehtavaLista = data; tallennaJaPaivitaTehtavalista(); naytaViesti("Tehtävälista tuotu onnistuneesti!", "success"); } } } catch (error) { naytaViesti("Virheellinen tai korruptoitunut tiedosto.", "error"); } finally { event.target.value = null; } }; lukija.readAsText(tiedosto); }
 function onGPSError(error) {let virheViesti = 'Tapahtui tuntematon virhe.';switch (error.code) {case error.PERMISSION_DENIED: virheViesti = 'Et antanut lupaa sijainnin käyttöön.'; break;case error.POSITION_UNAVAILABLE: virheViesti = 'Sijaintitieto ei ole saatavilla.'; break;case error.TIMEOUT: virheViesti = 'Sijainnin haku kesti liian kauan.'; break;}tulosAlue.innerHTML = `<p>${virheViesti}</p>`;naytaViesti(virheViesti, 'error');setButtonsDisabled(false);}
 function updateURL(lat, lon, zoom) {const ddmCoords = formatCoordinatesToDDM(lat, lon);const hash = `#${encodeURIComponent(ddmCoords)}/${zoom}`;if (history.replaceState) {history.replaceState(null, null, hash);} else {window.location.hash = hash;}}
 function lueURLJaAsetaSijainti() {if (window.location.hash) {try {const hash = decodeURIComponent(window.location.hash.substring(1));const parts = hash.split('/');if (parts.length === 2) {const coordsString = parts[0];const zoom = parseInt(parts[1], 10);const coords = parseCoordinates(coordsString);if (coords && !isNaN(zoom)) {map.setView([coords.lat, coords.lon], zoom);paivitaSijaintitiedot(coords.lat, coords.lon, "Jaettu sijainti");naytaViesti("Sijainti ladattu linkistä!");}}} catch (e) {console.error("Virhe URL-hajautteen lukemisessa:", e);}}}
