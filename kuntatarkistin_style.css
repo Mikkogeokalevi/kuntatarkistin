@@ -230,10 +230,9 @@ body {
     font-weight: bold;
 }
 
-/* --- LISÄYKSET (EHDOTUS 2 & 3) --- */
 .lataus-spinner {
-    border: 4px solid #f3f3f333; /* Läpinäkyvämpi harmaa */
-    border-top: 4px solid #90EE90; /* Teeman väri */
+    border: 4px solid #f3f3f333; 
+    border-top: 4px solid #90EE90;
     border-radius: 50%;
     width: 30px;
     height: 30px;
@@ -250,7 +249,7 @@ body {
     position: absolute;
     top: 30px; 
     right: 10px;
-    z-index: 1000; /* Varmistaa, että on kartan päällä */
+    z-index: 1000;
     background-color: #1a2015cc;
     color: white;
     border: 1px solid #90EE90;
@@ -262,11 +261,59 @@ body {
     text-align: center;
     cursor: pointer;
     box-shadow: 0 1px 5px rgba(0,0,0,0.65);
-    display: none; /* Piilotettu oletuksena */
+    display: none;
 }
 
 .kartta-pikanappi:hover {
     background-color: #2A381C;
+}
+
+/* --- KUNTALOKIN TYYLIT --- */
+.tallenna-loki-nappi {
+    background-color: #FFA500;
+    color: #1a2015;
+    border: none;
+    padding: 8px 15px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 6px;
+    display: block;
+    margin: 20px auto 5px auto;
+    width: 80%;
+}
+.tallenna-loki-nappi:hover {
+    background-color: #FFD700;
+}
+
+.loki-item {
+    background-color: #1a2015;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 4px;
+    border-left: 4px solid #FFD700;
+    text-align: left;
+    font-size: 0.9em;
+}
+
+.loki-item strong {
+    color: #FFD700;
+    font-size: 1.1em;
+}
+
+.loki-item .loki-tiedot {
+    font-size: 0.9em;
+    color: #bbb;
+    margin-top: 4px;
+}
+
+.loki-item .loki-muistiinpano {
+    font-style: italic;
+    color: #f8f8f8;
+    background-color: #2A381C;
+    padding: 5px 8px;
+    border-radius: 3px;
+    margin-top: 8px;
+    display: inline-block;
 }
 
 
@@ -328,9 +375,8 @@ body {
         margin-top: 10px;
     }
 
-    /* KORJATTU PIKANAPIN SIJAINTI MOBIILISSA */
     .kartta-pikanappi {
-        top: 35px; /* Varmistetaan etäisyys yläreunasta */
-        right: 15px; /* Varmistetaan sijainti oikeassa reunassa */
+        top: 35px;
+        right: 15px;
     }
 }
