@@ -1,6 +1,6 @@
 /*
   MIKKOKALEVIN KUNTATARKISTIN
-  Versio 24.0 - UI-uudistus: Välilehdet, typografia ja interaktiot
+  Versio 25.0 - UI-uudistus ja teemanvalitsin
 */
 
 // --- ELEMENTTIEN HAKU ---
@@ -23,8 +23,9 @@ const tyhjennaLokiNappi = document.getElementById('tyhjenna-loki');
 const tehtavaInput = document.getElementById('tehtava-input');
 const lisaaTehtavaNappi = document.getElementById('lisaa-tehtava-nappi');
 const tehtavaListaElem = document.getElementById('tehtava-lista');
-const valilehtiContainer = document.querySelector('.valilehdet'); // Välilehtien "vanhempi"
-const valilehtiPaneelit = document.querySelectorAll('.valilehti-paneeli'); // Kaikki paneelit
+const teemaValitsin = document.getElementById('teema-valitsin');
+const valilehtiContainer = document.querySelector('.valilehdet');
+const valilehtiPaneelit = document.querySelectorAll('.valilehti-paneeli');
 
 let map;
 let marker;
@@ -41,6 +42,7 @@ let viimeisinTulosData = null;
 
 const MAX_ETAISYYS_PISTEET = 30;
 
+// Ladataan tallennetut tiedot
 const tallennettuHistoria = localStorage.getItem('mk_kuntatarkistin_historia');
 if (tallennettuHistoria) sijaintiHistoria = JSON.parse(tallennettuHistoria);
 
@@ -52,6 +54,8 @@ if (tallennettuTehtavalista) tehtavaLista = JSON.parse(tallennettuTehtavalista);
 
 // --- TAPAHTUMANKUUNTELIJAT ---
 document.addEventListener('DOMContentLoaded', () => {
+    // Asetetaan teema ja karttatyyli ennen muiden alustusta
+    asetaTallennettuTeema();
     const tallennettuTyyli = localStorage.getItem('mk_kuntatarkistin_karttatyyli');
     if (tallennettuTyyli) karttaTyyli.value = tallennettuTyyli;
     
@@ -66,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
 haeSijaintiNappi.addEventListener('click', haeGPSsijainti);
 naytaKoordinaatitNappi.addEventListener('click', haeManuaalisesti);
 karttaTyyli.addEventListener('change', vaihdaKarttaTyyli);
+teemaValitsin.addEventListener('change', vaihdaTeema);
 tyhjennaPisteetNappi.addEventListener('click', tyhjennaEtaisyysPisteet);
 tyhjennaHistoriaNappi.addEventListener('click', tyhjennaHistoria);
 tyhjennaLokiNappi.addEventListener('click', tyhjennaLoki);
@@ -85,62 +90,35 @@ const handleKeskitys = (e) => {
 keskitaNappi.addEventListener('mousedown', handleKeskitys);
 keskitaNappi.addEventListener('touchstart', handleKeskitys);
 
-// UUSI: Välilehtien logiikka
 valilehtiContainer.addEventListener('click', (e) => {
     const klikattuNappi = e.target.closest('.valilehti-nappi');
     if (!klikattuNappi) return;
-
     const kohde = klikattuNappi.dataset.valilehti;
-
-    // Poistetaan aktiivinen tila kaikilta
     valilehtiContainer.querySelectorAll('.valilehti-nappi').forEach(nappi => nappi.classList.remove('aktiivinen'));
     valilehtiPaneelit.forEach(paneeli => paneeli.classList.remove('aktiivinen'));
-
-    // Asetetaan aktiivinen tila klikatulle
     klikattuNappi.classList.add('aktiivinen');
     document.getElementById(kohde).classList.add('aktiivinen');
-
-    // Erityishuomio kartalle: päivitetään sen koko, kun se tulee näkyviin
-    if (kohde === 'etaisyys') {
-        setTimeout(() => map.invalidateSize(), 1);
-    }
+    if (kohde === 'etaisyys') { setTimeout(() => map.invalidateSize(), 1); }
 });
 
-
-function setButtonsDisabled(disabled) {
-    haeSijaintiNappi.disabled = disabled;
-    naytaKoordinaatitNappi.disabled = disabled;
+// --- TEEMANVAIHTO ---
+function vaihdaTeema(event) {
+    const teema = event.target.value;
+    document.body.dataset.theme = teema;
+    localStorage.setItem('mk_kuntatarkistin_teema', teema);
+}
+function asetaTallennettuTeema() {
+    const tallennettuTeema = localStorage.getItem('mk_kuntatarkistin_teema') || 'sinertava';
+    document.body.dataset.theme = tallennettuTeema;
+    teemaValitsin.value = tallennettuTeema;
 }
 
-function naytaViesti(viesti, tyyppi = 'info') {
-    const div = document.createElement('div');
-    div.className = tyyppi === 'error' ? 'virhe-viesti' : 'onnistui-viesti';
-    div.textContent = viesti;
-    document.body.appendChild(div);
-    setTimeout(() => div.remove(), 4000);
-}
 
-function initMap() {
-    map = L.map('kartta-container').setView([60.98, 25.66], 10);
-    vaihdaKarttaTyyli();
-    map.on('click', onMapClick);
-}
-
-// ... loput funktioista pysyvät pääosin ennallaan ...
-
-function vaihdaKarttaTyyli() {
-    if (currentTileLayer) map.removeLayer(currentTileLayer);
-    const tyyli = karttaTyyli.value;
-    let uusiTaso;
-    switch(tyyli) {
-        case 'cartodb': uusiTaso = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap contributors &copy; CARTO' }); break;
-        case 'satellite': uusiTaso = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri' }); break;
-        case 'terrain': uusiTaso = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { attribution: 'Map data: &copy; OpenStreetMap, &copy; OpenTopoMap' }); break;
-        default: uusiTaso = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' });
-    }
-    currentTileLayer = uusiTaso.addTo(map);
-    localStorage.setItem('mk_kuntatarkistin_karttatyyli', tyyli);
-}
+// ... loput funktioista ...
+function setButtonsDisabled(disabled) {haeSijaintiNappi.disabled = disabled;naytaKoordinaatitNappi.disabled = disabled;}
+function naytaViesti(viesti, tyyppi = 'info') {const div = document.createElement('div');div.className = tyyppi === 'error' ? 'virhe-viesti' : 'onnistui-viesti';div.textContent = viesti;document.body.appendChild(div);setTimeout(() => div.remove(), 4000);}
+function initMap() {map = L.map('kartta-container').setView([60.98, 25.66], 10);vaihdaKarttaTyyli();map.on('click', onMapClick);}
+function vaihdaKarttaTyyli() {if (currentTileLayer) map.removeLayer(currentTileLayer);const tyyli = karttaTyyli.value;let uusiTaso;switch(tyyli) {case 'cartodb': uusiTaso = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap contributors &copy; CARTO' }); break;case 'satellite': uusiTaso = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri' }); break;case 'terrain': uusiTaso = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { attribution: 'Map data: &copy; OpenStreetMap, &copy; OpenTopoMap' }); break;default: uusiTaso = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' });}currentTileLayer = uusiTaso.addTo(map);localStorage.setItem('mk_kuntatarkistin_karttatyyli', tyyli);}
 function parseCoordinates(input) {input = input.trim();const ddmRegex = /([ns])\s*(\d{1,3})[°\s]+([\d.]+)'?[\s,]*([ew])\s*(\d{1,3})[°\s]+([\d.]+)'?/i;const ddmMatch = input.match(ddmRegex);if (ddmMatch) {let lat_deg = parseFloat(ddmMatch[2]), lat_min = parseFloat(ddmMatch[3]), lat = lat_deg + lat_min / 60;if (ddmMatch[1].toUpperCase() === 'S') lat = -lat;let lon_deg = parseFloat(ddmMatch[5]), lon_min = parseFloat(ddmMatch[6]), lon = lon_deg + lon_min / 60;if (ddmMatch[4].toUpperCase() === 'W') lon = -lon;return { lat, lon };} else {const parts = input.split(/[,;\s]/).filter(Boolean);if (parts.length === 2) {const lat = parseFloat(parts[0]), lon = parseFloat(parts[1]);if (!isNaN(lat) && !isNaN(lon)) return { lat, lon };}}return null;}
 function formatCoordinatesToDDM(lat, lon) {const formatPart = (value, hemi1, hemi2) => {const hemisphere = value >= 0 ? hemi1 : hemi2;const absValue = Math.abs(value);const degrees = Math.floor(absValue);const minutes = (absValue - degrees) * 60;const paddedDegrees = (hemi1 === 'E') ? degrees.toString().padStart(3, '0') : degrees;return `${hemisphere} ${paddedDegrees}° ${minutes.toFixed(3)}'`;};return `${formatPart(lat, 'N', 'S')} ${formatPart(lon, 'E', 'W')}`;}
 function luoKopioiNappi(teksti) {const nappi = document.createElement('button');nappi.className = 'kopioi-nappi';nappi.textContent = 'Kopioi';nappi.onclick = () => {navigator.clipboard.writeText(teksti).then(() => naytaViesti('Kopioitu leikepöydälle!', 'success'), () => naytaViesti('Kopiointi epäonnistui', 'error'));};return nappi;}
@@ -169,7 +147,7 @@ window.poistaLokimerkinta = function(index) {const kunta = kuntaloki[index].kunt
 function tyhjennaLoki() {if (kuntaloki.length === 0) {naytaViesti("Loki on jo tyhjä.");return;}if (confirm("Haluatko varmasti tyhjentää koko kuntalokin? Toimintoa ei voi perua.")) {kuntaloki = [];localStorage.removeItem('mk_kuntatarkistin_loki');paivitaLoki();naytaViesti('Kuntaloki tyhjennetty.');}}
 function lisaaUusiTehtava() {const nimi = tehtavaInput.value.trim();if (nimi === "") {naytaViesti("Kirjoita kunnan nimi.", "error");return;}tehtavaLista.push({ nimi: nimi, kayty: false });tallennaJaPaivitaTehtavalista();tehtavaInput.value = "";tehtavaInput.focus();}
 function naytaTehtavalista() {if (tehtavaLista.length === 0) {tehtavaListaElem.innerHTML = '<p>Listasi on tyhjä.</p>';return;}
-tehtavaLista.sort((a, b) => {if (a.kayty !== b.kayty) {return a.kayty ? 1 : -1;}return a.nimi.localeCompare(b.nimi);});tehtavaListaElem.innerHTML = tehtavaLista.map((item, index) => {return `<div class="tehtava-item ${item.kayty ? 'kayty' : ''}"><input type="checkbox" onchange="vaihdaTehtavanTila(${index})" ${item.kayty ? 'checked' : ''}><span>${item.nimi}</span><div class="loki-item-actions"><button class="loki-nappi" title="Muokkaa nimeä" onclick="muokkaaTehtavaa(${index})">✏️</button><button class="loki-nappi" title="Poista tehtävä" onclick="poistaTehtava(${index})">🗑️</button></div></div>`;}).join('');}
+tehtavaLista.sort((a, b) => {if (a.kayty !== b.kayty) {return a.kayty ? 1 : -1;}return a.nimi.localeCompare(b.nimi);});tehtavaListaElem.innerHTML = tehtavaLista.map((item, index) => {return `<div class="tehtava-item ${item.kayty ? 'kayty' : ''}"><input type="checkbox" onchange="vaihdaTehtavanTila(${index})" ${item.kayty ? 'checked' : ''} title="Merkitse käydyksi"><span>${item.nimi}</span><div class="loki-item-actions"><button class="loki-nappi" title="Muokkaa nimeä" onclick="muokkaaTehtavaa(${index})">✏️</button><button class="loki-nappi" title="Poista tehtävä" onclick="poistaTehtava(${index})">🗑️</button></div></div>`;}).join('');}
 function tallennaJaPaivitaTehtavalista() {localStorage.setItem('mk_kuntatarkistin_tehtavalista', JSON.stringify(tehtavaLista));naytaTehtavalista();}
 window.vaihdaTehtavanTila = function(index) {tehtavaLista[index].kayty = !tehtavaLista[index].kayty;tallennaJaPaivitaTehtavalista();};
 window.muokkaaTehtavaa = function(index) {const nykyinenNimi = tehtavaLista[index].nimi;const uusiNimi = prompt("Muokkaa kunnan nimeä:", nykyinenNimi);if (uusiNimi && uusiNimi.trim() !== "") {tehtavaLista[index].nimi = uusiNimi.trim();tallennaJaPaivitaTehtavalista();}};
