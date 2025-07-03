@@ -37,7 +37,10 @@
                     </select>
                 </div>
                 
-                <div id="kartta-container"></div>
+                <div id="kartta-wrapper">
+                    <div id="kartta-container"></div>
+                    <button id="keskitaNappi" class="kartta-pikanappi" title="Keskitä omaan sijaintiin">🎯</button>
+                </div>
             </div>
 
             <div class="huomio-laatikko">
@@ -58,7 +61,7 @@
                 <div id="etaisyys-laatikko" style="display: none;">
                     <p class="huomio-otsikko" style="margin-top: 20px;">ETÄISYYSLASKURI</p>
                     <div id="etaisyys-pisteet">
-                        <p>Klikkaa karttaa kahdesti etäisyyden laskemiseksi</p>
+                        <p>Klikkaa karttaa lisätäksesi reittipisteitä</p>
                     </div>
                     <button id="tyhjenna-pisteet" class="nappi nappi-pieni">Tyhjennä pisteet</button>
                     <div id="etaisyys-tulos"></div>
