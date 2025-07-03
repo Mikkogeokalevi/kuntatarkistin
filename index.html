@@ -78,6 +78,11 @@
                         </div>
                         <div id="hakutulokset-container"></div>
                         <div id="tehtava-lista"></div>
+                        <div class="data-hallinta-container">
+                            <button class="nappi nappi-pieni" id="vie-tehtavalista">Vie lista...</button>
+                            <button class="nappi nappi-pieni" onclick="document.getElementById('tuo-tehtavalista-input').click();">Tuo lista...</button>
+                            <input type="file" id="tuo-tehtavalista-input" accept=".json" style="display: none;">
+                        </div>
                     </div>
 
                     <div id="etaisyys" class="valilehti-paneeli">
@@ -103,13 +108,17 @@
                     <div id="loki" class="valilehti-paneeli">
                         <p class="huomio-otsikko">KUNTALOKI</p>
                         <div id="loki-lista"></div>
-                        <button id="tyhjenna-loki" class="nappi nappi-pieni">Tyhjennä loki</button>
+                        <div class="data-hallinta-container">
+                            <button class="nappi nappi-pieni" id="vie-loki">Vie loki...</button>
+                            <button class="nappi nappi-pieni" onclick="document.getElementById('tuo-loki-input').click();">Tuo loki...</button>
+                            <input type="file" id="tuo-loki-input" accept=".json" style="display: none;">
+                            <button class="nappi nappi-pieni" id="tyhjenna-loki">Tyhjennä loki</button>
+                        </div>
                     </div>
 
                     <div id="versiot" class="valilehti-paneeli">
                         <p class="huomio-otsikko">VERSIOHISTORIA</p>
-                        <div id="versiohistoria-container" class="versiohistoria-container">
-                            </div>
+                        <div id="versiohistoria-container" class="versiohistoria-container"></div>
                     </div>
                 </div>
             </div>
