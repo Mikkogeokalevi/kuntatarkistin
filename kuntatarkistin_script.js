@@ -1,6 +1,6 @@
 /*
   MIKKOKALEVIN KUNTATARKISTIN
-  Versio 22.0 - Kuntalokin muokkaus ja poisto
+  Versio 22.1 - Korjattu "Tallenna lokiin" -napin näkyvyys mobiilissa
 */
 
 // --- ELEMENTTIEN HAKU ---
@@ -31,6 +31,7 @@ let sijaintiHistoria = [];
 let kuntaloki = [];
 let kayttoTila = 'haku';
 let viimeisinGpsSijainti = null;
+let viimeisinTulosData = null; // UUSI: Tallentaa väliaikaisesti viimeisimmän tuloksen datan
 
 const MAX_ETAISYYS_PISTEET = 30;
 
@@ -310,6 +311,8 @@ async function paivitaSijaintitiedot(lat, lon, paikanNimi) {
             paatinimi = address.municipality || address.town || address.village || address.city || 'Kuntaa ei löytynyt';
         }
 
+        viimeisinTulosData = { kunta: paatinimi, koordinaatit: koordinaatitDDM };
+
         const tie = address?.road;
         const postinumero = address?.postcode;
         const maa = address?.country || 'Ei saatavilla';
@@ -327,7 +330,7 @@ async function paivitaSijaintitiedot(lat, lon, paikanNimi) {
         const tallennaNappi = document.createElement('button');
         tallennaNappi.textContent = 'Tallenna kuntalokiin';
         tallennaNappi.className = 'nappi nappi-keltainen tallenna-loki-nappi';
-        tallennaNappi.onclick = () => tallennaLokiin(paatinimi, koordinaatitDDM);
+        tallennaNappi.onclick = tallennaViimeisinTulosLokiin;
         tulosAlue.appendChild(tallennaNappi);
 
         const koordinaattiRivi = tulosAlue.querySelector('.koordinaatti-rivi');
@@ -347,6 +350,14 @@ async function paivitaSijaintitiedot(lat, lon, paikanNimi) {
 }
 
 // --- KUNTALOKI-FUNKTIOT ---
+function tallennaViimeisinTulosLokiin() {
+    if (viimeisinTulosData) {
+        tallennaLokiin(viimeisinTulosData.kunta, viimeisinTulosData.koordinaatit);
+    } else {
+        naytaViesti("Ei tallennettavaa sijaintia.", "error");
+    }
+}
+
 function tallennaLokiin(kunta, koordinaatit) {
     const muistiinpano = prompt("Lisää muistiinpano (esim. GC-koodi) tai jätä tyhjäksi:", "");
     if (muistiinpano === null) return; 
@@ -386,7 +397,7 @@ window.muokkaaLokimerkintaa = function(index) {
     const nykyinenMuistiinpano = kuntaloki[index].muistiinpano || "";
     const uusiMuistiinpano = prompt("Muokkaa muistiinpanoa:", nykyinenMuistiinpano);
 
-    if (uusiMuistiinpano !== null) { // Vain jos käyttäjä ei paina "Cancel"
+    if (uusiMuistiinpano !== null) {
         kuntaloki[index].muistiinpano = uusiMuistiinpano;
         localStorage.setItem('mk_kuntatarkistin_loki', JSON.stringify(kuntaloki));
         paivitaLoki();
@@ -397,7 +408,7 @@ window.muokkaaLokimerkintaa = function(index) {
 window.poistaLokimerkinta = function(index) {
     const kunta = kuntaloki[index].kunta;
     if (confirm(`Haluatko varmasti poistaa lokimerkinnän kunnalle ${kunta}?`)) {
-        kuntaloki.splice(index, 1); // Poistetaan elementti taulukosta
+        kuntaloki.splice(index, 1);
         localStorage.setItem('mk_kuntatarkistin_loki', JSON.stringify(kuntaloki));
         paivitaLoki();
         naytaViesti("Merkintä poistettu.");
