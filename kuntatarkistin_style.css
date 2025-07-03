@@ -50,7 +50,7 @@ body { background-color: var(--color-bg); font-family: -apple-system, BlinkMacSy
 #kartta-container { width: 100%; height: 350px; border-radius: 12px; margin-top: 20px; border: 1px solid var(--color-border); background-color: var(--color-bg); }
 .kartta-pikanappi { position: absolute; top: 15px; right: 15px; z-index: 1000; background-color: color-mix(in srgb, var(--color-surface) 90%, transparent); color: var(--color-text-primary); border: 1px solid var(--color-border); border-radius: 8px; width: 40px; height: 40px; font-size: 24px; line-height: 40px; text-align: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3); display: none; transition: all 0.2s ease; backdrop-filter: blur(5px); }
 .kartta-pikanappi:hover { transform: scale(1.05); }
-.manual-input { width: calc(100% - 24px); padding: 12px; margin-bottom: 10px; background-color: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text-primary); border-radius: 8px; font-family: monospace; transition: all 0.2s ease; }
+.manual-input { width: 100%; box-sizing: border-box; padding: 12px; margin-bottom: 10px; background-color: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text-primary); border-radius: 8px; font-family: monospace; transition: all 0.2s ease; }
 .manual-input:focus { outline: none; border-color: var(--color-accent-yellow); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-yellow) 25%, transparent); }
 .kartta-kontrollit label { font-size: 0.9em; color: var(--color-text-secondary); }
 .kartta-kontrollit select { background-color: var(--color-surface); color: var(--color-text-primary); border: 1px solid var(--color-border); padding: 8px; border-radius: 8px; }
@@ -67,10 +67,10 @@ body { background-color: var(--color-bg); font-family: -apple-system, BlinkMacSy
 .loki-item { border-left-color: var(--color-accent-yellow); }
 .tehtava-item { border-left-color: var(--color-accent-blue); } 
 .tehtava-item.kayty { border-left-color: var(--color-accent-green); background-color: color-mix(in srgb, var(--color-card) 50%, var(--color-bg)); }
-.tehtava-item.kayty span { text-decoration: line-through; color: var(--color-text-secondary); }
-.loki-item-header, .tehtava-item { display: flex; justify-content: space-between; align-items: center; }
-.tehtava-item { gap: 10px; }
-.tehtava-item span { flex-grow: 1; word-break: break-word; }
+.tehtava-item.kayty > div > span { text-decoration: line-through; color: var(--color-text-secondary); }
+.loki-item-header, .tehtava-header { display: flex; justify-content: space-between; align-items: center; }
+.tehtava-header { gap: 10px; }
+.tehtava-header span { flex-grow: 1; word-break: break-word; font-weight: 500; }
 .loki-item strong { color: var(--color-accent-yellow); font-size: 1.1em; }
 .loki-item .loki-tiedot { font-size: 0.85em; color: var(--color-text-secondary); margin-top: 4px; }
 .loki-item .loki-muistiinpano { font-style: italic; color: var(--color-text-primary); background-color: var(--color-bg); padding: 8px; border-radius: 6px; margin-top: 8px; display: inline-block; word-break: break-word; font-size: 0.95em; }
@@ -94,20 +94,48 @@ body { background-color: var(--color-bg); font-family: -apple-system, BlinkMacSy
 .data-hallinta-container { display: flex; justify-content: center; gap: 10px; margin-top: 20px; border-top: 1px solid var(--color-border); padding-top: 20px; }
 .tehtavalista-huomautus { background-color: color-mix(in srgb, var(--color-accent-blue) 15%, transparent); border: 1px solid var(--color-accent-blue); color: var(--color-text-primary); padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9em; }
 
-/* --- MOBIILIOPTIMOINTI --- */
+/* UUDET TYYLIT */
+.haku-spinner {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--color-border);
+    border-top-color: var(--color-accent-blue);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: none; /* Piilotettu oletuksena */
+}
+.tehtava-tyypit {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--color-border);
+}
+.tehtava-tyypit label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.85em;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+}
+
 @media screen and (max-width: 480px) {
     body { padding: 5px; }
     .sisalto-laatikko { margin: 10px auto; padding: 5px; }
     .teksti-alue { padding: 5px; font-size: 1em; }
-    /* UUSI YLÄPALKIN ASETTELU */
     .header-flex-container { flex-wrap: nowrap; align-items: center; gap: 10px; }
     .logo { width: 45px; height: 45px; flex-shrink: 0; }
     .paaotsikko { font-size: 1em; text-align: left; line-height: 1.2; }
     #teema-valitsin { padding: 4px; font-size: 0.7em; }
-    
     .nappi { width: 100%; margin: 8px 0; }
     #kartta-container { height: 300px; }
     .virhe-viesti, .onnistui-viesti { position: relative; top: auto; right: auto; margin-top: 10px; }
     .kartta-pikanappi { top: 15px; right: 15px; width: 36px; height: 36px; line-height: 36px; }
     .valilehti-nappi { flex-basis: calc(33.3% - 6px); font-size: 0.8em; }
+    .tehtava-tyypit { flex-wrap: wrap; gap: 10px; }
 }
