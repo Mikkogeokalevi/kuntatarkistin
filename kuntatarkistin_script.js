@@ -1,6 +1,6 @@
 /*
   MIKKOKALEVIN KUNTATARKISTIN
-  Versio 20.1 - Korjattu keskitysnapin toiminta mobiililaitteilla
+  Versio 21.0 - Kuntaloki-ominaisuus
 */
 
 // --- ELEMENTTIEN HAKU ---
@@ -17,7 +17,10 @@ const tyhjennaHistoriaNappi = document.getElementById('tyhjenna-historia');
 const tilaHakuNappi = document.getElementById('tila-haku');
 const tilaEtaisyysNappi = document.getElementById('tila-etaisyys');
 const etaisyysLaatikko = document.getElementById('etaisyys-laatikko');
-const keskitaNappi = document.getElementById('keskitaNappi'); // Uusi pikanappi
+const keskitaNappi = document.getElementById('keskitaNappi');
+const lokiLista = document.getElementById('loki-lista');
+const tyhjennaLokiNappi = document.getElementById('tyhjenna-loki');
+
 
 let map;
 let marker;
@@ -26,25 +29,28 @@ let etaisyysPisteet = [];
 let etaisyysMarkerit = [];
 let etaisyysViiva;
 let sijaintiHistoria = [];
+let kuntaloki = []; // Uusi taulukko kuntalokille
 let kayttoTila = 'haku';
-let viimeisinGpsSijainti = null; // Uusi muuttuja GPS-sijainnille
+let viimeisinGpsSijainti = null;
 
 const MAX_ETAISYYS_PISTEET = 30;
 
+// Ladataan tallennetut tiedot
 const tallennettuHistoria = localStorage.getItem('mk_kuntatarkistin_historia');
-if (tallennettuHistoria) {
-    sijaintiHistoria = JSON.parse(tallennettuHistoria);
-}
+if (tallennettuHistoria) sijaintiHistoria = JSON.parse(tallennettuHistoria);
+
+const tallennettuLoki = localStorage.getItem('mk_kuntatarkistin_loki');
+if (tallennettuLoki) kuntaloki = JSON.parse(tallennettuLoki);
+
 
 // --- TAPAHTUMANKUUNTELIJAT ---
 document.addEventListener('DOMContentLoaded', () => {
     const tallennettuTyyli = localStorage.getItem('mk_kuntatarkistin_karttatyyli');
-    if (tallennettuTyyli) {
-        karttaTyyli.value = tallennettuTyyli;
-    }
+    if (tallennettuTyyli) karttaTyyli.value = tallennettuTyyli;
     
     initMap();
     paivitaHistoria();
+    paivitaLoki(); // Päivitetään loki näkyviin heti alussa
     lueURLJaAsetaSijainti();
 });
 haeSijaintiNappi.addEventListener('click', haeGPSsijainti);
@@ -52,23 +58,17 @@ naytaKoordinaatitNappi.addEventListener('click', haeManuaalisesti);
 karttaTyyli.addEventListener('change', vaihdaKarttaTyyli);
 tyhjennaPisteetNappi.addEventListener('click', tyhjennaEtaisyysPisteet);
 tyhjennaHistoriaNappi.addEventListener('click', tyhjennaHistoria);
+tyhjennaLokiNappi.addEventListener('click', tyhjennaLoki); // Uusi kuuntelija
 tilaHakuNappi.addEventListener('click', () => vaihdaKayttoTila('haku'));
 tilaEtaisyysNappi.addEventListener('click', () => vaihdaKayttoTila('etaisyys'));
 
-// --- KORJATTU TAPAHTUMANKUUNTELIJA MOBIILILAITTEILLE ---
-// Käytetään 'mousedown' ja 'touchstart' tapahtumia, jotka ovat luotettavampia
-// kuin 'click' nopeissa napautuksissa. Estetään tuplakäsittely.
 let nappiaKasitelty = false;
 const handleKeskitys = (e) => {
     if (nappiaKasitelty) return;
     nappiaKasitelty = true;
-    
     e.preventDefault();
     keskitäKartta();
-
-    setTimeout(() => {
-        nappiaKasitelty = false;
-    }, 300); // Nollataan pienellä viiveellä
+    setTimeout(() => { nappiaKasitelty = false; }, 300);
 };
 keskitaNappi.addEventListener('mousedown', handleKeskitys);
 keskitaNappi.addEventListener('touchstart', handleKeskitys);
@@ -94,23 +94,14 @@ function initMap() {
 }
 
 function vaihdaKarttaTyyli() {
-    if (currentTileLayer) {
-        map.removeLayer(currentTileLayer);
-    }
+    if (currentTileLayer) map.removeLayer(currentTileLayer);
     const tyyli = karttaTyyli.value;
     let uusiTaso;
     switch(tyyli) {
-        case 'cartodb':
-            uusiTaso = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>' });
-            break;
-        case 'satellite':
-            uusiTaso = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri' });
-            break;
-        case 'terrain':
-            uusiTaso = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="https://opentopomap.org">OpenTopoMap</a>' });
-            break;
-        default:
-            uusiTaso = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' });
+        case 'cartodb': uusiTaso = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap contributors &copy; CARTO' }); break;
+        case 'satellite': uusiTaso = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri' }); break;
+        case 'terrain': uusiTaso = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { attribution: 'Map data: &copy; OpenStreetMap, &copy; OpenTopoMap' }); break;
+        default: uusiTaso = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' });
     }
     currentTileLayer = uusiTaso.addTo(map);
     localStorage.setItem('mk_kuntatarkistin_karttatyyli', tyyli);
@@ -310,13 +301,8 @@ async function paivitaSijaintitiedot(lat, lon, paikanNimi) {
     const nominatimUrl = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=10&accept-language=fi`;
     
     try {
-        const response = await fetch(nominatimUrl, {
-            headers: { 'User-Agent': 'MikkokalevinKuntatarkistin/1.0' }
-        });
-
-        if (!response.ok) {
-            throw new Error(`Osoitehaku epäonnistui (status: ${response.status})`);
-        }
+        const response = await fetch(nominatimUrl, { headers: { 'User-Agent': 'MikkokalevinKuntatarkistin/1.0' } });
+        if (!response.ok) throw new Error(`Osoitehaku epäonnistui (status: ${response.status})`);
         
         const data = await response.json();
         const address = data.address;
@@ -340,7 +326,15 @@ async function paivitaSijaintitiedot(lat, lon, paikanNimi) {
         htmlOutput += `<p><strong>Maa:</strong> ${maa}</p>`;
         htmlOutput += `<hr style="border-color: #90EE9044; border-style: dashed;"><p><strong>Tarkka sijainti:</strong> ${kokoNimi}</p>`;
         
+        // Lisätään tallenna-nappi dynaamisesti
+        const tallennaNappi = document.createElement('button');
+        tallennaNappi.textContent = 'Tallenna kuntalokiin';
+        tallennaNappi.className = 'nappi nappi-keltainen tallenna-loki-nappi';
+        tallennaNappi.onclick = () => tallennaLokiin(paatinimi, koordinaatitDDM);
+        
         tulosAlue.innerHTML = htmlOutput;
+        tulosAlue.appendChild(tallennaNappi); // Lisätään nappi tulosalueen loppuun
+
         const koordinaattiRivi = tulosAlue.querySelector('.koordinaatti-rivi');
         if (koordinaattiRivi) koordinaattiRivi.appendChild(luoKopioiNappi(koordinaatitDDM));
         
@@ -356,6 +350,55 @@ async function paivitaSijaintitiedot(lat, lon, paikanNimi) {
         setButtonsDisabled(false);
     }
 }
+
+// --- KUNTALOKI-FUNKTIOT ---
+function tallennaLokiin(kunta, koordinaatit) {
+    const muistiinpano = prompt("Lisää muistiinpano (esim. GC-koodi) tai jätä tyhjäksi:", "");
+    // Jos käyttäjä painaa "Cancel", prompt palauttaa null
+    if (muistiinpano === null) {
+        return; 
+    }
+
+    const uusiMerkinta = {
+        kunta: kunta,
+        koordinaatit: koordinaatit,
+        muistiinpano: muistiinpano,
+        aika: new Date()
+    };
+    
+    kuntaloki.unshift(uusiMerkinta); // Lisätään uusin merkintä listan alkuun
+    localStorage.setItem('mk_kuntatarkistin_loki', JSON.stringify(kuntaloki));
+    paivitaLoki();
+    naytaViesti(`${kunta} tallennettu lokiin!`, 'success');
+}
+
+function paivitaLoki() {
+    if (kuntaloki.length === 0) {
+        lokiLista.innerHTML = '<p>Lokisi on tyhjä. Tallenna sijainti nähdäksesi sen täällä.</p>';
+        return;
+    }
+
+    lokiLista.innerHTML = kuntaloki.map(item => {
+        const pvm = new Date(item.aika).toLocaleDateString('fi-FI');
+        return `
+            <div class="loki-item">
+                <strong>${item.kunta}</strong>
+                <div class="loki-tiedot">${pvm} - ${item.koordinaatit}</div>
+                ${item.muistiinpano ? `<div class="loki-muistiinpano">${item.muistiinpano}</div>` : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+function tyhjennaLoki() {
+    if (confirm("Haluatko varmasti tyhjentää koko kuntalokin? Toimintoa ei voi perua.")) {
+        kuntaloki = [];
+        localStorage.removeItem('mk_kuntatarkistin_loki');
+        paivitaLoki();
+        naytaViesti('Kuntaloki tyhjennetty.');
+    }
+}
+
 
 function onGPSError(error) {
     let virheViesti = 'Tapahtui tuntematon virhe.';
