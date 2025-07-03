@@ -1,6 +1,6 @@
 /*
   MIKKOKALEVIN KUNTATARKISTIN
-  Versio 19.0 - Lopullinen Nominatim-versio, jossa käytetään toimivaksi todettua kuntalogiikkaa
+  Versio 20.0 - Lisätty UX-parannuksia: Keskitys, zoom, latausspinneri ja teeman tallennus
 */
 
 // --- ELEMENTTIEN HAKU ---
@@ -17,6 +17,7 @@ const tyhjennaHistoriaNappi = document.getElementById('tyhjenna-historia');
 const tilaHakuNappi = document.getElementById('tila-haku');
 const tilaEtaisyysNappi = document.getElementById('tila-etaisyys');
 const etaisyysLaatikko = document.getElementById('etaisyys-laatikko');
+const keskitaNappi = document.getElementById('keskitaNappi'); // Uusi pikanappi
 
 let map;
 let marker;
@@ -25,7 +26,8 @@ let etaisyysPisteet = [];
 let etaisyysMarkerit = [];
 let etaisyysViiva;
 let sijaintiHistoria = [];
-let kayttoTila = 'haku'; // 'haku' tai 'etaisyys'
+let kayttoTila = 'haku';
+let viimeisinGpsSijainti = null; // Uusi muuttuja GPS-sijainnille
 
 const MAX_ETAISYYS_PISTEET = 30;
 
@@ -34,7 +36,14 @@ if (tallennettuHistoria) {
     sijaintiHistoria = JSON.parse(tallennettuHistoria);
 }
 
+// --- TAPAHTUMANKUUNTELIJAT ---
 document.addEventListener('DOMContentLoaded', () => {
+    // Ladataan tallennettu karttatyyli ennen kartan alustusta
+    const tallennettuTyyli = localStorage.getItem('mk_kuntatarkistin_karttatyyli');
+    if (tallennettuTyyli) {
+        karttaTyyli.value = tallennettuTyyli;
+    }
+    
     initMap();
     paivitaHistoria();
     lueURLJaAsetaSijainti();
@@ -42,10 +51,12 @@ document.addEventListener('DOMContentLoaded', () => {
 haeSijaintiNappi.addEventListener('click', haeGPSsijainti);
 naytaKoordinaatitNappi.addEventListener('click', haeManuaalisesti);
 karttaTyyli.addEventListener('change', vaihdaKarttaTyyli);
+keskitaNappi.addEventListener('click', keskitäKartta); // Uusi kuuntelija
 tyhjennaPisteetNappi.addEventListener('click', tyhjennaEtaisyysPisteet);
 tyhjennaHistoriaNappi.addEventListener('click', tyhjennaHistoria);
 tilaHakuNappi.addEventListener('click', () => vaihdaKayttoTila('haku'));
 tilaEtaisyysNappi.addEventListener('click', () => vaihdaKayttoTila('etaisyys'));
+
 
 function setButtonsDisabled(disabled) {
     haeSijaintiNappi.disabled = disabled;
@@ -62,14 +73,15 @@ function naytaViesti(viesti, tyyppi = 'info') {
 
 function initMap() {
     map = L.map('kartta-container').setView([60.98, 25.66], 10);
-    currentTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+    // Kartan tyyli vaihdetaan heti alussa, jotta tallennettu arvo tulee käyttöön
+    vaihdaKarttaTyyli();
     map.on('click', onMapClick);
 }
 
 function vaihdaKarttaTyyli() {
-    map.removeLayer(currentTileLayer);
+    if (currentTileLayer) {
+        map.removeLayer(currentTileLayer);
+    }
     const tyyli = karttaTyyli.value;
     let uusiTaso;
     switch(tyyli) {
@@ -86,6 +98,8 @@ function vaihdaKarttaTyyli() {
             uusiTaso = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' });
     }
     currentTileLayer = uusiTaso.addTo(map);
+    // Tallennetaan valittu tyyli selaimen muistiin
+    localStorage.setItem('mk_kuntatarkistin_karttatyyli', tyyli);
 }
 
 function parseCoordinates(input) {
@@ -226,10 +240,11 @@ function vaihdaKayttoTila(uusiTila) {
     }
 }
 
+// --- PÄÄTOIMINNOT ---
 function haeGPSsijainti() {
     if (!("geolocation" in navigator)) return naytaViesti('GPS ei ole käytettävissä', 'error');
     setButtonsDisabled(true);
-    tulosAlue.innerHTML = '<p style="text-align: center;">Haetaan GPS-sijaintia...</p>';
+    tulosAlue.innerHTML = '<div class="lataus-spinner"></div><p style="text-align: center;">Haetaan GPS-sijaintia...</p>';
     navigator.geolocation.getCurrentPosition(onGPSSuccess, onGPSError, { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
 }
 
@@ -245,7 +260,11 @@ function haeManuaalisesti() {
 
 function onGPSSuccess(position) {
     const { latitude: lat, longitude: lon } = position.coords;
-    map.setView([lat, lon], 13);
+    // Tallennetaan sijainti ja näytetään pikanappi
+    viimeisinGpsSijainti = [lat, lon];
+    keskitaNappi.style.display = 'block';
+    // Zoomataan lähemmäs
+    map.setView([lat, lon], 15);
     paivitaSijaintitiedot(lat, lon, "Oma sijainti");
 }
 
@@ -258,9 +277,19 @@ function onMapClick(e) {
     }
 }
 
+// Uusi funktio kartan keskittämiseen
+function keskitäKartta() {
+    if (viimeisinGpsSijainti) {
+        map.setView(viimeisinGpsSijainti, 15); // Käytetään samaa tarkkaa zoomia
+        naytaViesti("Kartta keskitetty omaan sijaintiin!");
+    } else {
+        naytaViesti("Omaa sijaintia ei ole vielä haettu.", "error");
+    }
+}
+
 async function paivitaSijaintitiedot(lat, lon, paikanNimi) {
     setButtonsDisabled(true);
-    tulosAlue.innerHTML = '<p style="text-align: center;">Haetaan sijaintitietoja...</p>';
+    tulosAlue.innerHTML = '<div class="lataus-spinner"></div><p style="text-align: center;">Haetaan sijaintitietoja...</p>';
     
     if (marker) marker.setLatLng([lat, lon]);
     else marker = L.marker([lat, lon]).addTo(map);
@@ -282,15 +311,10 @@ async function paivitaSijaintitiedot(lat, lon, paikanNimi) {
         const data = await response.json();
         const address = data.address;
         
-        // --- KORJATTU LOGIIKKA VANHAN, TOIMIVAN VERSION MUKAAN ---
         let paatinimi = 'Kuntaa ei löytynyt';
         if (data.display_name) {
-            // Otetaan ensimmäinen osa pilkulla erotetusta listasta.
-            // Tämä on usein kunta tai kaupunki, ja toimii paremmin kuin
-            // epäluotettavat `address`-kentät.
             paatinimi = data.display_name.split(',')[0].trim();
         } else {
-            // Varaketju, jos display_name puuttuu
             paatinimi = address.municipality || address.town || address.village || address.city || 'Kuntaa ei löytynyt';
         }
 
