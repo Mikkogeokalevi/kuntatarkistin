@@ -1,28 +1,160 @@
 [
-    { "versio": "23.0", "kuvaus": ["Lisätty 'Täytyy käydä -lista' hallintatoiminnoilla."] },
-    { "versio": "22.0", "kuvaus": ["Lisätty Kuntalokiin yksittäisen merkinnän poisto ja muokkaus."] },
-    { "versio": "21.0", "kuvaus": ["Lisätty Kuntaloki, johon voi tallentaa sijainteja muistiinpanoilla."] },
-    { "versio": "20.0", "kuvaus": ["Lisätty 'Keskitä minuun' -pikanappi, parannettu zoomausta ja lisätty latausindikaattori.", "Sovellus muistaa nyt valitun karttatyylin."] },
-    { "versio": "19.0", "kuvaus": ["Korjattu kunnan nimen tunnistuslogiikka (paluu display_name-strategiaan)."] },
-    { "versio": "18.0", "kuvaus": ["*Kokeilu (hylätty):* Paluu Nominatim-hakuun, mutta eri logiikalla."] },
-    { "versio": "17.0", "kuvaus": ["*Kokeilu (hylätty):* Oma välityspalvelin (Vercel) CORS-ongelman kiertämiseksi."] },
-    { "versio": "16.x", "kuvaus": ["*Kokeilu (hylätty):* Yrityksiä integroida Maanmittauslaitoksen (MML) API kuntatietojen tarkkuuden varmistamiseksi."] },
-    { "versio": "15.0", "kuvaus": ["Etäisyyslaskuriin lisätty välimatkojen näyttö (esim. piste 1 -> 2)."] },
-    { "versio": "14.0", "kuvaus": ["Parannettu etäisyyslaskuri: tuki usealle pisteelle ja pisteiden siirtelylle."] },
-    { "versio": "13.0", "kuvaus": ["Sijaintihistoria ja valittu karttatyyli tallennetaan selaimeen.", "Sijainnin URL päivittyy osoiteriville, mahdollistaen linkkien jakamisen."] },
-    { "versio": "12.0", "kuvaus": ["Lähtötilanne tässä keskustelussa. Modulaarinen rakenne, useita tiedostoja."] },
-    { "versio": "10.0", "kuvaus": ["Mobiilinäkymän yläosan uudelleenasettelu (logo ja otsikko vierekkäin)."] },
-    { "versio": "9.9", "kuvaus": ["Mobiilioptimointia (reunukset ja marginaalit)."] },
-    { "versio": "9.8", "kuvaus": ["Yleisiä parannuksia (User-Agent, latauksen aikainen napin lukitus)."] },
-    { "versio": "9.7", "kuvaus": ["Tyhjien tietokenttien (katu, postinumero) piilotus tulosnäkymästä."] },
-    { "versio": "9.6", "kuvaus": ["Ensimmäinen versio, jossa useita tiedostoja."] },
-    { "versio": "9.0", "kuvaus": ["Viimeisin yhden tiedoston versio, jossa lisätiedot ja N/E-koordinaatit."] },
-    { "versio": "8.0", "kuvaus": ["Parannettu kuntatietojen hakulogiikkaa (seutukuntien ja taajamien suodatus)."] },
-    { "versio": "7.0", "kuvaus": ["Lisätty tuki geokätköilyssä yleiselle DDM-koordinaattimuodolle."] },
-    { "versio": "6.0", "kuvaus": ["Lisätty manuaalinen koordinaattihaku tekstikentällä."] },
-    { "versio": "5.0", "kuvaus": ["Parannettu mobiilikäytettävyyttä siirtämällä tulokset kartan yläpuolelle."] },
-    { "versio": "4.0", "kuvaus": ["Lisätty interaktiivinen Leaflet.js-kartta."] },
-    { "versio": "3.0", "kuvaus": ["Rikastettu tulosnäkymää lisätiedoilla (katu, postinumero, maa)."] },
-    { "versio": "2.0", "kuvaus": ["Toiminnallisuus integroitu omaan sivupohjaan (ulkoasu ja logo)."] },
-    { "versio": "1.0", "kuvaus": ["Ensimmäinen toimiva prototyyppi (GPS-haku ja kunnan nimi)."] }
+    {
+        "versio": "23.0",
+        "kuvaus": [
+            "Lisätty 'Täytyy käydä -lista' hallintatoiminnoilla."
+        ]
+    },
+    {
+        "versio": "22.0",
+        "kuvaus": [
+            "Lisätty Kuntalokiin yksittäisen merkinnän poisto ja muokkaus."
+        ]
+    },
+    {
+        "versio": "21.0",
+        "kuvaus": [
+            "Lisätty Kuntaloki, johon voi tallentaa sijainteja muistiinpanoilla."
+        ]
+    },
+    {
+        "versio": "20.0",
+        "kuvaus": [
+            "Lisätty 'Keskitä minuun' -pikanappi, parannettu zoomausta ja lisätty latausindikaattori.",
+            "Sovellus muistaa nyt valitun karttatyylin."
+        ]
+    },
+    {
+        "versio": "19.0",
+        "kuvaus": [
+            "Korjattu kunnan nimen tunnistuslogiikka (paluu display_name-strategiaan)."
+        ]
+    },
+    {
+        "versio": "18.0",
+        "kuvaus": [
+            "*Kokeilu (hylätty):* Paluu Nominatim-hakuun, mutta eri logiikalla."
+        ]
+    },
+    {
+        "versio": "17.0",
+        "kuvaus": [
+            "*Kokeilu (hylätty):* Oma välityspalvelin (Vercel) CORS-ongelman kiertämiseksi."
+        ]
+    },
+    {
+        "versio": "16.x",
+        "kuvaus": [
+            "*Kokeilu (hylätty):* Yrityksiä integroida Maanmittauslaitoksen (MML) API kuntatietojen tarkkuuden varmistamiseksi."
+        ]
+    },
+    {
+        "versio": "15.0",
+        "kuvaus": [
+            "Etäisyyslaskuriin lisätty välimatkojen näyttö (esim. piste 1 -> 2)."
+        ]
+    },
+    {
+        "versio": "14.0",
+        "kuvaus": [
+            "Parannettu etäisyyslaskuri: tuki usealle pisteelle ja pisteiden siirtelylle."
+        ]
+    },
+    {
+        "versio": "13.0",
+        "kuvaus": [
+            "Sijaintihistoria ja valittu karttatyyli tallennetaan selaimeen.",
+            "Sijainnin URL päivittyy osoiteriville, mahdollistaen linkkien jakamisen."
+        ]
+    },
+    {
+        "versio": "12.0",
+        "kuvaus": [
+            "Lähtötilanne tässä keskustelussa. Modulaarinen rakenne, useita tiedostoja."
+        ]
+    },
+    {
+        "versio": "10.0",
+        "kuvaus": [
+            "Mobiilinäkymän yläosan uudelleenasettelu (logo ja otsikko vierekkäin)."
+        ]
+    },
+    {
+        "versio": "9.9",
+        "kuvaus": [
+            "Mobiilioptimointia (reunukset ja marginaalit)."
+        ]
+    },
+    {
+        "versio": "9.8",
+        "kuvaus": [
+            "Yleisiä parannuksia (User-Agent, latauksen aikainen napin lukitus)."
+        ]
+    },
+    {
+        "versio": "9.7",
+        "kuvaus": [
+            "Tyhjien tietokenttien (katu, postinumero) piilotus tulosnäkymästä."
+        ]
+    },
+    {
+        "versio": "9.6",
+        "kuvaus": [
+            "Ensimmäinen versio, jossa useita tiedostoja."
+        ]
+    },
+    {
+        "versio": "9.0",
+        "kuvaus": [
+            "Viimeisin yhden tiedoston versio, jossa lisätiedot ja N/E-koordinaatit."
+        ]
+    },
+    {
+        "versio": "8.0",
+        "kuvaus": [
+            "Parannettu kuntatietojen hakulogiikkaa (seutukuntien ja taajamien suodatus)."
+        ]
+    },
+    {
+        "versio": "7.0",
+        "kuvaus": [
+            "Lisätty tuki geokätköilyssä yleiselle DDM-koordinaattimuodolle."
+        ]
+    },
+    {
+        "versio": "6.0",
+        "kuvaus": [
+            "Lisätty manuaalinen koordinaattihaku tekstikentällä."
+        ]
+    },
+    {
+        "versio": "5.0",
+        "kuvaus": [
+            "Parannettu mobiilikäytettävyyttä siirtämällä tulokset kartan yläpuolelle."
+        ]
+    },
+    {
+        "versio": "4.0",
+        "kuvaus": [
+            "Lisätty interaktiivinen Leaflet.js-kartta."
+        ]
+    },
+    {
+        "versio": "3.0",
+        "kuvaus": [
+            "Rikastettu tulosnäkymää lisätiedoilla (katu, postinumero, maa)."
+        ]
+    },
+    {
+        "versio": "2.0",
+        "kuvaus": [
+            "Toiminnallisuus integroitu omaan sivupohjaan (ulkoasu ja logo)."
+        ]
+    },
+    {
+        "versio": "1.0",
+        "kuvaus": [
+            "Ensimmäinen toimiva prototyyppi (GPS-haku ja kunnan nimi)."
+        ]
+    }
 ]
