@@ -18,6 +18,14 @@
                     <img src="https://img.geocaching.com:443/84454fa6-e23a-4aad-a8a4-612b77f23abe.png" alt="Oma logo" class="logo" />
                 </div>
                 <h3 class="paaotsikko">— Mikkokalevin kuntatarkistin —</h3>
+                <div class="teema-valitsin-container">
+                    <select id="teema-valitsin" title="Vaihda väriteemaa">
+                        <option value="sinertava">Sinertävä</option>
+                        <option value="vihrea">Vihreä</option>
+                        <option value="tumma">Tumma</option>
+                        <option value="vaalea">Vaalea</option>
+                    </select>
+                </div>
             </div>
             
             <div class="huomio-laatikko">
@@ -43,25 +51,26 @@
                 </div>
             </div>
 
-            <div class="huomio-laatikko">
-                <p class="huomio-otsikko">HAE KOORDINAATEILLA</p>
-                <input type="text" id="koordinaatit-input" class="manual-input" placeholder="Syötä koordinaatit...">
-                <div class="ehdotus-teksti">
-                    Esimerkit: "60.98, 25.66" tai "N 60° 55.690' E 025° 59.412'"
-                </div>
-                <button id="naytaKoordinaatit" class="nappi nappi-keltainen">Näytä kartalla</button>
-            </div>
-
             <div class="huomio-laatikko" style="padding: 0;">
                 <div class="valilehdet">
-                    <button class="valilehti-nappi aktiivinen" data-valilehti="tehtavat">Tehtävät 🗺️</button>
+                    <button class="valilehti-nappi aktiivinen" data-valilehti="haku">Haku 🔎</button>
+                    <button class="valilehti-nappi" data-valilehti="tehtavat">Tehtävät 🗺️</button>
                     <button class="valilehti-nappi" data-valilehti="etaisyys">Etäisyys 📏</button>
                     <button class="valilehti-nappi" data-valilehti="historia">Historia 📖</button>
                     <button class="valilehti-nappi" data-valilehti="loki">Loki 📝</button>
                 </div>
 
                 <div class="valilehti-sisalto">
-                    <div id="tehtavat" class="valilehti-paneeli aktiivinen">
+                    <div id="haku" class="valilehti-paneeli aktiivinen">
+                        <p class="huomio-otsikko">HAE KOORDINAATEILLA</p>
+                        <input type="text" id="koordinaatit-input" class="manual-input" placeholder="Syötä koordinaatit...">
+                        <div class="ehdotus-teksti">
+                            Esimerkit: "60.98, 25.66" tai "N 60° 55.690' E 025° 59.412'"
+                        </div>
+                        <button id="naytaKoordinaatit" class="nappi nappi-keltainen">Näytä kartalla</button>
+                    </div>
+
+                    <div id="tehtavat" class="valilehti-paneeli">
                         <p class="huomio-otsikko">TÄYTYY KÄYDÄ -LISTA</p>
                         <div class="tehtava-input-container">
                             <input type="text" id="tehtava-input" class="manual-input" placeholder="Lisää kunta listalle...">
