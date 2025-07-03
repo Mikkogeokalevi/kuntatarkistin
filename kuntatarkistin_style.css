@@ -1,179 +1,68 @@
 /* --- TEEMAMUUTTUJAT --- */
-:root {
-    /* Oletus teema: Sinertävä */
-    --color-bg: #212529;
-    --color-surface: #343A40;
-    --color-card: #495057;
-    --color-border: #6c757d;
-    --color-text-primary: #F8F9FA;
-    --color-text-secondary: #adb5bd;
-    --color-accent-green: #90EE90;
-    --color-accent-yellow: #FFD700;
-    --color-accent-blue: #0d6efd;
-    --color-button-text: #fff;
-    --color-button-yellow-text: #212529;
+:root { /* Oletus: Sinertävä */
+    --color-bg: #212529; --color-surface: #343A40; --color-card: #495057; --color-border: #6c757d;
+    --color-text-primary: #F8F9FA; --color-text-secondary: #adb5bd; --color-accent-green: #90EE90;
+    --color-accent-yellow: #FFD700; --color-accent-blue: #0d6efd; --color-button-text: #fff; --color-button-yellow-text: #212529;
 }
-
 body[data-theme="vihrea"] {
-    --color-bg: #1a2015;
-    --color-surface: #3D4F2B;
-    --color-card: #2A381C;
-    --color-border: #90EE90;
-    --color-text-primary: #F8F8F8;
-    --color-text-secondary: #ccc;
-    --color-accent-green: #90EE90;
-    --color-accent-yellow: #FFD700;
-    --color-accent-blue: #589ee3;
-    --color-button-text: var(--color-accent-green);
+    --color-bg: #1a2015; --color-surface: #3D4F2B; --color-card: #2A381C; --color-border: #90EE90;
+    --color-text-primary: #F8F8F8; --color-text-secondary: #ccc; --color-accent-green: #90EE90;
+    --color-accent-yellow: #FFD700; --color-accent-blue: #589ee3; --color-button-text: var(--color-accent-green);
     --color-button-yellow-text: #1a2015;
 }
-
 body[data-theme="tumma"] {
-    --color-bg: #121212;
-    --color-surface: #1E1E1E;
-    --color-card: #282828;
-    --color-border: #444;
-    --color-text-primary: #E0E0E0;
-    --color-text-secondary: #9E9E9E;
-    --color-accent-green: #4CAF50;
-    --color-accent-yellow: #FFC107;
-    --color-accent-blue: #2196F3;
-    --color-button-text: #E0E0E0;
+    --color-bg: #121212; --color-surface: #1E1E1E; --color-card: #282828; --color-border: #444;
+    --color-text-primary: #E0E0E0; --color-text-secondary: #9E9E9E; --color-accent-green: #4CAF50;
+    --color-accent-yellow: #FFC107; --color-accent-blue: #2196F3; --color-button-text: #E0E0E0;
     --color-button-yellow-text: #121212;
 }
-
 body[data-theme="vaalea"] {
-    --color-bg: #F8F9FA;
-    --color-surface: #FFFFFF;
-    --color-card: #E9ECEF;
-    --color-border: #DEE2E6;
-    --color-text-primary: #212529;
-    --color-text-secondary: #6C757D;
-    --color-accent-green: #28a745;
-    --color-accent-yellow: #fd7e14;
-    --color-accent-blue: #0d6efd;
-    --color-button-text: #212529;
+    --color-bg: #F8F9FA; --color-surface: #FFFFFF; --color-card: #E9ECEF; --color-border: #DEE2E6;
+    --color-text-primary: #212529; --color-text-secondary: #6C757D; --color-accent-green: #28a745;
+    --color-accent-yellow: #fd7e14; --color-accent-blue: #0d6efd; --color-button-text: #212529;
     --color-button-yellow-text: #FFFFFF;
 }
 
-
 /* --- YLEISET ASETUKSET --- */
-body { 
-    background-color: var(--color-bg);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    margin: 0; 
-    padding: 20px; 
-    transition: background-color 0.3s ease;
-}
-.sisalto-laatikko { 
-    max-width: 700px; margin: 30px auto; padding: 10px; 
-    background-color: var(--color-surface); 
-    border: 1px solid var(--color-border);
-    border-radius: 16px; 
-    box-shadow: 0 8px 30px rgba(0,0,0,0.2); 
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-}
+body { background-color: var(--color-bg); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 20px; transition: background-color 0.3s ease; }
+.sisalto-laatikko { max-width: 700px; margin: 30px auto; padding: 10px; background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.2); transition: background-color 0.3s ease, border-color 0.3s ease; }
 .teksti-alue { color: var(--color-text-primary); padding: 10px; font-size: 1em; }
-
-/* --- YLÄTUNNISTE & TEEMANVALITSIN --- */
 .header-flex-container { display: flex; align-items: center; gap: 15px; padding-bottom: 10px; justify-content: center; }
-.logo-container { text-align: center; }
 .logo { width: 100px; height: 100px; border: 3px solid var(--color-border); border-radius: 50%; transition: all 0.3s; }
 .logo:hover { transform: scale(1.05) rotate(5deg); }
 .paaotsikko { color: var(--color-accent-green); text-align: center; margin: 0; font-size: 1.8em; font-weight: 300; flex-grow: 1; }
 .teema-valitsin-container { margin-left: auto; }
-#teema-valitsin {
-    background-color: var(--color-card); color: var(--color-text-secondary);
-    border: 1px solid var(--color-border); border-radius: 8px;
-    padding: 5px 8px; font-size: 0.8em; cursor: pointer;
-}
-
-/* --- KORTIT / LAATIKOT --- */
-.huomio-laatikko { 
-    background-color: var(--color-card); 
-    padding: 20px; border-radius: 12px; margin-top: 20px; 
-    text-align: center; border: 1px solid var(--color-border);
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-.huomio-otsikko { 
-    color: var(--color-accent-yellow); font-weight: 500; 
-    margin: 0 0 20px 0; font-size: 1.1em; letter-spacing: 0.5px;
-}
-
-/* --- NAPIT & INTERAKTIOT --- */
-.nappi { 
-    transition: all 0.2s ease; background-color: var(--color-card); color: var(--color-button-text); 
-    border: 1px solid var(--color-border); padding: 10px 18px; font-size: 1em; 
-    font-weight: 500; border-radius: 8px; cursor: pointer; margin: 5px; 
-}
-.nappi:hover { 
-    border-color: var(--color-accent-green); transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
+#teema-valitsin { background-color: var(--color-card); color: var(--color-text-secondary); border: 1px solid var(--color-border); border-radius: 8px; padding: 5px 8px; font-size: 0.8em; cursor: pointer; }
+.huomio-laatikko { background-color: var(--color-card); padding: 20px; border-radius: 12px; margin-top: 20px; text-align: center; border: 1px solid var(--color-border); transition: background-color 0.3s ease, border-color 0.3s ease; }
+.huomio-otsikko { color: var(--color-accent-yellow); font-weight: 500; margin: 0 0 20px 0; font-size: 1.1em; letter-spacing: 0.5px; }
+.nappi { transition: all 0.2s ease; background-color: var(--color-card); color: var(--color-button-text); border: 1px solid var(--color-border); padding: 10px 18px; font-size: 1em; font-weight: 500; border-radius: 8px; cursor: pointer; margin: 5px; }
+.nappi:hover { border-color: var(--color-accent-green); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 .nappi:active { transform: translateY(0) scale(0.98); box-shadow: none; }
 .nappi:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
 .nappi-keltainen { background-color: var(--color-accent-yellow); color: var(--color-button-yellow-text); border: none; }
 .nappi-keltainen:hover { filter: brightness(1.1); border-color: transparent; }
 .nappi-pieni { padding: 6px 10px; font-size: 0.9em; }
-
-/* --- TULOSALUE & KARTTA --- */
-#tulos-alue { text-align: left; margin-top: 15px; color: var(--color-text-primary); line-height: 1.7; }
+#tulos-alue { position: relative; text-align: left; margin-top: 15px; color: var(--color-text-primary); line-height: 1.7; }
 #tulos-alue p { margin: 10px 0; }
 #tulos-alue strong { color: var(--color-accent-green); font-weight: 500; }
 .kunta-iso { font-size: 1.5em; font-weight: 600; color: var(--color-accent-yellow); text-align: center; margin-bottom: 20px !important; }
-
 #kartta-wrapper { position: relative; }
 #kartta-container { width: 100%; height: 350px; border-radius: 12px; margin-top: 20px; border: 1px solid var(--color-border); background-color: var(--color-bg); }
-.kartta-pikanappi {
-    position: absolute; top: 15px; right: 15px; z-index: 1000;
-    background-color: color-mix(in srgb, var(--color-surface) 90%, transparent);
-    color: var(--color-text-primary); border: 1px solid var(--color-border);
-    border-radius: 8px; width: 40px; height: 40px; font-size: 24px;
-    line-height: 40px; text-align: center; cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3); display: none;
-    transition: all 0.2s ease; backdrop-filter: blur(5px);
-}
+.kartta-pikanappi { position: absolute; top: 15px; right: 15px; z-index: 1000; background-color: color-mix(in srgb, var(--color-surface) 90%, transparent); color: var(--color-text-primary); border: 1px solid var(--color-border); border-radius: 8px; width: 40px; height: 40px; font-size: 24px; line-height: 40px; text-align: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3); display: none; transition: all 0.2s ease; backdrop-filter: blur(5px); }
 .kartta-pikanappi:hover { transform: scale(1.05); }
-
-/* --- SYÖTTÖ- JA VALINTAKENTÄT --- */
-.manual-input { 
-    width: calc(100% - 24px); padding: 12px; margin-bottom: 10px;
-    background-color: var(--color-bg); border: 1px solid var(--color-border);
-    color: var(--color-text-primary); border-radius: 8px; font-family: monospace;
-    transition: all 0.2s ease;
-}
-.manual-input:focus {
-    outline: none; border-color: var(--color-accent-yellow);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-yellow) 25%, transparent);
-}
+.manual-input { width: calc(100% - 24px); padding: 12px; margin-bottom: 10px; background-color: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text-primary); border-radius: 8px; font-family: monospace; transition: all 0.2s ease; }
+.manual-input:focus { outline: none; border-color: var(--color-accent-yellow); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-yellow) 25%, transparent); }
 .kartta-kontrollit label { font-size: 0.9em; color: var(--color-text-secondary); }
-.kartta-kontrollit select { 
-    background-color: var(--color-surface); color: var(--color-text-primary); 
-    border: 1px solid var(--color-border); padding: 8px; border-radius: 8px; 
-}
+.kartta-kontrollit select { background-color: var(--color-surface); color: var(--color-text-primary); border: 1px solid var(--color-border); padding: 8px; border-radius: 8px; }
 .ehdotus-teksti { font-size: 0.85em; color: var(--color-text-secondary); margin-top: 5px; }
-
-/* --- VÄLILEHDET --- */
 .valilehdet { display: flex; border-bottom: 1px solid var(--color-border); margin-bottom: 20px; flex-wrap: wrap; }
-.valilehti-nappi {
-    background: none; border: none; color: var(--color-text-secondary);
-    padding: 10px 15px; cursor: pointer; font-size: 0.9em;
-    font-weight: 500; border-bottom: 3px solid transparent;
-    transition: all 0.2s ease;
-}
+.valilehti-nappi { background: none; border: none; color: var(--color-text-secondary); padding: 10px 15px; cursor: pointer; font-size: 0.9em; font-weight: 500; border-bottom: 3px solid transparent; transition: all 0.2s ease; }
 .valilehti-nappi:hover { color: var(--color-text-primary); }
 .valilehti-nappi.aktiivinen { color: var(--color-accent-yellow); border-bottom-color: var(--color-accent-yellow); }
-.valilehti-paneeli { display: none; padding: 0 10px; }
+.valilehti-paneeli { display: none; padding: 0 10px 20px 10px; }
 .valilehti-paneeli.aktiivinen { display: block; animation: fadein 0.5s; }
 @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
-
-/* --- LISTA ELEMENTIT (HISTORIA, LOKI, TEHTÄVÄT) --- */
-.historia-item, .loki-item, .tehtava-item {
-    background-color: var(--color-surface); padding: 12px; margin: 8px 0;
-    border-radius: 8px; border-left: 4px solid var(--color-border);
-    text-align: left; transition: all 0.2s ease;
-}
+.historia-item, .loki-item, .tehtava-item { background-color: var(--color-surface); padding: 12px; margin: 8px 0; border-radius: 8px; border-left: 4px solid var(--color-border); text-align: left; transition: all 0.2s ease; }
 .historia-item:hover, .loki-item:hover, .tehtava-item:hover { transform: translateX(5px); }
 .loki-item { border-left-color: var(--color-accent-yellow); }
 .tehtava-item { border-left-color: var(--color-accent-blue); } 
@@ -184,44 +73,44 @@ body {
 .tehtava-item span { flex-grow: 1; word-break: break-word; }
 .loki-item strong { color: var(--color-accent-yellow); font-size: 1.1em; }
 .loki-item .loki-tiedot { font-size: 0.85em; color: var(--color-text-secondary); margin-top: 4px; }
-.loki-item .loki-muistiinpano {
-    font-style: italic; color: var(--color-text-primary); background-color: var(--color-bg);
-    padding: 8px; border-radius: 6px; margin-top: 8px;
-    display: inline-block; word-break: break-word; font-size: 0.95em;
-}
+.loki-item .loki-muistiinpano { font-style: italic; color: var(--color-text-primary); background-color: var(--color-bg); padding: 8px; border-radius: 6px; margin-top: 8px; display: inline-block; word-break: break-word; font-size: 0.95em; }
 .loki-item-actions { display: flex; gap: 8px; flex-shrink: 0; }
 .loki-nappi { background: none; border: none; color: var(--color-text-secondary); cursor: pointer; font-size: 1.2em; padding: 0; transition: color 0.2s; }
 .loki-nappi:hover { color: var(--color-text-primary); }
-
-/* Hakuehdotusten tyylit */
 .tehtava-input-container { position: relative; }
-#hakutulokset-container {
-    position: absolute; width: 100%; background-color: var(--color-surface);
-    border: 1px solid var(--color-border); border-top: none; border-radius: 0 0 8px 8px;
-    z-index: 100; max-height: 200px; overflow-y: auto;
-}
+#hakutulokset-container { position: absolute; width: 100%; background-color: var(--color-surface); border: 1px solid var(--color-border); border-top: none; border-radius: 0 0 8px 8px; z-index: 100; max-height: 200px; overflow-y: auto; }
 .hakutulos-item { padding: 10px; cursor: pointer; color: var(--color-text-primary); border-bottom: 1px solid var(--color-card); }
 .hakutulos-item:last-child { border-bottom: none; }
 .hakutulos-item:hover { background-color: var(--color-card); }
-
-/* UUSI: Versiohistorian tyylit */
 .versiohistoria-container { text-align: left; max-height: 400px; overflow-y: auto; padding-right: 10px;}
 .versio-item { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--color-border); }
 .versio-item:last-child { border-bottom: none; }
 .versio-item h4 { margin: 0 0 10px 0; color: var(--color-accent-green); }
 .versio-item ul { margin: 0; padding-left: 20px; }
 .versio-item li { margin-bottom: 5px; color: var(--color-text-secondary); }
-
-
-/* --- VIESTIT --- */
-.virhe-viesti, .onnistui-viesti { 
-    color: white; padding: 12px; border-radius: 8px; position: fixed;
-    top: 20px; right: 20px; z-index: 2000; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-}
+.virhe-viesti, .onnistui-viesti { color: white; padding: 12px; border-radius: 8px; position: fixed; top: 20px; right: 20px; z-index: 2000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
 .virhe-viesti { background-color: #dc3545; }
 .onnistui-viesti { background-color: #28a745; }
 
-/* --- MOBIILIOPTIMOINTI --- */
+/* UUDET TYYLIT */
+.tehtavalista-huomautus {
+    background-color: color-mix(in srgb, var(--color-accent-blue) 15%, transparent);
+    border: 1px solid var(--color-accent-blue);
+    color: var(--color-text-primary);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+}
+.data-hallinta-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+    border-top: 1px solid var(--color-border);
+    padding-top: 20px;
+}
+
 @media screen and (max-width: 480px) {
     body { padding: 5px; }
     .sisalto-laatikko { margin: 10px auto; padding: 5px; }
