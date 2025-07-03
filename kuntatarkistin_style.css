@@ -91,33 +91,20 @@ body { background-color: var(--color-bg); font-family: -apple-system, BlinkMacSy
 .virhe-viesti, .onnistui-viesti { color: white; padding: 12px; border-radius: 8px; position: fixed; top: 20px; right: 20px; z-index: 2000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
 .virhe-viesti { background-color: #dc3545; }
 .onnistui-viesti { background-color: #28a745; }
+.data-hallinta-container { display: flex; justify-content: center; gap: 10px; margin-top: 20px; border-top: 1px solid var(--color-border); padding-top: 20px; }
+.tehtavalista-huomautus { background-color: color-mix(in srgb, var(--color-accent-blue) 15%, transparent); border: 1px solid var(--color-accent-blue); color: var(--color-text-primary); padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9em; }
 
-/* UUDET TYYLIT */
-.tehtavalista-huomautus {
-    background-color: color-mix(in srgb, var(--color-accent-blue) 15%, transparent);
-    border: 1px solid var(--color-accent-blue);
-    color: var(--color-text-primary);
-    padding: 10px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    font-size: 0.9em;
-}
-.data-hallinta-container {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
-    border-top: 1px solid var(--color-border);
-    padding-top: 20px;
-}
-
+/* --- MOBIILIOPTIMOINTI --- */
 @media screen and (max-width: 480px) {
     body { padding: 5px; }
     .sisalto-laatikko { margin: 10px auto; padding: 5px; }
     .teksti-alue { padding: 5px; font-size: 1em; }
-    .header-flex-container { flex-wrap: wrap; }
-    .paaotsikko { width: 100%; text-align: center; order: -1; margin-bottom: 10px; }
-    .logo { width: 60px; height: 60px; }
+    /* UUSI YLÄPALKIN ASETTELU */
+    .header-flex-container { flex-wrap: nowrap; align-items: center; gap: 10px; }
+    .logo { width: 45px; height: 45px; flex-shrink: 0; }
+    .paaotsikko { font-size: 1em; text-align: left; line-height: 1.2; }
+    #teema-valitsin { padding: 4px; font-size: 0.7em; }
+    
     .nappi { width: 100%; margin: 8px 0; }
     #kartta-container { height: 300px; }
     .virhe-viesti, .onnistui-viesti { position: relative; top: auto; right: auto; margin-top: 10px; }
