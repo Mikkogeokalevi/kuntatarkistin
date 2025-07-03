@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuntalistan Generaattori</title>
+    
+    <style>
+        /* --- Yleiset sivupohjan tyylit --- */
+        body {
+            background-color: #1a2015;
+            font-family: 'Georgia', serif;
+            margin: 0;
+            padding: 20px;
+            transition: padding 0.3s ease;
+        }
+
+        .sisalto-laatikko {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 10px;
+            background-color: #3D4F2B;
+            border: 3px solid #11150C;
+            border-radius: 12px;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.6);
+            transition: margin 0.3s ease;
+        }
+
+        .teksti-alue {
+            color: #F8F8F8;
+            line-height: 1.8;
+            padding: 10px;
+            font-size: 1.1em;
+            transition: font-size 0.3s ease;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .logo {
+            width: 120px;
+            height: 120px;
+            border: 2px solid #90EE90;
+            border-radius: 50%;
+            display: inline-block;
+            vertical-align: middle;
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+            background-color: #3D4F2B;
+            padding: 3px;
+        }
+
+        .paaotsikko {
+            color: #90EE90;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            font-size: 1.6em;
+            letter-spacing: 0.5px;
+        }
+
+        .leipateksti {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #FFFFFF;
+            font-size: 1.2em;
+        }
+        
+        /* --- Responsiivisuus --- */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .sisalto-laatikko { margin: 15px auto; }
+            .teksti-alue { font-size: 1.0em; }
+            .paaotsikko { font-size: 1.4em; }
+            .leipateksti { font-size: 1.1em; text-align: left; }
+        }
+
+        /* --- Generaattorin osien tyylit (sovitettu teemaan) --- */
+        .form-section, .list-section, .actions { margin-top: 25px; }
+        label { font-weight: 600; color: #F8F8F8; }
+        textarea { 
+            width: 100%; 
+            padding: 10px; 
+            box-sizing: border-box; 
+            border: 1px solid #11150C; 
+            border-radius: 4px; 
+            font-size: 1rem;
+            background-color: #2A381C;
+            color: #F8F8F8;
+        }
+        
+        button, .button {
+            display: inline-block;
+            padding: 10px 18px;
+            border: 1px solid #90EE90;
+            background-color: #2A381C;
+            color: #90EE90;
+            text-decoration: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 1rem;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        button:hover, .button:hover {
+            background-color: #90EE90;
+            color: #1a2015;
+        }
+
+        .button-danger {
+            border-color: #FF6B6B;
+            color: #FF6B6B;
+        }
+        .button-danger:hover {
+            background-color: #FF6B6B;
+            color: #1a2015;
+        }
+
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+        th, td { 
+            border: 1px solid #90EE90; 
+            padding: 10px; 
+            text-align: left; 
+        }
+        th { 
+            background-color: #2A381C;
+            color: #90EE90;
+        }
+
+        #kuntien-vahvistus { 
+            border: 2px dashed #90EE90; 
+            padding: 15px; 
+            margin-top: 20px; 
+            border-radius: 8px; 
+            background-color: #2A381C; 
+        }
+        .vahvistus-rivi { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 8px 0; 
+            border-bottom: 1px solid #3D4F2B;
+        }
+        .vahvistus-rivi:last-child { border-bottom: none; }
+        .vahvistus-nimi { font-weight: bold; }
+        .checkbox-group label { margin-left: 15px; font-size: 0.9em; }
+
+        #loading-indicator { 
+            display: none; 
+            text-align: center; 
+            padding: 20px; 
+            font-weight: bold; 
+            color: #90EE90; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sisalto-laatikko">
+        <div class="teksti-alue">
+            <div class="logo-container">
+                <img src="https://img.geocaching.com:443/84454fa6-e23a-4aad-a8a4-612b77f23abe.png" alt="Oma logo" class="logo" />
+            </div>
+            
+            <h3 class="paaotsikko">Kuntalistan Generaattori</h3>
+            
+            <div class="form-section">
+                <h4 class="leipateksti" style="font-weight:bold; margin-bottom:10px; font-size:1.1em;">1. Syötä kunnat</h4>
+                <form id="kunta-lomake">
+                    <label for="kuntien_nimet">Syötä kunnat pilkulla erotettuna:</label>
+                    <textarea name="kuntien_nimet" id="kuntien_nimet" rows="3" placeholder="esim. Lahti, Hollola, Orimattila"></textarea>
+                    <button type="submit" style="margin-top: 10px;">Hae kuntia</button>
+                </form>
+            </div>
+
+            <div id="kuntien-vahvistus" style="display: none;"></div>
+
+            <div id="loading-indicator">Ladataan koordinaatteja... Hetkinen.</div>
+
+            <div class="list-section">
+                <h4 class="leipateksti" style="font-weight:bold; margin-top:25px; font-size:1.1em;">2. Lopullinen tehtävälista</h4>
+                <div id="lista-container">
+                    <p class="leipateksti" style="font-size:1em;">Lista on tyhjä.</p>
+                </div>
+                <div class="actions" id="lista-toiminnot" style="display: none; margin-top: 20px;">
+                    <button id="lataa-json">Lataa JSON-tiedosto</button>
+                    <button id="tyhjenna-lista" class="button-danger">Tyhjennä koko lista</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+<script>
+// Globaali muuttuja, joka säilyttää lopullisen listan kunnista
+let tehtavalista = [];
+
+// Elementtien viittaukset
+const kuntaLomake = document.getElementById('kunta-lomake');
+const kuntienNimetInput = document.getElementById('kuntien_nimet');
+const vahvistusAlue = document.getElementById('kuntien-vahvistus');
+const listaContainer = document.getElementById('lista-container');
+const listaToiminnot = document.getElementById('lista-toiminnot');
+const lataaJsonNappi = document.getElementById('lataa-json');
+const tyhjennaListaNappi = document.getElementById('tyhjenna-lista');
+const loadingIndicator = document.getElementById('loading-indicator');
+
+// Tapahtumankäsittelijä kuntien hakemiselle
+kuntaLomake.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const nimet = kuntienNimetInput.value.split(',')
+        .map(nimi => nimi.trim())
+        .filter(nimi => nimi.length > 0);
+    
+    if (nimet.length > 0) {
+        naytaVahvistus(nimet);
+    }
+});
+
+// Funktio, joka näyttää vahvistusalueen kuntakohtaisilla valinnoilla
+function naytaVahvistus(nimet) {
+    vahvistusAlue.innerHTML = '<h4 style="color:#FFD700; margin-top:0;">Määritä tyypit jokaiselle kunnalle:</h4>';
+    
+    nimet.forEach(nimi => {
+        const rivi = document.createElement('div');
+        rivi.className = 'vahvistus-rivi';
+        rivi.dataset.kuntaNimi = nimi; // Tallennetaan nimi data-attribuuttiin
+        
+        rivi.innerHTML = `
+            <span class="vahvistus-nimi">${nimi}</span>
+            <div class="checkbox-group">
+                <label><input type="checkbox" name="tradi"> Tradi</label>
+                <label><input type="checkbox" name="multi"> Multi</label>
+                <label><input type="checkbox" name="mysse"> Mysse</label>
+            </div>
+        `;
+        vahvistusAlue.appendChild(rivi);
+    });
+
+    const lisaaNappi = document.createElement('button');
+    lisaaNappi.textContent = 'Lisää valitut listalle';
+    lisaaNappi.style.marginTop = '15px';
+    lisaaNappi.onclick = kasitteleJaLisaaListalle; // Tapahtumankäsittelijä napille
+    
+    vahvistusAlue.appendChild(lisaaNappi);
+    vahvistusAlue.style.display = 'block';
+}
+
+// Funktio, joka käsittelee valinnat ja hakee koordinaatit
+async function kasitteleJaLisaaListalle() {
+    vahvistusAlue.style.display = 'none';
+    loadingIndicator.style.display = 'block';
+
+    const vahvistusRivit = vahvistusAlue.querySelectorAll('.vahvistus-rivi');
+    const lisattavatKunnat = [];
+
+    vahvistusRivit.forEach(rivi => {
+        const nimi = rivi.dataset.kuntaNimi;
+        const tyypit = {
+            tradi: rivi.querySelector('input[name="tradi"]').checked,
+            multi: rivi.querySelector('input[name="multi"]').checked,
+            mysse: rivi.querySelector('input[name="mysse"]').checked
+        };
+        lisattavatKunnat.push({ nimi, tyypit });
+    });
+
+    for (const kunta of lisattavatKunnat) {
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${kunta.nimi}&countrycodes=fi&format=json&limit=1`);
+            const data = await response.json();
+
+            if (data.length > 0) {
+                const sijainti = data[0];
+                tehtavalista.push({
+                    nimi: kunta.nimi,
+                    lat: parseFloat(sijainti.lat),
+                    lon: parseFloat(sijainti.lon),
+                    kayty: false,
+                    tyypit: kunta.tyypit
+                });
+            } else {
+                console.warn(`Sijaintia ei löytynyt nimelle: ${kunta.nimi}`);
+            }
+        } catch (error) {
+            console.error(`Virhe haettaessa sijaintia: ${error}`);
+        }
+    }
+    
+    loadingIndicator.style.display = 'none';
+    kuntienNimetInput.value = '';
+    paivitaLopullinenLista();
+}
+
+// Funktio, joka päivittää lopullisen taulukon näkymän
+function paivitaLopullinenLista() {
+    if (tehtavalista.length === 0) {
+        listaContainer.innerHTML = '<p class="leipateksti" style="font-size:1em;">Lista on tyhjä.</p>';
+        listaToiminnot.style.display = 'none';
+        return;
+    }
+
+    const table = document.createElement('table');
+    table.innerHTML = `
+        <thead>
+            <tr>
+                <th>Nimi</th>
+                <th>Lat</th>
+                <th>Lon</th>
+                <th>Tyypit</th>
+                <th>Toiminto</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    `;
+    const tbody = table.querySelector('tbody');
+
+    tehtavalista.forEach((kunta, indeksi) => {
+        const rivi = tbody.insertRow();
+        rivi.innerHTML = `
+            <td>${kunta.nimi}</td>
+            <td>${kunta.lat.toFixed(6)}</td>
+            <td>${kunta.lon.toFixed(6)}</td>
+            <td>
+                ${kunta.tyypit.tradi ? 'Tradi ' : ''}
+                ${kunta.tyypit.multi ? 'Multi ' : ''}
+                ${kunta.tyypit.mysse ? 'Mysse ' : ''}
+            </td>
+            <td><button class="button-danger" style="padding: 5px 10px;" data-indeksi="${indeksi}">Poista</button></td>
+        `;
+    });
+    
+    listaContainer.innerHTML = '';
+    listaContainer.appendChild(table);
+    listaToiminnot.style.display = 'block';
+
+    listaContainer.querySelectorAll('.button-danger').forEach(nappi => {
+        nappi.addEventListener('click', (event) => {
+            const indeksi = parseInt(event.target.dataset.indeksi);
+            poistaKunta(indeksi);
+        });
+    });
+}
+
+// Funktio kunnan poistamiseen
+function poistaKunta(indeksi) {
+    tehtavalista.splice(indeksi, 1);
+    paivitaLopullinenLista();
+}
+
+// Tapahtumankäsittelijä JSON-lataukselle
+lataaJsonNappi.addEventListener('click', () => {
+    if (tehtavalista.length === 0) return;
+    
+    const jsonString = JSON.stringify(tehtavalista, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'tehtavalista.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+});
+
+// Tapahtumankäsittelijä listan tyhjentämiselle
+tyhjennaListaNappi.addEventListener('click', () => {
+    if (confirm('Haluatko varmasti tyhjentää koko listan?')) {
+        tehtavalista = [];
+        paivitaLopullinenLista();
+    }
+});
+</script>
+
+</body>
+</html>
