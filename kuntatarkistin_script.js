@@ -1,11 +1,13 @@
 /*
   MIKKOKALEVIN KUNTATARKISTIN
-  Versio 29.0 - Versiohistoria jaettu omaan tiedostoon
+  Versio 28.3 - Korjattu versiohistorian käsittely vastaamaan sovittua arkkitehtuuria.
 */
 
-// --- VIIMEISIMMÄT VERSIOT ---
+// --- VIIMEISIMMÄT VERSIOT (VANHAT HAETAAN TIEDOSTOSTA) ---
 const versiohistoriaData = [
-    { versio: "29.0", kuvaus: ["Siirretty vanhempi versiohistoria omaan JSON-tiedostoon luotettavuuden parantamiseksi."] },
+    { versio: "28.3", kuvaus: ["Korjattu versiohistorian näyttäminen takaisin dynaamiseksi ja tiedostosta ladattavaksi."] },
+    { versio: "28.2", kuvaus: ["Korjattu hakuehdotusten näkymiseen liittyvä CSS-ongelma iPhone-laitteilla."] },
+    { versio: "28.1", kuvaus: ["Korjattu tietojen vienti -toiminnallisuus.", "Palautettu täydellinen, käyttäjän kokoama versiohistoria."] },
     { versio: "28.0", kuvaus: ["Parannettu 'Täytyy käydä'-listan hakua responsiivisemmaksi.", "Lisätty latausindikaattori hakuun.", "Lisätty 'Täytyy käydä'-listaan valinnat kätkötyypeille (Tradi, Multi, Mysse)."] },
     { versio: "27.x", kuvaus: ["Lisätty älykäs yhteys listojen välille ja data-export/import-toiminnot. Korjattu useita bugeja."] },
     { versio: "26.x", kuvaus: ["Laajennettu ja järjestelty versiohistoria, muutettu dynaamiseksi."] },
@@ -15,7 +17,6 @@ const versiohistoriaData = [
 // --- ELEMENTTIEN HAKU ---
 const haeSijaintiNappi = document.getElementById('haeSijainti');
 const tulosAlue = document.getElementById('tulos-alue');
-// ... ja kaikki muut elementtien haut pysyvät ennallaan ...
 const karttaContainer = document.getElementById('kartta-container');
 const koordinaatitInput = document.getElementById('koordinaatit-input');
 const naytaKoordinaatitNappi = document.getElementById('naytaKoordinaatit');
@@ -61,7 +62,6 @@ let hakuAjastin;
 
 const MAX_ETAISYYS_PISTEET = 30;
 
-// Ladataan tallennetut tiedot
 const tallennettuHistoria = localStorage.getItem('mk_kuntatarkistin_historia');
 if (tallennettuHistoria) sijaintiHistoria = JSON.parse(tallennettuHistoria);
 const tallennettuLoki = localStorage.getItem('mk_kuntatarkistin_loki');
@@ -78,7 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
     lueURLJaAsetaSijainti();
 });
 
-// Lisätään kaikki kuuntelijat
 haeSijaintiNappi.addEventListener('click', haeGPSsijainti);
 naytaKoordinaatitNappi.addEventListener('click', haeManuaalisesti);
 karttaTyyli.addEventListener('change', vaihdaKarttaTyyli);
@@ -153,7 +152,7 @@ function paivitaLoki() { if (kuntaloki.length === 0) { lokiLista.innerHTML = '<p
 window.muokkaaLokimerkintaa = function(index) { const nykyinen = kuntaloki[index].muistiinpano || ""; const uusi = prompt("Muokkaa muistiinpanoa:", nykyinen); if (uusi !== null) { kuntaloki[index].muistiinpano = uusi; localStorage.setItem('mk_kuntatarkistin_loki', JSON.stringify(kuntaloki)); paivitaLoki(); naytaViesti("Päivitetty!"); } };
 window.poistaLokimerkinta = function(index) { const kunta = kuntaloki[index].kunta; if (confirm(`Poistetaanko ${kunta}?`)) { kuntaloki.splice(index, 1); localStorage.setItem('mk_kuntatarkistin_loki', JSON.stringify(kuntaloki)); paivitaLoki(); naytaViesti("Poistettu."); } };
 function tyhjennaLoki() { if (kuntaloki.length === 0) return; if (confirm("Haluatko tyhjentää koko lokin?")) { kuntaloki = []; localStorage.removeItem('mk_kuntatarkistin_loki'); paivitaLoki(); naytaViesti('Loki tyhjennetty.'); } }
-function handleTehtavaInput(e) { clearTimeout(hakuAjastin); const hakusana = e.target.value; if (hakusana.length < 2) { hakutuloksetContainer.innerHTML = ''; tehtavaHakuSpinner.style.display = 'none'; return; } tehtavaHakuSpinner.style.display = 'block'; hakuAjastin = setTimeout(() => { haeEhdotuksia(hakusana); }, 250); }
+function handleTehtavaInput(e) { clearTimeout(hakuAjastin); const hakusana = e.target.value; tehtavaHakuSpinner.style.display = 'none'; if (hakusana.length < 2) { hakutuloksetContainer.innerHTML = ''; return; } tehtavaHakuSpinner.style.display = 'block'; hakuAjastin = setTimeout(() => { haeEhdotuksia(hakusana); }, 250); }
 async function haeEhdotuksia(hakusana) { const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(hakusana)}&format=json&countrycodes=fi&limit=5&featuretype=administrative`; try { const response = await fetch(url, { headers: { 'User-Agent': 'MikkokalevinKuntatarkistin/1.0' } }); if (!response.ok) throw new Error("Haku epäonnistui"); const data = await response.json(); const ehdotukset = data.filter(item => ['administrative'].includes(item.type) && (item.addresstype === 'city' || item.addresstype === 'town' || item.addresstype === 'municipality')); naytaEhdotukset(ehdotukset); } catch (error) { console.error("Haku epäonnistui:", error); naytaViesti("Kuntien haku epäonnistui.", "error"); hakutuloksetContainer.innerHTML = ''; } finally { tehtavaHakuSpinner.style.display = 'none'; } }
 function naytaEhdotukset(ehdotukset) { if (ehdotukset.length === 0) { hakutuloksetContainer.innerHTML = ''; return; } hakutuloksetContainer.innerHTML = ehdotukset.map(item => `<div class="hakutulos-item" data-nimi="${item.name}" data-lat="${item.lat}" data-lon="${item.lon}">${item.display_name}</div>`).join(''); hakutuloksetContainer.querySelectorAll('.hakutulos-item').forEach(item => { item.addEventListener('click', () => { lisaaUusiTehtava({ nimi: item.dataset.nimi, lat: parseFloat(item.dataset.lat), lon: parseFloat(item.dataset.lon) }); }); }); }
 function lisaaUusiTehtava(tehtavaObj) { if (!tehtavaObj || !tehtavaObj.nimi) return; tehtavaLista.push({ ...tehtavaObj, kayty: false, tyypit: { tradi: false, multi: false, mysse: false } }); tallennaJaPaivitaTehtavalista(); tehtavaInput.value = ""; hakutuloksetContainer.innerHTML = ''; tehtavaInput.focus(); }
@@ -179,7 +178,7 @@ return `
 </div>`; }).join(''); }
 function tallennaJaPaivitaTehtavalista() { localStorage.setItem('mk_kuntatarkistin_tehtavalista', JSON.stringify(tehtavaLista)); naytaTehtavalista(); }
 window.vaihdaTehtavanTila = function(index) { tehtavaLista[index].kayty = !tehtavaLista[index].kayty; tallennaJaPaivitaTehtavalista(); };
-window.vaihdaTehtavanTyyppi = function(index, tyyppi) { if (!tehtavaLista[index].tyypit) tehtavaLista[index].tyypit = { tradi: false, multi: false, mysse: false }; tehtavaLista[index].tyypit[tyyppi] = !tehtavaLista[index].tyypit[tyyppi]; tallennaJaPaivitaTehtavalista(); };
+window.vaihdaTehtavanTyyppi = function(index, tyyppi) { if (!tehtavaLista[index].tyypit) { tehtavaLista[index].tyypit = { tradi: false, multi: false, mysse: false }; } tehtavaLista[index].tyypit[tyyppi] = !tehtavaLista[index].tyypit[tyyppi]; tallennaJaPaivitaTehtavalista(); };
 window.muokkaaTehtavaa = function(index) { const nykyinen = tehtavaLista[index].nimi; const uusi = prompt("Muokkaa nimeä:", nykyinen); if (uusi && uusi.trim() !== "") { tehtavaLista[index].nimi = uusi.trim(); tallennaJaPaivitaTehtavalista(); }};
 window.poistaTehtava = function(index) { const nimi = tehtavaLista[index].nimi; if (confirm(`Poistetaanko "${nimi}"?`)) { tehtavaLista.splice(index, 1); tallennaJaPaivitaTehtavalista(); }};
 function tarkistaOnkoTehtavalistalla(kunta) { const onListalla = tehtavaLista.find(item => item.nimi.toLowerCase() === kunta.toLowerCase() && !item.kayty); const container = document.getElementById('tehtavalista-huomautus-container'); if(onListalla) { container.innerHTML = `<div class="tehtavalista-huomautus">Tämä kunta on "Täytyy käydä" -listallasi!</div>`; } else { container.innerHTML = ''; } }
