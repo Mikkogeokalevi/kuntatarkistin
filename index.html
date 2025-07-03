@@ -58,6 +58,7 @@
                     <button class="valilehti-nappi" data-valilehti="etaisyys">Etäisyys 📏</button>
                     <button class="valilehti-nappi" data-valilehti="historia">Historia 📖</button>
                     <button class="valilehti-nappi" data-valilehti="loki">Loki 📝</button>
+                    <button class="valilehti-nappi" data-valilehti="versiot">Versiot ℹ️</button>
                 </div>
 
                 <div class="valilehti-sisalto">
@@ -75,7 +76,8 @@
                         <div class="tehtava-input-container">
                             <input type="text" id="tehtava-input" class="manual-input" placeholder="Hae ja lisää kunta listalle...">
                         </div>
-                        <div id="hakutulokset-container"></div> <div id="tehtava-lista"></div>
+                        <div id="hakutulokset-container"></div>
+                        <div id="tehtava-lista"></div>
                     </div>
 
                     <div id="etaisyys" class="valilehti-paneeli">
@@ -102,6 +104,48 @@
                         <p class="huomio-otsikko">KUNTALOKI</p>
                         <div id="loki-lista"></div>
                         <button id="tyhjenna-loki" class="nappi nappi-pieni">Tyhjennä loki</button>
+                    </div>
+
+                    <div id="versiot" class="valilehti-paneeli">
+                        <p class="huomio-otsikko">VERSIOHISTORIA</p>
+                        <div class="versiohistoria-container">
+                            <div class="versio-item">
+                                <h4>Versio 26 (nykyinen)</h4>
+                                <ul><li>Lisätty versiohistoria-välilehti.</li></ul>
+                            </div>
+                            <div class="versio-item">
+                                <h4>Versio 25</h4>
+                                <ul><li>Täysin uusittu ulkoasu ja värimaailma.</li><li>Lisätty teemanvalitsin (4 teemaa), jonka valinta tallentuu.</li><li>Siirretty toimintoja välilehtien alle mobiilikäytön helpottamiseksi.</li><li>Parannettu painikkeiden ja syöttökenttien interaktioita.</li></ul>
+                            </div>
+                            <div class="versio-item">
+                                <h4>Versio 23</h4>
+                                <ul><li>Lisätty "Täytyy käydä -lista", johon voi lisätä kuntia haun kautta.</li><li>Lisätty kartalle omat merkinnät "Täytyy käydä" -listan kunnille.</li></ul>
+                            </div>
+                             <div class="versio-item">
+                                <h4>Versio 22</h4>
+                                <ul><li>Lisätty Kuntalokiin yksittäisen merkinnän poisto ja muokkaus.</li></ul>
+                            </div>
+                             <div class="versio-item">
+                                <h4>Versio 21</h4>
+                                <ul><li>Lisätty Kuntaloki, johon voi tallentaa sijainteja muistiinpanoilla.</li></ul>
+                            </div>
+                             <div class="versio-item">
+                                <h4>Versio 20</h4>
+                                <ul><li>Lisätty "Keskitä minuun" -pikanappi kartalle.</li><li>Parannettu zoomausta ja lisätty latausindikaattori.</li><li>Sovellus muistaa nyt valitun karttatyylin.</li></ul>
+                            </div>
+                            <div class="versio-item">
+                                <h4>Versio 19</h4>
+                                <ul><li>Korjattu kunnan nimen tunnistuslogiikka toimimaan luotettavammin.</li></ul>
+                            </div>
+                             <div class="versio-item">
+                                <h4>Versio 14</h4>
+                                <ul><li>Parannettu etäisyyslaskuri: tukee useita pisteitä, näyttää välimatkat ja pisteiden siirtelyn.</li></ul>
+                            </div>
+                            <div class="versio-item">
+                                <h4>Versio 13</h4>
+                                <ul><li>Sijaintihistoria tallennetaan selaimeen.</li><li>URL päivittyy sijainnin mukaan, mahdollistaen linkkien jakamisen.</li></ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
