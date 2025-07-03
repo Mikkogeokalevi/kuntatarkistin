@@ -28,7 +28,7 @@
                 </div>
                 
                 <div class="kartta-kontrollit">
-                    <label for="kartta-tyyli" style="color: #90EE90;">Kartan tyyli: </label>
+                    <label for="kartta-tyyli">Kartan tyyli: </label>
                     <select id="kartta-tyyli">
                         <option value="osm">OpenStreetMap</option>
                         <option value="cartodb">CartoDB Light</option>
@@ -52,46 +52,50 @@
                 <button id="naytaKoordinaatit" class="nappi nappi-keltainen">Näytä kartalla</button>
             </div>
 
-            <div class="huomio-laatikko">
-                <p class="huomio-otsikko">TÄYTYY KÄYDÄ -LISTA 🗺️</p>
-                <div class="tehtava-input-container">
-                    <input type="text" id="tehtava-input" class="manual-input" placeholder="Lisää kunta listalle...">
-                    <button id="lisaa-tehtava-nappi" class="nappi">+</button>
+            <div class="huomio-laatikko" style="padding: 0;">
+                <div class="valilehdet">
+                    <button class="valilehti-nappi aktiivinen" data-valilehti="tehtavat">Tehtävät 🗺️</button>
+                    <button class="valilehti-nappi" data-valilehti="etaisyys">Etäisyys 📏</button>
+                    <button class="valilehti-nappi" data-valilehti="historia">Historia 📖</button>
+                    <button class="valilehti-nappi" data-valilehti="loki">Loki 📝</button>
                 </div>
-                <div id="tehtava-lista">
+
+                <div class="valilehti-sisalto">
+                    <div id="tehtavat" class="valilehti-paneeli aktiivinen">
+                        <p class="huomio-otsikko">TÄYTYY KÄYDÄ -LISTA</p>
+                        <div class="tehtava-input-container">
+                            <input type="text" id="tehtava-input" class="manual-input" placeholder="Lisää kunta listalle...">
+                            <button id="lisaa-tehtava-nappi" class="nappi">+</button>
+                        </div>
+                        <div id="tehtava-lista"></div>
                     </div>
-            </div>
 
-            <div class="huomio-laatikko">
-                <p class="huomio-otsikko">KARTAN KÄYTTÖTILA</p>
-                <div id="tila-valitsin">
-                    <button id="tila-haku" class="nappi nappi-pieni aktiivinen-tila">Hae sijainti kartalta</button>
-                    <button id="tila-etaisyys" class="nappi nappi-pieni">Mittaa etäisyyttä</button>
-                </div>
-                <div id="etaisyys-laatikko" style="display: none;">
-                    <p class="huomio-otsikko" style="margin-top: 20px;">ETÄISYYSLASKURI</p>
-                    <div id="etaisyys-pisteet">
-                        <p>Klikkaa karttaa lisätäksesi reittipisteitä</p>
+                    <div id="etaisyys" class="valilehti-paneeli">
+                        <p class="huomio-otsikko">ETÄISYYSLASKURI</p>
+                        <p>Valitse ensin mittaustila ja klikkaa sitten karttaa.</p>
+                        <div id="tila-valitsin">
+                            <button id="tila-haku" class="nappi nappi-pieni aktiivinen-tila">Hae sijainti</button>
+                            <button id="tila-etaisyys" class="nappi nappi-pieni">Mittaa etäisyyttä</button>
+                        </div>
+                        <div id="etaisyys-laatikko" style="display: none;">
+                            <div id="etaisyys-pisteet"></div>
+                            <button id="tyhjenna-pisteet" class="nappi nappi-pieni">Tyhjennä pisteet</button>
+                            <div id="etaisyys-tulos"></div>
+                        </div>
                     </div>
-                    <button id="tyhjenna-pisteet" class="nappi nappi-pieni">Tyhjennä pisteet</button>
-                    <div id="etaisyys-tulos"></div>
-                </div>
-            </div>
+                    
+                    <div id="historia" class="valilehti-paneeli">
+                        <p class="huomio-otsikko">SIJAINTIHISTORIA</p>
+                        <div id="historia-lista"></div>
+                        <button id="tyhjenna-historia" class="nappi nappi-pieni">Tyhjennä historia</button>
+                    </div>
 
-            <div class="huomio-laatikko">
-                <p class="huomio-otsikko">SIJAINTIHISTORIA</p>
-                <div id="historia-lista">
-                    <p>Ei vielä haettuja sijainteja</p>
+                    <div id="loki" class="valilehti-paneeli">
+                        <p class="huomio-otsikko">KUNTALOKI</p>
+                        <div id="loki-lista"></div>
+                        <button id="tyhjenna-loki" class="nappi nappi-pieni">Tyhjennä loki</button>
+                    </div>
                 </div>
-                <button id="tyhjenna-historia" class="nappi nappi-pieni">Tyhjennä historia</button>
-            </div>
-
-            <div class="huomio-laatikko">
-                <p class="huomio-otsikko">KUNTALOKI 📝</p>
-                <div id="loki-lista">
-                    <p>Lokisi on tyhjä. Tallenna sijainti nähdäksesi sen täällä.</p>
-                </div>
-                <button id="tyhjenna-loki" class="nappi nappi-pieni">Tyhjennä loki</button>
             </div>
         </div>
     </div>
