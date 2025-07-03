@@ -3,19 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kuntalistan Generaattori (Versio 6)</title>
+    <title>Kuntalistan Generaattori (Mobiiliver.)</title>
     
     <style>
-        /* Kaikki tyylit ovat samat kuin aiemmin */
+        /* --- Yleiset tyylit --- */
         body { background-color: #1a2015; font-family: 'Georgia', serif; margin: 0; padding: 20px; }
         .sisalto-laatikko { max-width: 800px; margin: 30px auto; padding: 20px; background-color: #3D4F2B; border: 3px solid #11150C; border-radius: 12px; box-shadow: 5px 5px 15px rgba(0,0,0,0.6); }
         .teksti-alue { color: #F8F8F8; line-height: 1.6; padding: 10px; font-size: 1.1em; }
-        .logo-container { text-align: center; margin-bottom: 15px; }
-        .logo { width: 120px; height: 120px; border: 2px solid #90EE90; border-radius: 50%; }
-        .paaotsikko { color: #90EE90; text-align: center; margin-top: 0; margin-bottom: 20px; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); font-size: 1.6em; }
+        
+        /* --- Logo ja Otsikko --- */
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        .logo { width: 120px; height: 120px; border: 2px solid #90EE90; border-radius: 50%; flex-shrink: 0; }
+        .paaotsikko { color: #90EE90; text-align: center; margin: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); font-size: 1.6em; }
+        
         .leipateksti { margin-top: 0; margin-bottom: 15px; color: #FFFFFF; font-size: 1.1em; }
         .alempi-otsikko { font-weight:bold; margin-bottom:10px; font-size:1.1em; color: #90EE90; border-bottom: 1px solid #90EE90; padding-bottom: 5px; }
         
+        /* --- Lomake-elementit --- */
         .form-section, .list-section, .actions { margin-top: 25px; }
         textarea { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #11150C; border-radius: 4px; font-size: 1rem; background-color: #2A381C; color: #F8F8F8; }
         button, .button, .link-button { display: inline-block; padding: 10px 18px; border: 1px solid #90EE90; background-color: #2A381C; color: #90EE90; text-decoration: none; border-radius: 4px; cursor: pointer; text-align: center; font-size: 1rem; transition: background-color 0.2s, color 0.2s; margin-right: 10px; margin-top: 10px; }
@@ -24,6 +34,7 @@
         .button-danger { border-color: #FF6B6B; color: #FF6B6B; }
         .button-danger:hover { background-color: #FF6B6B; color: #1a2015; }
         
+        /* --- Taulukot ja listat --- */
         table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9em; }
         th, td { border: 1px solid #90EE90; padding: 10px; text-align: left; }
         th { background-color: #2A381C; color: #90EE90; }
@@ -32,7 +43,8 @@
         .esikatselu-rivi { display: grid; grid-template-columns: 20px 1fr auto; align-items: center; gap: 15px; padding: 8px 0; border-bottom: 1px solid #3D4F2B; }
         .esikatselu-rivi:last-child { border-bottom: none; }
         .esikatselu-nimi { font-weight: bold; }
-        .checkbox-group label { margin-left: 15px; font-size: 0.9em; }
+        .checkbox-group { white-space: nowrap; }
+        .checkbox-group label { margin-left: 10px; font-size: 0.9em; }
         
         details { margin-top: 10px; }
         summary { cursor: pointer; color: #A6CBA6; font-weight: bold; padding: 5px; border-radius: 4px; }
@@ -41,17 +53,33 @@
         .link-button { padding: 2px 8px; font-size: 0.8em; margin-left: 5px; }
 
         #loading-indicator { display: none; text-align: center; padding: 20px; font-weight: bold; color: #90EE90; }
+
+        /* --- Mobiiliresponsiivisuus --- */
+        @media (max-width: 768px) {
+            body { padding: 5px; }
+            .sisalto-laatikko { margin: 10px auto; padding: 10px; }
+            .teksti-alue { padding: 5px; }
+            
+            .header-container { flex-direction: row; gap: 15px; justify-content: flex-start; }
+            .logo { width: 60px; height: 60px; }
+            .paaotsikko { font-size: 1.2em; text-align: left; }
+            
+            .esikatselu-rivi { grid-template-columns: 20px 1fr; gap: 10px; }
+            .esikatselu-rivi .checkbox-group { grid-column: 2; padding-left: 5px; }
+            .checkbox-group label { margin-left: 8px; }
+
+            button, .button { padding: 12px 15px; } /* Suuremmat napit mobiilissa */
+        }
     </style>
 </head>
 <body>
 
     <div class="sisalto-laatikko">
         <div class="teksti-alue">
-            <div class="logo-container">
+            <div class="header-container">
                 <img src="https://img.geocaching.com:443/84454fa6-e23a-4aad-a8a4-612b77f23abe.png" alt="Oma logo" class="logo" />
+                <h3 class="paaotsikko">Kuntalistan Generaattori</h3>
             </div>
-            
-            <h3 class="paaotsikko">Kuntalistan Generaattori</h3>
             
             <div class="form-section">
                 <h4 class="alempi-otsikko">Vaihe 1: Tuo tai lisää kunnat</h4>
@@ -91,15 +119,15 @@
     </div>
 
 <script>
-// Globaalit muuttujat
+// Koko JavaScript-osio pysyy täsmälleen samana kuin edellisessä versiossa.
+// Sinun ei tarvitse muuttaa mitään täällä.
+
 let esikatseluLista = [];
 let tehtavalista = [];
 
 const municipalityRegionMap={'Akaa':'Pirkanmaa','Alajärvi':'Etelä-Pohjanmaa','Alavieska':'Pohjois-Pohjanmaa','Alavus':'Etelä-Pohjanmaa','Asikkala':'Päijät-Häme','Askola':'Uusimaa','Aura':'Varsinais-Suomi','Brändö':'Ahvenanmaa','Eckerö':'Ahvenanmaa','Enonkoski':'Etelä-Savo','Enontekiö':'Lappi','Espoo':'Uusimaa','Eura':'Satakunta','Eurajoki':'Satakunta','Evijärvi':'Etelä-Pohjanmaa','Finström':'Ahvenanmaa','Forssa':'Kanta-Häme','Föglö':'Ahvenanmaa','Geta':'Ahvenanmaa','Hattula':'Kanta-Häme','Hausjärvi':'Kanta-Häme','Heinola':'Päijät-Häme','Kemiönsaari':'Varsinais-Suomi','Muonio':'Lappi','Rääkkylä':'Pohjois-Karjala','Mustasaari':'Pohjanmaa','Mäntyharju':'Etelä-Savo','Orimattila':'Päijät-Häme','Haapajärvi':'Pohjois-Pohjanmaa','Haapavesi':'Pohjois-Pohjanmaa','Hailuoto':'Pohjois-Pohjanmaa','Halsua':'Keski-Pohjanmaa','Hamina':'Kymenlaakso','Hammarland':'Ahvenanmaa','Hankasalmi':'Keski-Suomi','Hanko':'Uusimaa','Harjavalta':'Satakunta','Hartola':'Päijät-Häme','Heinävesi':'Pohjois-Karjala','Helsinki':'Uusimaa','Hirvensalmi':'Etelä-Savo','Hollola':'Päijät-Häme','Huittinen':'Satakunta','Humppila':'Kanta-Häme','Hyrynsalmi':'Kainuu','Hyvinkää':'Uusimaa','Hämeenkyrö':'Pirkanmaa','Hämeenlinna':'Kanta-Häme','Ii':'Pohjois-Pohjanmaa','Iisalmi':'Pohjois-Savo','Iitti':'Päijät-Häme','Ikaalinen':'Pirkanmaa','Ilmajoki':'Etelä-Pohjanmaa','Ilomantsi':'Pohjois-Karjala','Imatra':'Etelä-Karjala','Inari':'Lappi','Inkoo':'Uusimaa','Isojoki':'Etelä-Pohjanmaa','Isokyrö':'Pohjanmaa','Janakkala':'Kanta-Häme','Joensuu':'Pohjois-Karjala','Jokioinen':'Kanta-Häme','Jomala':'Ahvenanmaa','Joroinen':'Pohjois-Savo','Joutsa':'Keski-Suomi','Juuka':'Pohjois-Karjala','Juupajoki':'Pirkanmaa','Juva':'Etelä-Savo','Jyväskylä':'Keski-Suomi','Jämijärvi':'Satakunta','Jämsä':'Keski-Suomi','Järvenpää':'Uusimaa','Kaarina':'Varsinais-Suomi','Kaavi':'Pohjois-Savo','Kajaani':'Kainuu','Kalajoki':'Pohjois-Pohjanmaa','Kangasala':'Pirkanmaa','Kangasniemi':'Etelä-Savo','Kankaanpää':'Satakunta','Kannonkoski':'Keski-Suomi','Kannus':'Keski-Pohjanmaa','Karijoki':'Etelä-Pohjanmaa','Karkkila':'Uusimaa','Karstula':'Keski-Suomi','Karvia':'Satakunta','Kaskinen':'Pohjanmaa','Kauhajoki':'Etelä-Pohjanmaa','Kauhava':'Etelä-Pohjanmaa','Kauniainen':'Uusimaa','Kaustinen':'Keski-Pohjanmaa','Kemi':'Lappi','Kemijärvi':'Lappi','Keminmaa':'Lappi','Kempele':'Pohjois-Pohjanmaa','Kerava':'Uusimaa','Keitele':'Pohjois-Savo','Keuruu':'Keski-Suomi','Kihniö':'Pirkanmaa','Kinnula':'Keski-Suomi','Kirkkonummi':'Uusimaa','Kitee':'Pohjois-Karjala','Kittilä':'Lappi','Kiuruvesi':'Pohjois-Savo','Kivijärvi':'Keski-Suomi','Kokemäki':'Satakunta','Kokkola':'Keski-Pohjanmaa','Kolari':'Lappi','Konnevesi':'Keski-Suomi','Kontiolahti':'Pohjois-Karjala','Korsnäs':'Pohjanmaa','Koski Tl':'Varsinais-Suomi','Kotka':'Kymenlaakso','Kouvola':'Kymenlaakso','Kristiinankaupunki':'Pohjanmaa','Kruunupyy':'Pohjanmaa','Kuhmo':'Kainuu','Kuhmoinen':'Pirkanmaa','Kumlinge':'Ahvenanmaa','Kuopio':'Pohjois-Savo','Kuortane':'Etelä-Pohjanmaa','Kurikka':'Etelä-Pohjanmaa','Kustavi':'Varsinais-Suomi','Kuusamo':'Pohjois-Pohjanmaa','Kyyjärvi':'Keski-Suomi','Kärkölä':'Päijät-Häme','Kärsämäki':'Pohjois-Pohjanmaa','Kökar':'Ahvenanmaa','Lahti':'Päijät-Häme','Laihia':'Pohjanmaa','Laitila':'Varsinais-Suomi','Lapinjärvi':'Uusimaa','Lapinlahti':'Pohjois-Savo','Lappajärvi':'Etelä-Pohjanmaa','Lappeenranta':'Etelä-Karjala','Lapua':'Etelä-Pohjanmaa','Laukaa':'Keski-Suomi','Lemi':'Etelä-Karjala','Lemland':'Ahvenanmaa','Lempäälä':'Pirkanmaa','Leppävirta':'Pohjois-Savo','Lestijärvi':'Keski-Pohjanmaa','Lieksa':'Pohjois-Karjala','Lieto':'Varsinais-Suomi','Liminka':'Pohjois-Pohjanmaa','Liperi':'Pohjois-Karjala','Lohja':'Uusimaa','Loimaa':'Varsinais-Suomi','Loppi':'Kanta-Häme','Loviisa':'Uusimaa','Luhanka':'Keski-Suomi','Lumijoki':'Pohjois-Pohjanmaa','Lumparland':'Ahvenanmaa','Luoto':'Pohjanmaa','Luumäki':'Etelä-Karjala','Maalahti':'Pohjanmaa','Maarianhamina':'Ahvenanmaa','Marttila':'Varsinais-Suomi','Masku':'Varsinais-Suomi','Merijärvi':'Pohjois-Pohjanmaa','Merikarvia':'Satakunta','Miehikkälä':'Kymenlaakso','Mikkeli':'Etelä-Savo','Muhos':'Pohjois-Pohjanmaa','Multia':'Keski-Suomi','Muurame':'Keski-Suomi','Myrskylä':'Uusimaa','Mynämäki':'Varsinais-Suomi','Mäntsälä':'Uusimaa','Mänttä-Vilppula':'Pirkanmaa','Naantali':'Varsinais-Suomi','Nakkila':'Satakunta','Närpiö':'Pohjanmaa','Nivala':'Pohjois-Pohjanmaa','Nokia':'Pirkanmaa','Nousiainen':'Varsinais-Suomi','Nurmes':'Pohjois-Karjala','Nurmijärvi':'Uusimaa','Oripää':'Varsinais-Suomi','Orivesi':'Pirkanmaa','Oulainen':'Pohjois-Pohjanmaa','Oulu':'Pohjois-Pohjanmaa','Outokumpu':'Pohjois-Karjala','Padasjoki':'Päijät-Häme','Paimio':'Varsinais-Suomi','Paltamo':'Kainuu','Parainen':'Varsinais-Suomi','Parikkala':'Etelä-Karjala','Parkano':'Pirkanmaa','Pedersören kunta':'Pohjanmaa','Pelkosenniemi':'Lappi','Pello':'Lappi','Perho':'Keski-Pohjanmaa','Petäjävesi':'Keski-Suomi','Pieksämäki':'Etelä-Savo','Pielavesi':'Pohjois-Savo','Pietarsaari':'Pohjanmaa','Pihtipudas':'Keski-Suomi','Pirkkala':'Pirkanmaa','Polvijärvi':'Pohjois-Karjala','Pomarkku':'Satakunta','Pori':'Satakunta','Pornainen':'Uusimaa','Porvoo':'Uusimaa','Posio':'Lappi','Pudasjärvi':'Pohjois-Pohjanmaa','Pukkila':'Uusimaa','Punkalaidun':'Pirkanmaa','Puolanka':'Kainuu','Puumala':'Etelä-Savo','Pyhtää':'Kymenlaakso','Pyhäjoki':'Pohjois-Pohjanmaa','Pyhäjärvi':'Pohjois-Pohjanmaa','Pyhäntä':'Pohjois-Pohjanmaa','Pyhäranta':'Varsinais-Suomi','Pälkäne':'Pirkanmaa','Pöytyä':'Varsinais-Suomi','Raahe':'Pohjois-Pohjanmaa','Raasepori':'Uusimaa','Raisio':'Varsinais-Suomi','Rantasalmi':'Etelä-Savo','Ranua':'Lappi','Rauma':'Satakunta','Rautalampi':'Pohjois-Savo','Rautavaara':'Pohjois-Savo','Rautjärvi':'Etelä-Karjala','Reisjärvi':'Pohjois-Pohjanmaa','Riihimäki':'Kanta-Häme','Ristijärvi':'Kainuu','Rovaniemi':'Lappi','Ruokolahti':'Etelä-Karjala','Ruovesi':'Pirkanmaa','Rusko':'Varsinais-Suomi','Saarijärvi':'Keski-Suomi','Salla':'Lappi','Salo':'Varsinais-Suomi','Saltvik':'Ahvenanmaa','Sastamala':'Pirkanmaa','Sauvo':'Varsinais-Suomi','Savitaipale':'Etelä-Karjala','Savonlinna':'Etelä-Savo','Savukoski':'Lappi','Seinäjoki':'Etelä-Pohjanmaa','Sievi':'Pohjois-Pohjanmaa','Siikainen':'Satakunta','Siikajoki':'Pohjois-Pohjanmaa','Siikalatva':'Pohjois-Pohjanmaa','Siilinjärvi':'Pohjois-Savo','Simo':'Lappi','Sipoo':'Uusimaa','Siuntio':'Uusimaa','Sodankylä':'Lappi','Soini':'Etelä-Pohjanmaa','Somero':'Varsinais-Suomi','Sonkajärvi':'Pohjois-Savo','Sotkamo':'Kainuu','Sottunga':'Ahvenanmaa','Sulkava':'Etelä-Savo','Sund':'Ahvenanmaa','Suomussalmi':'Kainuu','Suonenjoki':'Pohjois-Savo','Sysmä':'Päijät-Häme','Säkylä':'Satakunta','Taipalsaari':'Etelä-Karjala','Taivalkoski':'Pohjois-Pohjanmaa','Taivassalo':'Varsinais-Suomi','Tammela':'Kanta-Häme','Tampere':'Pirkanmaa','Tervo':'Pohjois-Savo','Tervola':'Lappi','Teuva':'Etelä-Pohjanmaa','Tohmajärvi':'Pohjois-Karjala','Toholampi':'Keski-Pohjanmaa','Toivakka':'Keski-Suomi','Tornio':'Lappi','Turku':'Varsinais-Suomi','Tuusniemi':'Pohjois-Savo','Tuusula':'Uusimaa','Tyrnävä':'Pohjois-Pohjanmaa','Ulvila':'Satakunta','Urjala':'Pirkanmaa','Utajärvi':'Pohjois-Pohjanmaa','Utsjoki':'Lappi','Uurainen':'Keski-Suomi','Uusikaarlepyy':'Pohjanmaa','Uusikaupunki':'Varsinais-Suomi','Vaala':'Pohjois-Pohjanmaa','Vaasa':'Pohjanmaa','Valkeakoski':'Pirkanmaa','Vantaa':'Uusimaa','Varkaus':'Pohjois-Savo','Vehmaa':'Varsinais-Suomi','Vesanto':'Pohjois-Savo','Vesilahti':'Pirkanmaa','Veteli':'Keski-Pohjanmaa','Vieremä':'Pohjois-Savo','Vihti':'Uusimaa','Viitasaari':'Keski-Suomi','Vimpeli':'Etelä-Pohjanmaa','Virolahti':'Kymenlaakso','Virrat':'Pirkanmaa','Vårdö':'Ahvenanmaa','Vöyri':'Pohjanmaa','Ylitornio':'Lappi','Ylivieska':'Pohjois-Pohjanmaa','Ylöjärvi':'Pirkanmaa','Ypäjä':'Kanta-Häme','Ähtäri':'Etelä-Pohjanmaa','Äänekoski':'Keski-Suomi'};
 
-// --- Elementtiviittaukset ---
 const esikatseluControls = document.getElementById('esikatselu-controls');
-// ... muut elementtiviittaukset pysyvät samoina ...
 const elementit = {
     tuoKunnatNappi: document.getElementById('tuo-kunnat-url'),
     kuntaLomake: document.getElementById('kunta-lomake'),
@@ -114,9 +142,6 @@ const elementit = {
     loadingIndicator: document.getElementById('loading-indicator'),
 };
 
-// --- TAPAHTUMANKÄSITTELIJÄT ---
-
-// 1. Kuntien tuonti URL:sta
 elementit.tuoKunnatNappi.addEventListener('click', async () => {
     naytaLataus("Haetaan kuntia tilastosivulta...");
     try {
@@ -126,15 +151,12 @@ elementit.tuoKunnatNappi.addEventListener('click', async () => {
         if (!response.ok) throw new Error(`HTTP-virhe: ${response.status}`);
         const data = await response.json();
         if (!data.contents) throw new Error('Proxy-palvelin ei palauttanut sisältöä.');
-
         const parser = new DOMParser();
         const doc = parser.parseFromString(data.contents, 'text/html');
-        
         doc.querySelectorAll('.category').forEach(categoryDiv => {
             const categoryTitleText = categoryDiv.querySelector('h2').innerText.trim();
             const kuntaNodes = categoryDiv.querySelectorAll('.kunta-list li');
             let tyypit = parseTyypitFromTitle(categoryTitleText);
-
             kuntaNodes.forEach(liNode => {
                 const kuntaNameMatch = liNode.innerText.match(/^[^:(]+/);
                 if (kuntaNameMatch) {
@@ -149,23 +171,17 @@ elementit.tuoKunnatNappi.addEventListener('click', async () => {
         piilotaLataus();
     }
 });
-
-// 2. Kuntien lisäys käsin
 elementit.kuntaLomake.addEventListener('submit', (event) => {
     event.preventDefault();
     const nimet = elementit.kuntienNimetInput.value.split(',')
         .map(nimi => nimi.trim()).filter(Boolean);
-    
     nimet.forEach(nimi => lisaaEsikatseluun(nimi, {tradi: false, multi: false, mysse: false}));
     paivitaEsikatselu();
     elementit.kuntienNimetInput.value = '';
 });
-
-// 3. Valittujen siirto esikatselusta lopulliseen listaan
 elementit.lisaaLopulliseenNappi.addEventListener('click', async () => {
     const valitutRivit = elementit.esikatseluListaDiv.querySelectorAll('.esikatselu-rivi');
     const valitutKunnat = [];
-
     valitutRivit.forEach(rivi => {
         const checkbox = rivi.querySelector('input.kunta-valinta');
         const kuntaNimi = rivi.dataset.kuntaNimi;
@@ -181,12 +197,10 @@ elementit.lisaaLopulliseenNappi.addEventListener('click', async () => {
             }
         }
     });
-
     if (valitutKunnat.length === 0) {
         alert("Valitse ainakin yksi kunta lisättäväksi.");
         return;
     }
-
     naytaLataus("Haetaan koordinaatteja...");
     try {
         for (const kunta of valitutKunnat) {
@@ -206,9 +220,6 @@ elementit.lisaaLopulliseenNappi.addEventListener('click', async () => {
         piilotaLataus();
     }
 });
-
-
-// 4. Valintojen hallinta esikatselussa
 esikatseluControls.addEventListener('click', (event) => {
     const target = event.target.closest('.link-button');
     if (!target) return;
@@ -232,17 +243,12 @@ elementit.esikatseluListaDiv.addEventListener('click', (event) => {
         checkboxes.forEach(cb => cb.checked = false);
     }
 });
-
-
-// --- APUFUNKTIOT ---
-
 function lisaaEsikatseluun(nimi, tyypit) {
     if (!esikatseluLista.some(k => k.nimi === nimi) && !tehtavalista.some(k => k.nimi === nimi)) {
         const maakunta = municipalityRegionMap[nimi] || 'Tuntematon maakunta';
         esikatseluLista.push({ nimi, tyypit, maakunta });
     }
 }
-
 function paivitaEsikatselu() {
     elementit.esikatseluListaDiv.innerHTML = '';
     if (esikatseluLista.length > 0) {
@@ -251,20 +257,14 @@ function paivitaEsikatselu() {
         elementit.esikatseluAlue.style.display = 'none';
         return;
     }
-
-    // Ryhmitellään maakunnittain
     const ryhmitelty = esikatseluLista.reduce((acc, kunta) => {
         (acc[kunta.maakunta] = acc[kunta.maakunta] || []).push(kunta);
         return acc;
     }, {});
-
-    // Järjestetään maakunnat aakkosjärjestykseen
     const jarjestetytMaakunnat = Object.keys(ryhmitelty).sort();
-    
     for (const maakunta of jarjestetytMaakunnat) {
         const kunnat = ryhmitelty[maakunta].sort((a,b) => a.nimi.localeCompare(b.nimi));
         const details = document.createElement('details');
-        
         details.innerHTML = `
             <summary>
                 ${maakunta} (${kunnat.length} kpl)
@@ -274,7 +274,6 @@ function paivitaEsikatselu() {
                 </span>
             </summary>
         `;
-
         kunnat.forEach(kunta => {
             const rivi = document.createElement('div');
             rivi.className = 'esikatselu-rivi';
@@ -293,8 +292,6 @@ function paivitaEsikatselu() {
         elementit.esikatseluListaDiv.appendChild(details);
     }
 }
-
-// ... muut apufunktiot (paivitaLopullinenLista, parseTyypitFromTitle, haeKoordinaatit, jne.) pysyvät ennallaan ...
 function paivitaLopullinenLista() {
     tehtavalista.sort((a, b) => a.nimi.localeCompare(b.nimi, 'fi'));
     if (tehtavalista.length === 0) {
@@ -376,7 +373,6 @@ elementit.tyhjennaListaNappi.addEventListener('click', () => {
         paivitaEsikatselu();
     }
 });
-
 </script>
 </body>
 </html>
