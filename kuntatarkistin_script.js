@@ -1,6 +1,6 @@
 /*
   MIKKOKALEVIN KUNTATARKISTIN
-  Versio 18.0 - Palautettu yksinkertaiseen Nominatim-hakuun parannetulla logiikalla
+  Versio 19.0 - Lopullinen Nominatim-versio, jossa käytetään toimivaksi todettua kuntalogiikkaa
 */
 
 // --- ELEMENTTIEN HAKU ---
@@ -282,17 +282,22 @@ async function paivitaSijaintitiedot(lat, lon, paikanNimi) {
         const data = await response.json();
         const address = data.address;
         
-        // --- PARANNETTU LOGIIKKA KUNNAN Nimen ARVAAMISEKSI ---
-        // 1. Etsi virallinen 'municipality'. Tämä on paras osuma.
-        // 2. Jos sitä ei löydy, etsi 'town' tai 'village', jotka ovat yleensä oikein.
-        // 3. Vasta viimeisenä keinona käytä 'city', joka voi joskus olla seutukunta.
-        let paatinimi = address.municipality || address.town || address.village || address.city || 'Kuntaa ei löytynyt';
+        // --- KORJATTU LOGIIKKA VANHAN, TOIMIVAN VERSION MUKAAN ---
+        let paatinimi = 'Kuntaa ei löytynyt';
+        if (data.display_name) {
+            // Otetaan ensimmäinen osa pilkulla erotetusta listasta.
+            // Tämä on usein kunta tai kaupunki, ja toimii paremmin kuin
+            // epäluotettavat `address`-kentät.
+            paatinimi = data.display_name.split(',')[0].trim();
+        } else {
+            // Varaketju, jos display_name puuttuu
+            paatinimi = address.municipality || address.town || address.village || address.city || 'Kuntaa ei löytynyt';
+        }
 
-        const nominatimData = data;
         const tie = address?.road;
         const postinumero = address?.postcode;
         const maa = address?.country || 'Ei saatavilla';
-        const kokoNimi = nominatimData?.display_name || 'Ei lisätietoja saatavilla';
+        const kokoNimi = data?.display_name || 'Ei lisätietoja saatavilla';
         
         let htmlOutput = `<p class="kunta-iso">${paatinimi}</p>`;
         htmlOutput += `<div class="koordinaatti-rivi"><strong>Koordinaatit (DDM):</strong> ${koordinaatitDDM}</div>`;
