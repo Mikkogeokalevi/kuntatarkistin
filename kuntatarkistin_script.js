@@ -1,11 +1,7 @@
 /*
   MIKKOKALEVIN KUNTATARKISTIN
-  Versio 17.0 - Oma Vercel-välityspalvelin
+  Versio 18.0 - Palautettu yksinkertaiseen Nominatim-hakuun parannetulla logiikalla
 */
-
-// --- API-AVAIMESI ---
-const MML_API_KEY = '465a275a-7100-42fc-bb99-506fc447256b';
-
 
 // --- ELEMENTTIEN HAKU ---
 const haeSijaintiNappi = document.getElementById('haeSijainti');
@@ -273,52 +269,43 @@ async function paivitaSijaintitiedot(lat, lon, paikanNimi) {
     marker.bindPopup(`<b>${paikanNimi}</b><br>${koordinaatitDDM}`).openPopup();
     
     const nominatimUrl = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=10&accept-language=fi`;
-    const mmlTargetUrl = `https://avoin-paikkatieto.maanmittauslaitos.fi/ogc/features/v1/collections/paikannimet/items?lat=${lat}&lon=${lon}&limit=1&lang=fi&api-key=${MML_API_KEY}`;
     
-    // --- KÄYTETÄÄN OMAA VÄLITYSPALVELINTA ---
-    // Tämä osoite toimii, kun projekti on julkaistu Vercelissä.
-    const mmlProxyUrl = `/api/proxy?url=${encodeURIComponent(mmlTargetUrl)}`;
-
     try {
-        if (MML_API_KEY.startsWith('465a275a') === false) {
-            throw new Error("Maanmittauslaitoksen API-avain on virheellinen tai puuttuu.");
-        }
+        const response = await fetch(nominatimUrl, {
+            headers: { 'User-Agent': 'MikkokalevinKuntatarkistin/1.0' }
+        });
 
-        const [nominatimResponse, mmlResponse] = await Promise.all([
-            fetch(nominatimUrl, { headers: { 'User-Agent': 'MikkokalevinKuntatarkistin/1.0' } }),
-            fetch(mmlProxyUrl)
-        ]);
-
-        if (!mmlResponse.ok) {
-            throw new Error(`Oman välityspalvelimen virhe (status: ${mmlResponse.status}).`);
+        if (!response.ok) {
+            throw new Error(`Osoitehaku epäonnistui (status: ${response.status})`);
         }
         
-        const mmlData = await mmlResponse.json();
+        const data = await response.json();
+        const address = data.address;
         
-        let virallinenKunta = 'Kuntaa ei löytynyt';
-        if (mmlData.features && mmlData.features.length > 0 && mmlData.features[0].properties.kunta) {
-            virallinenKunta = mmlData.features[0].properties.kunta[0].teksti;
-        }
+        // --- PARANNETTU LOGIIKKA KUNNAN Nimen ARVAAMISEKSI ---
+        // 1. Etsi virallinen 'municipality'. Tämä on paras osuma.
+        // 2. Jos sitä ei löydy, etsi 'town' tai 'village', jotka ovat yleensä oikein.
+        // 3. Vasta viimeisenä keinona käytä 'city', joka voi joskus olla seutukunta.
+        let paatinimi = address.municipality || address.town || address.village || address.city || 'Kuntaa ei löytynyt';
 
-        const nominatimData = nominatimResponse.ok ? await nominatimResponse.json() : null;
-        const address = nominatimData?.address;
+        const nominatimData = data;
         const tie = address?.road;
         const postinumero = address?.postcode;
         const maa = address?.country || 'Ei saatavilla';
         const kokoNimi = nominatimData?.display_name || 'Ei lisätietoja saatavilla';
         
-        let htmlOutput = `<p class="kunta-iso">${virallinenKunta}</p>`;
+        let htmlOutput = `<p class="kunta-iso">${paatinimi}</p>`;
         htmlOutput += `<div class="koordinaatti-rivi"><strong>Koordinaatit (DDM):</strong> ${koordinaatitDDM}</div>`;
         if (tie) htmlOutput += `<p><strong>Katu:</strong> ${tie}</p>`;
         if (postinumero) htmlOutput += `<p><strong>Postinumero:</strong> ${postinumero}</p>`;
         htmlOutput += `<p><strong>Maa:</strong> ${maa}</p>`;
-        htmlOutput += `<hr style="border-color: #90EE9044; border-style: dashed;"><p><strong>Tarkka sijainti (Nominatim):</strong> ${kokoNimi}</p>`;
+        htmlOutput += `<hr style="border-color: #90EE9044; border-style: dashed;"><p><strong>Tarkka sijainti:</strong> ${kokoNimi}</p>`;
         
         tulosAlue.innerHTML = htmlOutput;
         const koordinaattiRivi = tulosAlue.querySelector('.koordinaatti-rivi');
         if (koordinaattiRivi) koordinaattiRivi.appendChild(luoKopioiNappi(koordinaatitDDM));
         
-        lisaaHistoriaan(virallinenKunta, koordinaatitDDM, paikanNimi);
+        lisaaHistoriaan(paatinimi, koordinaatitDDM, paikanNimi);
         updateURL(lat, lon, map.getZoom());
 
     } catch (error) {
