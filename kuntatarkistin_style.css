@@ -295,6 +295,34 @@ body {
     font-size: 0.9em;
 }
 
+.loki-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 5px;
+}
+
+.loki-item-actions {
+    display: flex;
+    gap: 8px;
+    /* Estää elementin kutistumisen flex-laatikossa */
+    flex-shrink: 0;
+}
+
+.loki-nappi {
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    font-size: 1.1em;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.loki-nappi:hover {
+    color: #fff;
+}
+
 .loki-item strong {
     color: #FFD700;
     font-size: 1.1em;
@@ -314,6 +342,7 @@ body {
     border-radius: 3px;
     margin-top: 8px;
     display: inline-block;
+    word-break: break-word;
 }
 
 
