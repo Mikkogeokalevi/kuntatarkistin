@@ -1,6 +1,6 @@
 /*
   MIKKOKALEVIN KUNTATARKISTIN
-  Versio 20.0 - Lisätty UX-parannuksia: Keskitys, zoom, latausspinneri ja teeman tallennus
+  Versio 20.1 - Korjattu keskitysnapin toiminta mobiililaitteilla
 */
 
 // --- ELEMENTTIEN HAKU ---
@@ -38,7 +38,6 @@ if (tallennettuHistoria) {
 
 // --- TAPAHTUMANKUUNTELIJAT ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Ladataan tallennettu karttatyyli ennen kartan alustusta
     const tallennettuTyyli = localStorage.getItem('mk_kuntatarkistin_karttatyyli');
     if (tallennettuTyyli) {
         karttaTyyli.value = tallennettuTyyli;
@@ -51,11 +50,28 @@ document.addEventListener('DOMContentLoaded', () => {
 haeSijaintiNappi.addEventListener('click', haeGPSsijainti);
 naytaKoordinaatitNappi.addEventListener('click', haeManuaalisesti);
 karttaTyyli.addEventListener('change', vaihdaKarttaTyyli);
-keskitaNappi.addEventListener('click', keskitäKartta); // Uusi kuuntelija
 tyhjennaPisteetNappi.addEventListener('click', tyhjennaEtaisyysPisteet);
 tyhjennaHistoriaNappi.addEventListener('click', tyhjennaHistoria);
 tilaHakuNappi.addEventListener('click', () => vaihdaKayttoTila('haku'));
 tilaEtaisyysNappi.addEventListener('click', () => vaihdaKayttoTila('etaisyys'));
+
+// --- KORJATTU TAPAHTUMANKUUNTELIJA MOBIILILAITTEILLE ---
+// Käytetään 'mousedown' ja 'touchstart' tapahtumia, jotka ovat luotettavampia
+// kuin 'click' nopeissa napautuksissa. Estetään tuplakäsittely.
+let nappiaKasitelty = false;
+const handleKeskitys = (e) => {
+    if (nappiaKasitelty) return;
+    nappiaKasitelty = true;
+    
+    e.preventDefault();
+    keskitäKartta();
+
+    setTimeout(() => {
+        nappiaKasitelty = false;
+    }, 300); // Nollataan pienellä viiveellä
+};
+keskitaNappi.addEventListener('mousedown', handleKeskitys);
+keskitaNappi.addEventListener('touchstart', handleKeskitys);
 
 
 function setButtonsDisabled(disabled) {
@@ -73,7 +89,6 @@ function naytaViesti(viesti, tyyppi = 'info') {
 
 function initMap() {
     map = L.map('kartta-container').setView([60.98, 25.66], 10);
-    // Kartan tyyli vaihdetaan heti alussa, jotta tallennettu arvo tulee käyttöön
     vaihdaKarttaTyyli();
     map.on('click', onMapClick);
 }
@@ -98,7 +113,6 @@ function vaihdaKarttaTyyli() {
             uusiTaso = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' });
     }
     currentTileLayer = uusiTaso.addTo(map);
-    // Tallennetaan valittu tyyli selaimen muistiin
     localStorage.setItem('mk_kuntatarkistin_karttatyyli', tyyli);
 }
 
@@ -240,7 +254,6 @@ function vaihdaKayttoTila(uusiTila) {
     }
 }
 
-// --- PÄÄTOIMINNOT ---
 function haeGPSsijainti() {
     if (!("geolocation" in navigator)) return naytaViesti('GPS ei ole käytettävissä', 'error');
     setButtonsDisabled(true);
@@ -260,10 +273,8 @@ function haeManuaalisesti() {
 
 function onGPSSuccess(position) {
     const { latitude: lat, longitude: lon } = position.coords;
-    // Tallennetaan sijainti ja näytetään pikanappi
     viimeisinGpsSijainti = [lat, lon];
     keskitaNappi.style.display = 'block';
-    // Zoomataan lähemmäs
     map.setView([lat, lon], 15);
     paivitaSijaintitiedot(lat, lon, "Oma sijainti");
 }
@@ -277,10 +288,9 @@ function onMapClick(e) {
     }
 }
 
-// Uusi funktio kartan keskittämiseen
 function keskitäKartta() {
     if (viimeisinGpsSijainti) {
-        map.setView(viimeisinGpsSijainti, 15); // Käytetään samaa tarkkaa zoomia
+        map.setView(viimeisinGpsSijainti, 15);
         naytaViesti("Kartta keskitetty omaan sijaintiin!");
     } else {
         naytaViesti("Omaa sijaintia ei ole vielä haettu.", "error");
