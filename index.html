@@ -51,7 +51,7 @@
                 </div>
             </div>
 
-            <div class="huomio-laatikko" style="padding: 0;">
+            <div class="huomio-laatikko tulostettava-osio" style="padding: 0;">
                 <div class="valilehdet">
                     <button class="valilehti-nappi aktiivinen" data-valilehti="haku">Haku 🔎</button>
                     <button class="valilehti-nappi" data-valilehti="tehtavat">Tehtävät 🗺️</button>
@@ -80,6 +80,7 @@
                         <div id="hakutulokset-container"></div>
                         <div id="tehtava-lista"></div>
                         <div class="data-hallinta-container">
+                            <button class="nappi nappi-pieni" id="tulosta-tehtavalista">Tulosta lista...</button>
                             <button class="nappi nappi-pieni" id="vie-tehtavalista">Vie lista...</button>
                             <button class="nappi nappi-pieni" onclick="document.getElementById('tuo-tehtavalista-input').click();">Tuo lista...</button>
                             <input type="file" id="tuo-tehtavalista-input" accept=".json" style="display: none;">
