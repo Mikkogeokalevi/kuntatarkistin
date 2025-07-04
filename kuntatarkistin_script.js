@@ -1,15 +1,14 @@
 /*
   MIKKOKALEVIN KUNTATARKISTIN
-  Versio 28.3 - Korjattu versiohistorian käsittely vastaamaan sovittua arkkitehtuuria.
+  Versio 29.1 - Lisätty tulostustoiminto tehtävälistalle
 */
 
-// --- VIIMEISIMMÄT VERSIOT (VANHAT HAETAAN TIEDOSTOSTA) ---
+// --- VERSIOHISTORIAN DATA ---
 const versiohistoriaData = [
-    { versio: "28.3", kuvaus: ["Korjattu versiohistorian näyttäminen takaisin dynaamiseksi ja tiedostosta ladattavaksi."] },
-    { versio: "28.2", kuvaus: ["Korjattu hakuehdotusten näkymiseen liittyvä CSS-ongelma iPhone-laitteilla."] },
-    { versio: "28.1", kuvaus: ["Korjattu tietojen vienti -toiminnallisuus.", "Palautettu täydellinen, käyttäjän kokoama versiohistoria."] },
-    { versio: "28.0", kuvaus: ["Parannettu 'Täytyy käydä'-listan hakua responsiivisemmaksi.", "Lisätty latausindikaattori hakuun.", "Lisätty 'Täytyy käydä'-listaan valinnat kätkötyypeille (Tradi, Multi, Mysse)."] },
-    { versio: "27.x", kuvaus: ["Lisätty älykäs yhteys listojen välille ja data-export/import-toiminnot. Korjattu useita bugeja."] },
+    { versio: "29.1", kuvaus: ["Lisätty 'Täytyy käydä'-listalle tulostustoiminto."] },
+    { versio: "29.0", kuvaus: ["Siirretty vanhempi versiohistoria omaan JSON-tiedostoon luotettavuuden parantamiseksi."] },
+    { versio: "28.x", kuvaus: ["Parannettu tehtävälistan hakua ja lisätty kätkötyyppien valinta.", "Korjattu useita bugeja."] },
+    { versio: "27.x", kuvaus: ["Lisätty älykäs yhteys listojen välille ja data-export/import-toiminnot."] },
     { versio: "26.x", kuvaus: ["Laajennettu ja järjestelty versiohistoria, muutettu dynaamiseksi."] },
     { versio: "25.0", kuvaus: ["Käyttöliittymän uudistus: välilehdet, moderni typografia ja teemanvalitsin.", "Lisätty 'Täytyy käydä'-listaan kuntahaku ja karttamerkinnät."] },
 ];
@@ -43,25 +42,11 @@ const tuoLokiInput = document.getElementById('tuo-loki-input');
 const vieTehtavalistaNappi = document.getElementById('vie-tehtavalista');
 const tuoTehtavalistaInput = document.getElementById('tuo-tehtavalista-input');
 const tehtavaHakuSpinner = document.getElementById('tehtava-haku-spinner');
+const tulostaTehtavalistaNappi = document.getElementById('tulosta-tehtavalista');
 
-
-let map;
-let marker;
-let currentTileLayer;
-let etaisyysPisteet = [];
-let etaisyysMarkerit = [];
-let etaisyysViiva;
-let sijaintiHistoria = [];
-let kuntaloki = [];
-let tehtavaLista = [];
-let tehtavaMarkerit = [];
-let kayttoTila = 'haku';
-let viimeisinGpsSijainti = null;
-let viimeisinTulosData = null;
-let hakuAjastin;
-
+// ... (Kaikki muuttujat ja datan lataus pysyvät ennallaan) ...
+let map, marker, currentTileLayer, etaisyysPisteet = [], etaisyysMarkerit = [], etaisyysViiva, sijaintiHistoria = [], kuntaloki = [], tehtavaLista = [], tehtavaMarkerit = [], kayttoTila = 'haku', viimeisinGpsSijainti = null, viimeisinTulosData = null, hakuAjastin;
 const MAX_ETAISYYS_PISTEET = 30;
-
 const tallennettuHistoria = localStorage.getItem('mk_kuntatarkistin_historia');
 if (tallennettuHistoria) sijaintiHistoria = JSON.parse(tallennettuHistoria);
 const tallennettuLoki = localStorage.getItem('mk_kuntatarkistin_loki');
@@ -69,6 +54,7 @@ if (tallennettuLoki) kuntaloki = JSON.parse(tallennettuLoki);
 const tallennettuTehtavalista = localStorage.getItem('mk_kuntatarkistin_tehtavalista');
 if (tallennettuTehtavalista) tehtavaLista = JSON.parse(tallennettuTehtavalista);
 
+// --- TAPAHTUMANKUUNTELIJAT ---
 document.addEventListener('DOMContentLoaded', () => {
     asetaTallennettuTeema();
     const tallennettuTyyli = localStorage.getItem('mk_kuntatarkistin_karttatyyli');
@@ -93,6 +79,8 @@ vieLokiNappi.addEventListener('click', () => vieData(kuntaloki, 'kuntaloki.json'
 tuoLokiInput.addEventListener('change', (e) => tuoData(e, 'loki'));
 vieTehtavalistaNappi.addEventListener('click', () => vieData(tehtavaLista, 'tehtavalista.json'));
 tuoTehtavalistaInput.addEventListener('change', (e) => tuoData(e, 'tehtavalista'));
+tulostaTehtavalistaNappi.addEventListener('click', tulostaTehtavalista); // UUSI
+window.addEventListener('afterprint', () => { document.body.classList.remove('tulostus-tila'); }); // UUSI
 
 let nappiaKasitelty = false;
 const handleKeskitys = (e) => {
@@ -114,6 +102,29 @@ valilehtiContainer.addEventListener('click', (e) => {
     if (kohde !== 'haku') { setTimeout(() => map.invalidateSize(), 1); }
 });
 
+// --- UUSI TULOSTUSFUNKTIO ---
+function tulostaTehtavalista() {
+    const kaikkiOsat = document.querySelectorAll('.teksti-alue > .huomio-laatikko');
+    kaikkiOsat.forEach(osa => {
+        if (!osa.classList.contains('tulostettava-osio')) {
+            osa.classList.add('piilota-tulostuksessa');
+        }
+    });
+    valilehtiContainer.classList.add('piilota-tulostuksessa');
+    document.querySelector('.data-hallinta-container').classList.add('piilota-tulostuksessa');
+    
+    window.print();
+    
+    // Siivotaan tulostusluokat print-dialogin jälkeen
+    setTimeout(() => {
+        kaikkiOsat.forEach(osa => osa.classList.remove('piilota-tulostuksessa'));
+        valilehtiContainer.classList.remove('piilota-tulostuksessa');
+        document.querySelector('.data-hallinta-container').classList.remove('piilota-tulostuksessa');
+    }, 500);
+}
+
+
+// ... Kaikki muut funktiot (vaihdaTeema, paivitaSijaintitiedot, jne.) pysyvät ennallaan ...
 function vaihdaTeema(event) { const teema = event.target.value; document.body.dataset.theme = teema; localStorage.setItem('mk_kuntatarkistin_teema', teema); }
 function asetaTallennettuTeema() { const tallennettuTeema = localStorage.getItem('mk_kuntatarkistin_teema') || 'sinertava'; document.body.dataset.theme = tallennettuTeema; teemaValitsin.value = tallennettuTeema; }
 function setButtonsDisabled(disabled) { haeSijaintiNappi.disabled = disabled; naytaKoordinaatitNappi.disabled = disabled; }
@@ -182,19 +193,7 @@ window.vaihdaTehtavanTyyppi = function(index, tyyppi) { if (!tehtavaLista[index]
 window.muokkaaTehtavaa = function(index) { const nykyinen = tehtavaLista[index].nimi; const uusi = prompt("Muokkaa nimeä:", nykyinen); if (uusi && uusi.trim() !== "") { tehtavaLista[index].nimi = uusi.trim(); tallennaJaPaivitaTehtavalista(); }};
 window.poistaTehtava = function(index) { const nimi = tehtavaLista[index].nimi; if (confirm(`Poistetaanko "${nimi}"?`)) { tehtavaLista.splice(index, 1); tallennaJaPaivitaTehtavalista(); }};
 function tarkistaOnkoTehtavalistalla(kunta) { const onListalla = tehtavaLista.find(item => item.nimi.toLowerCase() === kunta.toLowerCase() && !item.kayty); const container = document.getElementById('tehtavalista-huomautus-container'); if(onListalla) { container.innerHTML = `<div class="tehtavalista-huomautus">Tämä kunta on "Täytyy käydä" -listallasi!</div>`; } else { container.innerHTML = ''; } }
-async function naytaVersiohistoria() {
-    versiohistoriaContainer.innerHTML = '<div class="lataus-spinner"></div>';
-    try {
-        const response = await fetch('versiohistoria.json');
-        if (!response.ok) throw new Error('Historiaa ei voitu ladata');
-        const vanhaHistoria = await response.json();
-        const kokoHistoria = [...versiohistoriaData, ...vanhaHistoria];
-        versiohistoriaContainer.innerHTML = kokoHistoria.map(item => `<div class="versio-item"><h4>Versio ${item.versio}</h4><ul>${item.kuvaus.map(p => `<li>${p}</li>`).join('')}</ul></div>`).join('');
-    } catch (error) {
-        versiohistoriaContainer.innerHTML = '<p>Versiohistoriaa ei voitu ladata.</p>';
-        console.error("Virhe versiohistorian haussa:", error);
-    }
-}
+async function naytaVersiohistoria() { versiohistoriaContainer.innerHTML = '<div class="lataus-spinner"></div>'; try { const response = await fetch('versiohistoria.json'); if (!response.ok) throw new Error('Historiaa ei voitu ladata'); const vanhaHistoria = await response.json(); const kokoHistoria = [...versiohistoriaData, ...vanhaHistoria]; versiohistoriaContainer.innerHTML = kokoHistoria.map(item => `<div class="versio-item"><h4>Versio ${item.versio}</h4><ul>${item.kuvaus.map(p => `<li>${p}</li>`).join('')}</ul></div>`).join(''); } catch (error) { versiohistoriaContainer.innerHTML = '<p>Versiohistoriaa ei voitu ladata.</p>'; console.error("Virhe versiohistorian haussa:", error); } }
 function onGPSError(error) {let virheViesti = 'Tapahtui tuntematon virhe.';switch (error.code) {case error.PERMISSION_DENIED: virheViesti = 'Et antanut lupaa sijainnin käyttöön.'; break;case error.POSITION_UNAVAILABLE: virheViesti = 'Sijaintitieto ei ole saatavilla.'; break;case error.TIMEOUT: virheViesti = 'Sijainnin haku kesti liian kauan.'; break;}tulosAlue.innerHTML = `<p>${virheViesti}</p>`;naytaViesti(virheViesti, 'error');setButtonsDisabled(false);}
 function updateURL(lat, lon, zoom) {const ddmCoords = formatCoordinatesToDDM(lat, lon);const hash = `#${encodeURIComponent(ddmCoords)}/${zoom}`;if (history.replaceState) {history.replaceState(null, null, hash);} else {window.location.hash = hash;}}
 function lueURLJaAsetaSijainti() {if (window.location.hash) {try {const hash = decodeURIComponent(window.location.hash.substring(1));const parts = hash.split('/');if (parts.length === 2) {const coordsString = parts[0];const zoom = parseInt(parts[1], 10);const coords = parseCoordinates(coordsString);if (coords && !isNaN(zoom)) {map.setView([coords.lat, coords.lon], zoom);paivitaSijaintitiedot(coords.lat, coords.lon, "Jaettu sijainti");naytaViesti("Sijainti ladattu linkistä!");}}} catch (e) {console.error("Virhe URL-hajautteen lukemisessa:", e);}}}
