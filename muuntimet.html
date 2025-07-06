@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MK Muuntimet</title>
     <style>
-        /* MK Muuntimet, Versio 3.3 - Toiminnallisuus korjattu */
+        /* MK Muuntimet, Versio 3.4 - Selkeytetty mobiiliasettelu */
         :root {
             --color-bg: #212529; --color-surface: #343A40; --color-card: #495057; 
             --color-border: #6c757d; --color-text-primary: #F8F9FA; --color-text-secondary: #adb5bd; 
@@ -63,8 +63,19 @@
             .valilehdet.active-menu-class { display: flex; }
             .valilehdet .valilehti-nappi { width: 100%; text-align: left; padding: 12px 15px; border-bottom: 1px solid var(--color-border); }
             .valilehdet .valilehti-nappi.aktiivinen { border-bottom-color: var(--color-accent-yellow); }
-            .yksikko-muunnin { grid-template-columns: 1fr; }
-            .swap-btn { transform: rotate(90deg); margin: 10px auto; }
+            
+            /* UUSI MOBIILIasettelu muuntimille */
+            .yksikko-muunnin {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 15px; /* Lisätään väliä elementtien välille */
+            }
+            .yksikko-muunnin > * { width: 100%; }
+            .yksikko-muunnin .grid-item-arvo   { order: 1; }
+            .yksikko-muunnin .grid-item-mista  { order: 2; }
+            .yksikko-muunnin .grid-item-swap   { order: 3; transform: rotate(90deg); margin: 0 auto; }
+            .yksikko-muunnin .grid-item-mihin  { order: 4; }
+            .yksikko-muunnin .grid-item-tulos  { order: 5; margin-top: 10px; }
         }
     </style>
 </head>
@@ -132,7 +143,7 @@
     <script>
     /*
       MK MUUNTIMET
-      Versio 3.3 - Toiminnallisuus korjattu
+      Versio 3.4 - Selkeytetty mobiiliasettelu
     */
     document.addEventListener('DOMContentLoaded', () => {
         // --- PERUSRAKENNE JA NAVIGAATIO ---
@@ -173,7 +184,24 @@
         
         // --- MUUNTIMIEN ALUSTUSFUNKTIOT ---
 
-        const luoVakioMuunninHTML = (id) => `<div class="yksikko-muunnin"><div><label for="${id}-arvo">Arvo</label><input type="number" id="${id}-arvo" value="1"></div><div></div><div class="input-wrapper"><label for="${id}-tulos">Tulos</label><input type="text" id="${id}-tulos" readonly><button class="copy-btn" title="Kopioi leikepöydälle">📋</button></div><div><label for="${id}-yksikko-mista">Mistä</label><select id="${id}-yksikko-mista"></select></div><button class="swap-btn" title="Vaihda yksiköt">↔</button><div><label for="${id}-yksikko-mihin">Mihin</label><select id="${id}-yksikko-mihin"></select></div></div>`;
+        const luoVakioMuunninHTML = (id) => `<div class="grid-item-arvo">
+                <label for="${id}-arvo">Arvo</label>
+                <input type="number" id="${id}-arvo" value="1">
+            </div>
+            <div class="grid-item-tulos input-wrapper">
+                <label for="${id}-tulos">Tulos</label>
+                <input type="text" id="${id}-tulos" readonly>
+                <button class="copy-btn" title="Kopioi leikepöydälle">📋</button>
+            </div>
+            <div class="grid-item-mista">
+                <label for="${id}-yksikko-mista">Mistä</label>
+                <select id="${id}-yksikko-mista"></select>
+            </div>
+            <button class="swap-btn grid-item-swap" title="Vaihda yksiköt">↔</button>
+            <div class="grid-item-mihin">
+                <label for="${id}-yksikko-mihin">Mihin</label>
+                <select id="${id}-yksikko-mihin"></select>
+            </div>`;
         
         const alustaVakioMuunnin = (id, yksikkoData) => {
             const container = document.getElementById(id);
@@ -246,10 +274,15 @@
 
         const alustaTypografiaMuunnin = () => {
             const id = 'typografia'; const container = document.getElementById(id);
-            container.innerHTML = `<div class="muunnin-ryhma" style="max-width: 200px;"><label for="typo-base">Perusfonttikoko (px)</label><input type="number" id="typo-base" value="16"></div><hr style="border-color: var(--color-border);">` + luoVakioMuunninHTML(id);
+            container.classList.add('yksikko-muunnin'); // Add class for mobile ordering
+            container.innerHTML = `<div class="muunnin-ryhma grid-item-arvo" style="max-width: 200px;"><label for="typo-base">Perusfonttikoko (px)</label><input type="number" id="typo-base" value="16"></div>` + luoVakioMuunninHTML(id).replace('grid-item-arvo','grid-item-typo-arvo'); // Replace to avoid conflict
             const arvoInput = document.getElementById(`${id}-arvo`), tulosInput = document.getElementById(`${id}-tulos`), mistaSelect = document.getElementById(`${id}-yksikko-mista`), mihinSelect = document.getElementById(`${id}-yksikko-mihin`), baseInput = document.getElementById('typo-base'), swapBtn = container.querySelector('.swap-btn'), copyBtn = container.querySelector('.copy-btn');
             yksikot.typografia.forEach(u => { mistaSelect.add(new Option(u.name, u.sym)); mihinSelect.add(new Option(u.name, u.sym)); });
             mihinSelect.selectedIndex = 1;
+            // Re-apply grid-item classes for ordering
+            baseInput.parentElement.classList.add('grid-item-arvo');
+            arvoInput.parentElement.classList.add('grid-item-typo-arvo'); // This now has a unique class
+            
             const laske = () => {
                 const baseSize = parseFloat(baseInput.value) || 16; let arvo = parseFloat(arvoInput.value) || 0;
                 switch (mistaSelect.value) { case 'pt': arvo = arvo * 4 / 3; break; case 'em': case 'rem': arvo = arvo * baseSize; break; }
@@ -265,7 +298,7 @@
         
         const alustaAikaMuunnin = () => {
             const container = document.getElementById('aika');
-            container.innerHTML = `<div class="yksikko-muunnin"><div><label for="aika-arvo">Arvo</label><input type="number" id="aika-arvo" value="1"></div><div></div><div><label for="aika-yksikko-mista">Yksikkö</label><select id="aika-yksikko-mista"></select></div></div><div id="aika-tulokset" class="aika-tulos-laatikko"></div>`;
+            container.innerHTML = `<div class="muunnin-ryhma"><label for="aika-arvo">Arvo</label><input type="number" id="aika-arvo" value="1"></div><div class="muunnin-ryhma"><label for="aika-yksikko-mista">Yksikkö</label><select id="aika-yksikko-mista"></select></div><div id="aika-tulokset" class="aika-tulos-laatikko"></div>`;
             const arvoInput = document.getElementById('aika-arvo'), yksikkoSelect = document.getElementById('aika-yksikko-mista'), tuloksetDiv = document.getElementById('aika-tulokset');
             yksikot.aika.forEach(y => yksikkoSelect.add(new Option(`${y.name} (${y.sym})`, y.sym)));
             yksikkoSelect.value = 'h';
@@ -273,12 +306,8 @@
                 const arvo = parseFloat(arvoInput.value) || 0;
                 const mistaKerroin = yksikot.aika.find(y => y.sym === yksikkoSelect.value)?.kerroin || 1;
                 const sekunteina = arvo * mistaKerroin;
-                let html = '<p><strong>Muunnos:</strong></p>';
-                const d = Math.floor(sekunteina/86400), h = Math.floor((sekunteina%86400)/3600), m = Math.floor((sekunteina%3600)/60), s = sekunteina%60;
-                html += `<p><strong>Yhteensä:</strong> ${d} pv, ${h} h, ${m} min ja ${s.toFixed(1)} s</p><hr>`;
-                yksikot.aika.slice().reverse().forEach(y => {
-                    html += `<p><strong>${y.plural || y.name}:</strong> ${(sekunteina / y.kerroin).toLocaleString('fi-FI', { maximumFractionDigits: 4 })} ${y.sym}</p>`;
-                });
+                let html = '<div class="tulos-box" style="margin-bottom: 15px;"><strong>Yhteensä:</strong> ' + Math.floor(sekunteina/86400) + ' pv, ' + Math.floor((sekunteina%86400)/3600) + ' h, ' + Math.floor((sekunteina%3600)/60) + ' min ja ' + (sekunteina%60).toFixed(1) + ' s</div>';
+                yksikot.aika.slice().reverse().forEach(y => { html += `<p><strong>${y.plural || y.name}:</strong> ${(sekunteina / y.kerroin).toLocaleString('fi-FI', { maximumFractionDigits: 4 })} ${y.sym}</p>`; });
                 tuloksetDiv.innerHTML = html;
             };
             [arvoInput, yksikkoSelect].forEach(el => el.addEventListener('input', laske));
@@ -286,7 +315,10 @@
         };
 
         const alustaLampotilaMuunnin = () => {
-            const id = 'lampotila'; document.getElementById(id).innerHTML = luoVakioMuunninHTML(id);
+            const id = 'lampotila';
+            const container = document.getElementById(id);
+            container.classList.add('yksikko-muunnin');
+            container.innerHTML = luoVakioMuunninHTML(id);
             const arvoInput = document.getElementById('lampotila-arvo'), tulosInput = document.getElementById('lampotila-tulos'), mistaSelect = document.getElementById('lampotila-yksikko-mista'), mihinSelect = document.getElementById('lampotila-yksikko-mihin'), swapBtn = document.querySelector(`#${id} .swap-btn`), copyBtn = document.querySelector(`#${id} .copy-btn`);
             ['Celsius', 'Fahrenheit', 'Kelvin'].forEach(key => { mistaSelect.add(new Option(key, key)); mihinSelect.add(new Option(key, key)); });
             mihinSelect.value = 'Fahrenheit';
@@ -306,7 +338,10 @@
         };
 
         const alustaPolttoaineMuunnin = () => {
-            const id = 'polttoaine'; document.getElementById(id).innerHTML = luoVakioMuunninHTML(id);
+            const id = 'polttoaine';
+            const container = document.getElementById(id);
+            container.classList.add('yksikko-muunnin');
+            container.innerHTML = luoVakioMuunninHTML(id);
             const arvoInput = document.getElementById(`${id}-arvo`), tulosInput = document.getElementById(`${id}-tulos`), mistaSelect = document.getElementById(`${id}-yksikko-mista`), mihinSelect = document.getElementById(`${id}-yksikko-mihin`), swapBtn = document.querySelector(`#${id} .swap-btn`), copyBtn = document.querySelector(`#${id} .copy-btn`);
             const units = [ { sym: 'l100km', name: 'L/100km' }, { sym: 'mpg_us', name: 'MPG (US)' }, { sym: 'mpg_uk', name: 'MPG (UK)' } ];
             units.forEach(u => { mistaSelect.add(new Option(u.name, u.sym)); mihinSelect.add(new Option(u.name, u.sym)); });
@@ -328,7 +363,8 @@
 
         const alustaRoomalainenMuunnin = () => {
             const container = document.getElementById('roomalaiset');
-            container.innerHTML = `<div class="yksikko-muunnin"><div><label for="rooma-arabialainen">Numero</label><input type="number" id="rooma-arabialainen" placeholder="esim. 1984"></div><button class="swap-btn" id="rooma-swap" title="Vaihda">↔</button><div><label for="rooma-roomalainen">Roomalainen numero</label><input type="text" id="rooma-roomalainen" placeholder="esim. MCMLXXXIV"></div></div>`;
+            container.classList.add('yksikko-muunnin');
+            container.innerHTML = `<div class="grid-item-arvo"><label for="rooma-arabialainen">Numero</label><input type="number" id="rooma-arabialainen" placeholder="esim. 1984"></div><button class="swap-btn grid-item-swap" id="rooma-swap" title="Vaihda">↔</button><div class="grid-item-tulos"><label for="rooma-roomalainen">Roomalainen numero</label><input type="text" id="rooma-roomalainen" placeholder="esim. MCMLXXXIV"></div>`;
             const arabInput = document.getElementById('rooma-arabialainen'), roomaInput = document.getElementById('rooma-roomalainen');
             const arabToRoman = (num) => { if (isNaN(num) || num < 1 || num > 3999) return ''; const map = { M: 1000, CM: 900, D: 500, CD: 400, C: 100, XC: 90, L: 50, XL: 40, X: 10, IX: 9, V: 5, IV: 4, I: 1 }; let r = ''; for (let k in map) { while (num >= map[k]) { r += k; num -= map[k]; } } return r; };
             const romanToArab = (str) => { str = str.toUpperCase(); const map = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 }; let r = 0; for (let i = 0; i < str.length; i++) { const c = map[str[i]], n = map[str[i + 1]]; if (n && c < n) r -= c; else r += c; } return isNaN(r) || r > 3999 ? '' : r; };
