@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MK Muuntimet</title>
     <style>
-        /* MK Muuntimet, Versio 2.8 - Toiminnallisuus korjattu */
+        /* MK Muuntimet, Versio 2.9 - Mobiilinavigaatio päivitetty */
         :root {
             --color-bg: #212529; --color-surface: #343A40; --color-card: #495057; 
             --color-border: #6c757d; --color-text-primary: #F8F9FA; --color-text-secondary: #adb5bd; 
@@ -19,9 +19,10 @@
         }
         .sisalto-laatikko { max-width: 700px; margin: 30px auto; padding: 10px; background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.2); }
         .teksti-alue { padding: 10px; }
-        .header-flex-container { display: flex; align-items: center; gap: 15px; padding-bottom: 10px; justify-content: center; }
+        .header-flex-container { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding-bottom: 10px; }
+        .header-left { display: flex; align-items: center; gap: 15px; }
         .logo { width: 80px; height: 80px; border: 3px solid var(--color-border); border-radius: 50%; }
-        .paaotsikko { color: var(--color-accent-green); text-align: center; margin: 0; font-size: 1.8em; font-weight: 300; }
+        .paaotsikko { color: var(--color-accent-green); text-align: left; margin: 0; font-size: 1.8em; font-weight: 300; }
         .huomio-laatikko { background-color: var(--color-card); padding: 20px; border-radius: 12px; margin-top: 20px; text-align: center; border: 1px solid var(--color-border); }
         .huomio-otsikko { color: var(--color-accent-yellow); font-weight: 500; margin: 0 0 20px 0; font-size: 1.1em; letter-spacing: 0.5px; }
         .valilehdet { display: flex; border-bottom: 1px solid var(--color-border); margin-bottom: 20px; flex-wrap: wrap; }
@@ -48,16 +49,45 @@
         .aika-tulos-laatikko { margin-top: 20px; text-align: left; }
         .aika-tulos-laatikko p { margin: 8px 0; background-color: var(--color-bg); padding: 10px; border-radius: 6px; }
         .aika-tulos-laatikko strong { color: var(--color-accent-yellow); }
-        .mobiili-nav-container { display: none; margin-bottom: 20px; }
-        #mobiili-nav { width: 100%; padding: 12px; background-color: var(--color-card); color: var(--color-text-primary); border: 1px solid var(--color-border); border-radius: 8px; font-size: 1em; }
+
+        /* --- Hampurilaisvalikon tyylit --- */
+        #mobile-menu-toggle {
+            display: none; background: none; border: none;
+            cursor: pointer; padding: 8px; z-index: 1001;
+        }
+        #mobile-menu-toggle .bar {
+            display: block; width: 25px; height: 3px;
+            margin: 5px auto; background-color: var(--color-text-primary);
+            transition: 0.4s;
+        }
         
         @media screen and (max-width: 800px) {
             body { padding: 5px; }
             .sisalto-laatikko { margin: 10px auto; }
             .paaotsikko { font-size: 1.5em; }
             .logo { width: 60px; height: 60px; }
-            .valilehdet { display: none; }
-            .mobiili-nav-container { display: block; }
+            
+            /* Piilotetaan välilehdet oletuksena ja näytetään hampurilaispainike */
+            #mobile-menu-toggle { display: block; }
+            .valilehdet {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                border-bottom: none;
+                margin-bottom: 10px;
+            }
+            /* .active-menu-class näyttää valikon */
+            .valilehdet.active-menu-class { display: flex; }
+            .valilehdet .valilehti-nappi {
+                width: 100%;
+                text-align: left;
+                padding: 12px 15px;
+                border-bottom: 1px solid var(--color-border);
+            }
+             .valilehdet .valilehti-nappi.aktiivinen {
+                border-bottom-color: var(--color-accent-yellow); /* Korostetaan aktiivista myös mobiilissa */
+             }
+
             .yksikko-muunnin { grid-template-columns: 1fr; }
             .yksikko-muunnin .nuoli { transform: rotate(90deg); margin: 5px 0; }
         }
@@ -67,10 +97,13 @@
     <div class="sisalto-laatikko">
         <div class="teksti-alue">
             <div class="header-flex-container">
-                <div class="logo-container">
+                <div class="header-left">
                     <img src="https://img.geocaching.com:443/84454fa6-e23a-4aad-a8a4-612b77f23abe.png" alt="Oma logo" class="logo" />
+                    <h3 class="paaotsikko">MK Muuntimet</h3>
                 </div>
-                <h3 class="paaotsikko">MK Muuntimet</h3>
+                 <button id="mobile-menu-toggle">
+                    <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+                </button>
             </div>
 
             <div class="huomio-laatikko" style="padding: 0;">
@@ -92,10 +125,6 @@
                     <button class="valilehti-nappi" data-valilehti="luvut">Lukujärjestelmät</button>
                 </div>
                 
-                <div class="mobiili-nav-container">
-                    <select id="mobiili-nav"></select>
-                </div>
-
                 <div class="valilehti-sisalto">
                     <div id="koordinaatit" class="valilehti-paneeli aktiivinen"></div>
                     <div id="aika" class="valilehti-paneeli"></div>
@@ -120,14 +149,19 @@
     <script>
     /*
       MK MUUNTIMET
-      Versio 2.8 - Kriittinen korjaus muuntimien alustukseen.
+      Versio 2.9 - Mobiilinavigaatio päivitetty hampurilaisvalikkoon.
     */
     document.addEventListener('DOMContentLoaded', () => {
-        // --- VÄLILEHTIEN LOGIIKKA ---
         const valilehtiContainer = document.querySelector('.valilehdet');
         const valilehtiPaneelit = document.querySelectorAll('.valilehti-paneeli');
-        const mobiiliNav = document.getElementById('mobiili-nav');
         
+        // --- UUSI HAMBURGER-VALIKON LOGIIKKA ---
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        mobileMenuToggle.addEventListener('click', () => {
+            valilehtiContainer.classList.toggle('active-menu-class');
+        });
+
+        // --- VÄLILEHTIEN VAIHTOLOGIIKKA ---
         const vaihdaValilehtea = (kohde) => {
             valilehtiContainer.querySelectorAll('.valilehti-nappi').forEach(nappi => {
                 nappi.classList.toggle('aktiivinen', nappi.dataset.valilehti === kohde);
@@ -135,27 +169,19 @@
             valilehtiPaneelit.forEach(paneeli => {
                 paneeli.classList.toggle('aktiivinen', paneeli.id === kohde);
             });
-            if (mobiiliNav.value !== kohde) {
-                mobiiliNav.value = kohde;
-            }
         };
 
         valilehtiContainer.addEventListener('click', (e) => {
             const klikattuNappi = e.target.closest('.valilehti-nappi');
             if (klikattuNappi) {
                 vaihdaValilehtea(klikattuNappi.dataset.valilehti);
+                // Sulje hampurilaisvalikko valinnan jälkeen mobiilinäkymässä
+                if (window.innerWidth <= 800) {
+                   valilehtiContainer.classList.remove('active-menu-class');
+                }
             }
         });
 
-        mobiiliNav.addEventListener('change', (e) => {
-            vaihdaValilehtea(e.target.value);
-        });
-
-        valilehtiContainer.querySelectorAll('.valilehti-nappi').forEach(nappi => {
-            const option = new Option(nappi.textContent, nappi.dataset.valilehti);
-            mobiiliNav.add(option);
-        });
-        
         // --- KOORDINAATTIMUUNNIN ---
         const alustaKoordinaattiMuunnin = () => {
             const container = document.getElementById('koordinaatit');
