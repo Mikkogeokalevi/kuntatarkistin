@@ -1,4 +1,4 @@
-/* MK Muuntimet, Versio 5.1 - Korjattu työpöytäasettelu */
+/* MK Muuntimet, Versio 6.5 - Korjattu mobiilinäkymän vaihtonappi */
 :root {
     --color-bg: #212529; --color-surface: #343A40; --color-card: #495057; 
     --color-border: #6c757d; --color-text-primary: #F8F9FA; --color-text-secondary: #adb5bd; 
@@ -24,7 +24,7 @@ html, body {
 .valilehti-paneeli { display: none; padding: 10px; }
 .valilehti-paneeli.aktiivinen { display: block; animation: fadein 0.5s; }
 @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
-.muunnin-ryhma { margin-bottom: 0; } /* Nollataan marginaali, koska grid hoitaa välit */
+.muunnin-ryhma { margin-bottom: 0; } 
 .muunnin-ryhma label { display: block; text-align: left; font-size: 0.9em; color: var(--color-text-secondary); margin-bottom: 8px; }
 .muunnin-ryhma input, .muunnin-ryhma select, .muunnin-ryhma textarea {
     width: 100%; box-sizing: border-box; padding: 12px;
@@ -41,7 +41,7 @@ html, body {
     grid-template-columns: 1fr auto 1fr;
     grid-template-rows: auto auto;
     gap: 15px;
-    align-items: end; /* Asetetaan pohjaan kiinni */
+    align-items: end; 
 }
 .grid-item-arvo   { grid-column: 1; grid-row: 1; }
 .grid-item-mista  { grid-column: 1; grid-row: 2; }
@@ -52,9 +52,9 @@ html, body {
 .input-wrapper { position: relative; display: flex; align-items: center; }
 .input-wrapper input { width:100%; }
 .copy-btn { position: absolute; right: 8px; background: none; border: none; color: var(--color-text-secondary); cursor: pointer; font-size: 1.2em; }
-.swap-btn { background: none; border: 1px solid var(--color-border); border-radius: 50%; width: 40px; height: 40px; color: var(--color-text-primary); cursor: pointer; font-size: 1.5em; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+.swap-btn { background: none; border: 1px solid var(--color-border); border-radius: 50%; width: 40px; height: 40px; color: var(--color-text-primary); cursor: pointer; font-size: 1.5em; transition: all 0.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .swap-btn:hover { background-color: var(--color-bg); border-color: var(--color-accent-yellow); }
-.tulos-box { background-color: var(--color-bg); padding: 15px; border-radius: 8px; margin-top: 10px; font-size: 1.1em; color: var(--color-accent-yellow); font-weight: bold; }
+.tulos-box { background-color: var(--color-bg); padding: 15px; border-radius: 8px; margin-top: 10px; font-size: 1.1em; color: var(--color-accent-yellow); font-weight: bold; text-align: left; }
 #mobile-menu-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; z-index: 1001; }
 #mobile-menu-toggle .bar { display: block; width: 25px; height: 3px; margin: 5px auto; background-color: var(--color-text-primary); transition: 0.4s; }
 
@@ -72,7 +72,9 @@ html, body {
         gap: 15px;
     }
     .muunnin-ryhma { margin-bottom: 0; }
-    .yksikko-muunnin > * { width: 100%; } /* Varmistetaan, että elementit vievät koko leveyden */
+    /* TÄMÄ ON KORJATTU KOHTA: Sääntö koskee nyt vain muunnin-ryhmiä, ei vaihtonappia */
+    .yksikko-muunnin > .muunnin-ryhma { width: 100%; } 
+    
     .grid-item-arvo   { order: 1; }
     .grid-item-mista  { order: 2; }
     .grid-item-swap   { order: 3; transform: rotate(90deg); margin: 0 auto; }
