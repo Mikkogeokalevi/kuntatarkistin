@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MK Muuntimet</title>
     <style>
-        /* MK Muuntimet, Versio 2.9 - Kriittinen korjaus alustuslogiikkaan ja mobiilinavigaatioon */
+        /* MK Muuntimet, Versio 2.8 - Toiminnallisuus korjattu */
         :root {
             --color-bg: #212529; --color-surface: #343A40; --color-card: #495057; 
             --color-border: #6c757d; --color-text-primary: #F8F9FA; --color-text-secondary: #adb5bd; 
@@ -120,7 +120,7 @@
     <script>
     /*
       MK MUUNTIMET
-      Versio 2.9 - Kriittinen korjaus muuntimien alustukseen ja mobiilinavigaatioon.
+      Versio 2.8 - Kriittinen korjaus muuntimien alustukseen.
     */
     document.addEventListener('DOMContentLoaded', () => {
         // --- VÄLILEHTIEN LOGIIKKA ---
@@ -199,13 +199,8 @@
             const tulosInput = document.getElementById(`${id}-tulos`);
             const mistaSelect = document.getElementById(`${id}-yksikko-mista`);
             const mihinSelect = document.getElementById(`${id}-yksikko-mihin`);
-            yksikkoData.forEach(yksikko => {
-                const teksti = `${yksikko.name} (${yksikko.sym})`;
-                mistaSelect.add(new Option(teksti, yksikko.sym));
-                mihinSelect.add(new Option(teksti, yksikko.sym));
-            });
-            mistaSelect.selectedIndex = 1; 
-            if (yksikkoData.length > 2) mihinSelect.selectedIndex = 2;
+            yksikkoData.forEach(yksikko => { const teksti = `${yksikko.name} (${yksikko.sym})`; mistaSelect.add(new Option(teksti, yksikko.sym)); mihinSelect.add(new Option(teksti, yksikko.sym)); });
+            mistaSelect.selectedIndex = 1; if (yksikkoData.length > 2) mihinSelect.selectedIndex = 2;
             const laske = () => {
                 const arvo = parseFloat(arvoInput.value) || 0;
                 const mistaKerroin = yksikkoData.find(y => y.sym === mistaSelect.value)?.kerroin || 1;
@@ -213,18 +208,13 @@
                 const tulos = arvo * mistaKerroin / mihinKerroin;
                 tulosInput.value = tulos.toLocaleString('fi-FI', { maximumFractionDigits: 6 });
             };
-            arvoInput.addEventListener('input', laske);
-            mistaSelect.addEventListener('change', laske);
-            mihinSelect.addEventListener('change', laske);
+            [arvoInput, mistaSelect, mihinSelect].forEach(el => el.addEventListener('input', laske));
             laske();
         };
         
         const alustaLampotilaMuunnin = () => {
             document.getElementById('lampotila').innerHTML = luoVakioMuunninHTML('lampotila');
-            const arvoInput = document.getElementById('lampotila-arvo');
-            const tulosInput = document.getElementById('lampotila-tulos');
-            const mistaSelect = document.getElementById('lampotila-yksikko-mista');
-            const mihinSelect = document.getElementById('lampotila-yksikko-mihin');
+            const arvoInput = document.getElementById('lampotila-arvo'), tulosInput = document.getElementById('lampotila-tulos'), mistaSelect = document.getElementById('lampotila-yksikko-mista'), mihinSelect = document.getElementById('lampotila-yksikko-mihin');
             ['Celsius', 'Fahrenheit', 'Kelvin'].forEach(key => { mistaSelect.add(new Option(key, key)); mihinSelect.add(new Option(key, key)); });
             mihinSelect.value = 'Fahrenheit';
             const laske = () => {
@@ -236,18 +226,14 @@
                 else if (mihinSelect.value === 'Kelvin') tulos = arvo + 273.15;
                 tulosInput.value = tulos.toLocaleString('fi-FI', { maximumFractionDigits: 2 });
             };
-            arvoInput.addEventListener('input', laske);
-            mistaSelect.addEventListener('change', laske);
-            mihinSelect.addEventListener('change', laske);
+            [arvoInput, mistaSelect, mihinSelect].forEach(el => el.addEventListener('input', laske));
             laske();
         };
 
         const alustaAikaMuunnin = () => {
             const container = document.getElementById('aika');
             container.innerHTML = `<div class="yksikko-muunnin"><div><label for="aika-arvo">Arvo</label><input type="number" id="aika-arvo" value="1"></div><div></div><div><label for="aika-yksikko-mista">Yksikkö</label><select id="aika-yksikko-mista"></select></div></div><div id="aika-tulokset" class="aika-tulos-laatikko"></div>`;
-            const arvoInput = document.getElementById('aika-arvo');
-            const yksikkoSelect = document.getElementById('aika-yksikko-mista');
-            const tuloksetDiv = document.getElementById('aika-tulokset');
+            const arvoInput = document.getElementById('aika-arvo'), yksikkoSelect = document.getElementById('aika-yksikko-mista'), tuloksetDiv = document.getElementById('aika-tulokset');
             yksikot.aika.forEach(y => yksikkoSelect.add(new Option(`${y.name} (${y.sym})`, y.sym)));
             yksikkoSelect.value = 'h';
             const laske = () => {
@@ -255,46 +241,34 @@
                 const mistaKerroin = yksikot.aika.find(y => y.sym === yksikkoSelect.value)?.kerroin || 1;
                 const sekunteina = arvo * mistaKerroin;
                 let html = '<p><strong>Muunnos:</strong></p>';
-                const d = Math.floor(sekunteina / 86400); const h = Math.floor((sekunteina % 86400) / 3600);
-                const m = Math.floor((sekunteina % 3600) / 60); const s = sekunteina % 60;
+                const d = Math.floor(sekunteina/86400), h = Math.floor((sekunteina%86400)/3600), m = Math.floor((sekunteina%3600)/60), s = sekunteina%60;
                 html += `<p><strong>Yhteensä:</strong> ${d} pv, ${h} h, ${m} min ja ${s.toFixed(1)} s</p><hr>`;
                 yksikot.aika.slice().reverse().forEach(y => {
                     html += `<p><strong>${y.plural}:</strong> ${(sekunteina / y.kerroin).toLocaleString('fi-FI', { maximumFractionDigits: 4 })} ${y.sym}</p>`;
                 });
                 tuloksetDiv.innerHTML = html;
             };
-            arvoInput.addEventListener('input', laske);
-            yksikkoSelect.addEventListener('change', laske);
+            [arvoInput, yksikkoSelect].forEach(el => el.addEventListener('input', laske));
             laske();
         };
 
         const alustaLukujarjestelmaMuunnin = () => {
             const container = document.getElementById('luvut');
-            container.innerHTML = `
-                <div class="muunnin-ryhma"><label for="luku-dec">Desimaali (10)</label><input type="number" id="luku-dec" placeholder="esim. 42"></div>
-                <div class="muunnin-ryhma"><label for="luku-bin">Binääri (2)</label><input type="text" id="luku-bin" placeholder="esim. 101010"></div>
-                <div class="muunnin-ryhma"><label for="luku-oct">Oktaali (8)</label><input type="text" id="luku-oct" placeholder="esim. 52"></div>
-                <div class="muunnin-ryhma"><label for="luku-hex">Heksadesimaali (16)</label><input type="text" id="luku-hex" placeholder="esim. 2A"></div>`;
+            container.innerHTML = `<div class="muunnin-ryhma"><label for="luku-dec">Desimaali (10)</label><input type="number" id="luku-dec" placeholder="esim. 42"></div><div class="muunnin-ryhma"><label for="luku-bin">Binääri (2)</label><input type="text" id="luku-bin" placeholder="esim. 101010"></div><div class="muunnin-ryhma"><label for="luku-oct">Oktaali (8)</label><input type="text" id="luku-oct" placeholder="esim. 52"></div><div class="muunnin-ryhma"><label for="luku-hex">Heksadesimaali (16)</label><input type="text" id="luku-hex" placeholder="esim. 2A"></div>`;
             const inputs = { dec: 10, bin: 2, oct: 8, hex: 16 };
             Object.keys(inputs).forEach(key => {
                 document.getElementById(`luku-${key}`).addEventListener('input', (e) => {
                     const arvo = e.target.value; if (arvo === '') return;
                     const pohja = inputs[key]; const desimaaliArvo = parseInt(arvo, pohja);
                     if (isNaN(desimaaliArvo)) return;
-                    Object.keys(inputs).forEach(otherKey => {
-                        if (key !== otherKey) document.getElementById(`luku-${otherKey}`).value = desimaaliArvo.toString(inputs[otherKey]).toUpperCase();
-                    });
+                    Object.keys(inputs).forEach(otherKey => { if (key !== otherKey) document.getElementById(`luku-${otherKey}`).value = desimaaliArvo.toString(inputs[otherKey]).toUpperCase(); });
                 });
             });
         };
         
         const alustaRoomalainenMuunnin = () => {
             const container = document.getElementById('roomalaiset');
-            container.innerHTML = `<div class="yksikko-muunnin">
-                <div><label for="rooma-arabialainen">Numero</label><input type="number" id="rooma-arabialainen" placeholder="esim. 1984"></div>
-                <div class="nuoli">&harr;</div>
-                <div><label for="rooma-roomalainen">Roomalainen numero</label><input type="text" id="rooma-roomalainen" placeholder="esim. MCMLXXXIV"></div>
-            </div>`;
+            container.innerHTML = `<div class="yksikko-muunnin"><div><label for="rooma-arabialainen">Numero</label><input type="number" id="rooma-arabialainen" placeholder="esim. 1984"></div><div class="nuoli">&harr;</div><div><label for="rooma-roomalainen">Roomalainen numero</label><input type="text" id="rooma-roomalainen" placeholder="esim. MCMLXXXIV"></div></div>`;
             const arabInput = document.getElementById('rooma-arabialainen'), roomaInput = document.getElementById('rooma-roomalainen');
             const arabToRoman = (num) => { if (isNaN(num) || num < 1 || num > 3999) return ''; const map = { M: 1000, CM: 900, D: 500, CD: 400, C: 100, XC: 90, L: 50, XL: 40, X: 10, IX: 9, V: 5, IV: 4, I: 1 }; let r = ''; for (let k in map) { while (num >= map[k]) { r += k; num -= map[k]; } } return r; };
             const romanToArab = (str) => { str = str.toUpperCase(); const map = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 }; let r = 0; for (let i = 0; i < str.length; i++) { const c = map[str[i]], n = map[str[i + 1]]; if (c < n) r -= c; else r += c; } return isNaN(r) || r > 3999 ? '' : r; };
@@ -304,16 +278,20 @@
 
         // Alustetaan kaikki muuntimet
         alustaKoordinaattiMuunnin();
+        alustaVakioMuunnin('pituus', yksikot.pituus);
+        alustaVakioMuunnin('massa', yksikot.massa);
+        alustaLampotilaMuunnin();
+        alustaVakioMuunnin('nopeus', yksikot.nopeus);
+        alustaVakioMuunnin('pinta-ala', yksikot.pinta_ala);
+        alustaVakioMuunnin('tilavuus', yksikot.tilavuus);
+        alustaVakioMuunnin('paine', yksikot.paine);
+        alustaVakioMuunnin('energia', yksikot.energia);
+        alustaVakioMuunnin('teho', yksikot.teho);
+        alustaVakioMuunnin('data', yksikot.data);
+        alustaVakioMuunnin('kulma', yksikot.kulma);
         alustaAikaMuunnin();
         alustaLukujarjestelmaMuunnin();
         alustaRoomalainenMuunnin();
-        alustaLampotilaMuunnin();
-        // Käydään loput läpi dynaamisesti
-        Object.keys(yksikot).forEach(key => {
-            if (!['aika'].includes(key)) { // Nämä alustettiin jo erikseen
-                alustaVakioMuunnin(key, yksikot[key]);
-            }
-        });
     });
     </script>
 </body>
