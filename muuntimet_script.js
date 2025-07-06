@@ -1,6 +1,6 @@
 /*
   MK MUUNTIMET
-  Versio 5.3 - Kattava lisäys vanhoja suomalaisia mittoja
+  Versio 5.4 - Palautettu puuttuvat tilavuusyksiköt
 */
 document.addEventListener('DOMContentLoaded', () => {
     // --- PERUSRAKENNE JA NAVIGAATIO ---
@@ -54,16 +54,24 @@ document.addEventListener('DOMContentLoaded', () => {
             { sym: 'kapanala', name: 'Kapanala (vanha)', kerroin: 308.5 }
         ],
         tilavuus: [ 
+            // Metriset
+            { sym: 'ml', name: 'Millilitra', kerroin: 0.001 }, 
+            { sym: 'cl', name: 'Senttilitra', kerroin: 0.01 }, 
+            { sym: 'dl', name: 'Desilitra', kerroin: 0.1 }, 
             { sym: 'l', name: 'Litra', kerroin: 1 }, 
-            { sym: 'm³', name: 'Kuutiometri', kerroin: 1000 }, 
-            { sym: 'tynnyri_neste', name: 'Tynnyri, neste (vanha)', kerroin: 125.6 },
-            { sym: 'aami', name: 'Aami (vanha)', kerroin: 157 },
+            { sym: 'm³', name: 'Kuutiometri', kerroin: 1000 },
+            // Imperial / US
+            { sym: 'gal_us', name: 'Gallona (US)', kerroin: 3.78541 }, 
+            { sym: 'gal_uk', name: 'Gallona (UK)', kerroin: 4.54609 },
+            // Vanhat suomalaiset
             { sym: 'kannu', name: 'Kannu (vanha)', kerroin: 2.617 }, 
             { sym: 'tuoppi', name: 'Tuoppi (vanha)', kerroin: 1.309 }, 
             { sym: 'kortteli', name: 'Kortteli (vanha)', kerroin: 0.327 },
             { sym: 'jumpru', name: 'Jumpru (vanha)', kerroin: 0.08175 },
-            { sym: 'tynnyri_kuiva', name: 'Tynnyri, kuiva (vanha)', kerroin: 146.5 },
             { sym: 'kappa', name: 'Kappa (vanha)', kerroin: 4.58 }, 
+            { sym: 'tynnyri_neste', name: 'Tynnyri, neste (vanha)', kerroin: 125.6 },
+            { sym: 'aami', name: 'Aami (vanha)', kerroin: 157 },
+            { sym: 'tynnyri_kuiva', name: 'Tynnyri, kuiva (vanha)', kerroin: 146.5 }
         ],
         paine: [ { sym: 'Pa', name: 'Pascal', kerroin: 1 }, { sym: 'kPa', name: 'Kilopascal', kerroin: 1000 }, { sym: 'bar', name: 'Baari', kerroin: 100000 }, { sym: 'atm', name: 'Ilmakehä', kerroin: 101325 } ],
         energia: [ { sym: 'J', name: 'Joule', kerroin: 1 }, { sym: 'kJ', name: 'Kilojoule', kerroin: 1000 }, { sym: 'kcal', name: 'Kilokalori', kerroin: 4184 }, { sym: 'kWh', name: 'Kilowattitunti', kerroin: 3600000 } ],
