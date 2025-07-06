@@ -1,6 +1,6 @@
 /*
   MK MUUNTIMET
-  Versio 5.1 - Aika- ja Päivämäärälaskurien parannus
+  Versio 5.3 - Kattava lisäys vanhoja suomalaisia mittoja
 */
 document.addEventListener('DOMContentLoaded', () => {
     // --- PERUSRAKENNE JA NAVIGAATIO ---
@@ -25,12 +25,46 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // --- YKSIKKÖDATA ---
     const yksikot = {
-        pituus: [ { sym: 'mm', name: 'Millimetri', kerroin: 0.001 }, { sym: 'cm', name: 'Senttimetri', kerroin: 0.01 }, { sym: 'm', name: 'Metri', kerroin: 1 }, { sym: 'km', name: 'Kilometri', kerroin: 1000 }, { sym: 'in', name: 'Tuuma', kerroin: 0.0254 }, { sym: 'ft', name: 'Jalka', kerroin: 0.3048 }, { sym: 'yd', name: 'Jaardi', kerroin: 0.9144 }, { sym: 'mi', name: 'Maili', kerroin: 1609.34 }, { sym: 'nmi', name: 'Meripeninkulma', kerroin: 1852 }, { sym: 'virsta', name: 'Virsta (Suomi)', kerroin: 1068.8 }, { sym: 'peninkulma', name: 'Peninkulma', kerroin: 10688 } ],
+        pituus: [ 
+            { sym: 'mm', name: 'Millimetri', kerroin: 0.001 }, 
+            { sym: 'cm', name: 'Senttimetri', kerroin: 0.01 }, 
+            { sym: 'm', name: 'Metri', kerroin: 1 },
+            { sym: 'km', name: 'Kilometri', kerroin: 1000 },
+            { sym: 'in', name: 'Tuuma (eng.)', kerroin: 0.0254 },
+            { sym: 'ft', name: 'Jalka (eng.)', kerroin: 0.3048 },
+            { sym: 'syli', name: 'Syli (vanha)', kerroin: 1.781 },
+            { sym: 'kyynärä', name: 'Kyynärä (vanha)', kerroin: 0.5937 },
+            { sym: 'jalka_vanha', name: 'Jalka (vanha)', kerroin: 0.2969 },
+            { sym: 'vaaksa', name: 'Vaaksa (vanha)', kerroin: 0.1484 },
+            { sym: 'tuuma_vanha', name: 'Tuuma (vanha)', kerroin: 0.02474 },
+            { sym: 'linja', name: 'Linja (vanha)', kerroin: 0.00206 },
+            { sym: 'virsta', name: 'Virsta', kerroin: 1068.8 },
+            { sym: 'peninkulma', name: 'Peninkulma', kerroin: 10688 }
+        ],
         massa: [ { sym: 'g', name: 'Gramma', kerroin: 1 }, { sym: 'kg', name: 'Kilogramma', kerroin: 1000 }, { sym: 't', name: 'Tonni', kerroin: 1000000 }, { sym: 'oz', name: 'Unssi', kerroin: 28.3495 }, { sym: 'lb', name: 'Naula (pauna)', kerroin: 453.592 }, { sym: 'st', name: 'Stone', kerroin: 6350.29 }, { sym: 'luoti', name: 'Luoti (vanha)', kerroin: 13.28 }, { sym: 'leiviskä', name: 'Leiviskä (vanha)', kerroin: 8500 } ],
         nopeus: [ { sym: 'm/s', name: 'Metriä/s', kerroin: 1 }, { sym: 'km/h', name: 'Kilometriä/h', kerroin: 1 / 3.6 }, { sym: 'mph', name: 'Mailia/h', kerroin: 0.44704 }, { sym: 'kn', name: 'Solmu', kerroin: 0.514444 } ],
         aika: [ { sym: 'ms', name: 'Millisekunti', plural: 'Millisekunteina', kerroin: 0.001 }, { sym: 's', name: 'Sekunti', plural: 'Sekunteina', kerroin: 1 }, { sym: 'min', name: 'Minuutti', plural: 'Minuutteina', kerroin: 60 }, { sym: 'h', name: 'Tunti', plural: 'Tunteina', kerroin: 3600 }, { sym: 'd', name: 'Päivä', plural: 'Päivinä', kerroin: 86400 }, { sym: 'vk', name: 'Viikko', plural: 'Viikkoina', kerroin: 604800 } ],
-        pinta_ala: [ { sym: 'mm²', name: 'Neliömillimetri', kerroin: 0.000001 }, { sym: 'cm²', name: 'Neliösenttimetri', kerroin: 0.0001 }, { sym: 'm²', name: 'Neliömetri', kerroin: 1 }, { sym: 'a', name: 'Aari', kerroin: 100 }, { sym: 'ha', name: 'Hehtaari', kerroin: 10000 }, { sym: 'km²', name: 'Neliökilometri', kerroin: 1000000 } ],
-        tilavuus: [ { sym: 'ml', name: 'Millilitra', kerroin: 0.001 }, { sym: 'l', name: 'Litra', kerroin: 1 }, { sym: 'm³', name: 'Kuutiometri', kerroin: 1000 }, { sym: 'gal_us', name: 'Gallona (US)', kerroin: 3.78541 }, { sym: 'gal_uk', name: 'Gallona (UK)', kerroin: 4.54609 } ],
+        pinta_ala: [ 
+            { sym: 'm²', name: 'Neliömetri', kerroin: 1 }, 
+            { sym: 'a', name: 'Aari', kerroin: 100 }, 
+            { sym: 'ha', name: 'Hehtaari', kerroin: 10000 }, 
+            { sym: 'km²', name: 'Neliökilometri', kerroin: 1000000 },
+            { sym: 'tynnyrinala', name: 'Tynnyrinala (vanha)', kerroin: 4936.5 },
+            { sym: 'panninala', name: 'Panninala (vanha)', kerroin: 2468.25 },
+            { sym: 'kapanala', name: 'Kapanala (vanha)', kerroin: 308.5 }
+        ],
+        tilavuus: [ 
+            { sym: 'l', name: 'Litra', kerroin: 1 }, 
+            { sym: 'm³', name: 'Kuutiometri', kerroin: 1000 }, 
+            { sym: 'tynnyri_neste', name: 'Tynnyri, neste (vanha)', kerroin: 125.6 },
+            { sym: 'aami', name: 'Aami (vanha)', kerroin: 157 },
+            { sym: 'kannu', name: 'Kannu (vanha)', kerroin: 2.617 }, 
+            { sym: 'tuoppi', name: 'Tuoppi (vanha)', kerroin: 1.309 }, 
+            { sym: 'kortteli', name: 'Kortteli (vanha)', kerroin: 0.327 },
+            { sym: 'jumpru', name: 'Jumpru (vanha)', kerroin: 0.08175 },
+            { sym: 'tynnyri_kuiva', name: 'Tynnyri, kuiva (vanha)', kerroin: 146.5 },
+            { sym: 'kappa', name: 'Kappa (vanha)', kerroin: 4.58 }, 
+        ],
         paine: [ { sym: 'Pa', name: 'Pascal', kerroin: 1 }, { sym: 'kPa', name: 'Kilopascal', kerroin: 1000 }, { sym: 'bar', name: 'Baari', kerroin: 100000 }, { sym: 'atm', name: 'Ilmakehä', kerroin: 101325 } ],
         energia: [ { sym: 'J', name: 'Joule', kerroin: 1 }, { sym: 'kJ', name: 'Kilojoule', kerroin: 1000 }, { sym: 'kcal', name: 'Kilokalori', kerroin: 4184 }, { sym: 'kWh', name: 'Kilowattitunti', kerroin: 3600000 } ],
         teho: [ { sym: 'W', name: 'Watti', kerroin: 1 }, { sym: 'kW', name: 'Kilowatti', kerroin: 1000 }, { sym: 'MW', name: 'Megawatti', kerroin: 1000000 }, { sym: 'hp', name: 'Hevosvoima', kerroin: 745.7 } ],
@@ -213,8 +247,46 @@ document.addEventListener('DOMContentLoaded', () => {
         laske();
     };
 
-    const alustaLampotilaMuunnin = () => { alustaVakioMuunnin('lampotila', []); const id='lampotila'; const container=document.getElementById(id); const arvoInput=document.getElementById(`${id}-arvo`),tulosInput=document.getElementById(`${id}-tulos`),mistaSelect=document.getElementById(`${id}-yksikko-mista`),mihinSelect=document.getElementById(`${id}-yksikko-mihin`);mistaSelect.innerHTML = '';mihinSelect.innerHTML = '';['Celsius','Fahrenheit','Kelvin'].forEach(key=>{mistaSelect.add(new Option(key,key));mihinSelect.add(new Option(key,key))});mihinSelect.value='Fahrenheit';const laske=()=>{let arvo=parseFloat(arvoInput.value)||0;let tulos;if(mistaSelect.value==='Fahrenheit')arvo=(arvo-32)*5/9;else if(mistaSelect.value==='Kelvin')arvo=arvo-273.15;if(mihinSelect.value==='Celsius')tulos=arvo;else if(mihinSelect.value==='Fahrenheit')tulos=arvo*9/5+32;else if(mihinSelect.value==='Kelvin')tulos=arvo+273.15;tulosInput.value=tulos.toLocaleString('fi-FI',{maximumFractionDigits:2})};[arvoInput,mistaSelect,mihinSelect].forEach(el=>el.addEventListener('input',laske));laske(); };
-    const alustaPolttoaineMuunnin = () => { alustaVakioMuunnin('polttoaine', []); const id='polttoaine';const container=document.getElementById(id);const arvoInput=document.getElementById(`${id}-arvo`),tulosInput=document.getElementById(`${id}-tulos`),mistaSelect=document.getElementById(`${id}-yksikko-mista`),mihinSelect=document.getElementById(`${id}-yksikko-mihin`);mistaSelect.innerHTML = '';mihinSelect.innerHTML = '';const units=[{sym:'l100km',name:'L/100km'},{sym:'mpg_us',name:'MPG (US)'},{sym:'mpg_uk',name:'MPG (UK)'}];units.forEach(u=>{mistaSelect.add(new Option(u.name,u.sym));mihinSelect.add(new Option(u.name,u.sym))});mihinSelect.selectedIndex=1;const laske=()=>{const arvo=parseFloat(arvoInput.value);if(isNaN(arvo)||arvo===0){tulosInput.value='0';return}const mista=mistaSelect.value,mihin=mihinSelect.value;let tulos;if(mista===mihin)tulos=arvo;else if(mista==='l100km'){if(mihin==='mpg_us')tulos=235.214/arvo;else tulos=282.481/arvo}else if(mista==='mpg_us'){if(mihin==='l100km')tulos=235.214/arvo;else tulos=arvo*1.20095}else{if(mihin==='l100km')tulos=282.481/arvo;else tulos=arvo/1.20095}tulosInput.value=tulos.toLocaleString('fi-FI',{maximumFractionDigits:2})};[arvoInput,mistaSelect,mihinSelect].forEach(el=>el.addEventListener('input',laske));laske();};
+    const alustaLampotilaMuunnin = () => {
+        const id = 'lampotila';
+        alustaVakioMuunnin(id, []);
+        const arvoInput = document.getElementById(`${id}-arvo`), tulosInput = document.getElementById(`${id}-tulos`), mistaSelect = document.getElementById(`${id}-yksikko-mista`), mihinSelect = document.getElementById(`${id}-yksikko-mihin`);
+        mistaSelect.innerHTML = ''; mihinSelect.innerHTML = '';
+        ['Celsius', 'Fahrenheit', 'Kelvin'].forEach(key => { mistaSelect.add(new Option(key, key)); mihinSelect.add(new Option(key, key)); });
+        mihinSelect.value = 'Fahrenheit';
+        const laske = () => {
+            let arvo = parseFloat(arvoInput.value) || 0; let tulos;
+            if (mistaSelect.value === 'Fahrenheit') arvo = (arvo - 32) * 5/9;
+            else if (mistaSelect.value === 'Kelvin') arvo = arvo - 273.15;
+            if (mihinSelect.value === 'Celsius') tulos = arvo;
+            else if (mihinSelect.value === 'Fahrenheit') tulos = arvo * 9/5 + 32;
+            else if (mihinSelect.value === 'Kelvin') tulos = arvo + 273.15;
+            tulosInput.value = tulos.toLocaleString('fi-FI', { maximumFractionDigits: 2 });
+        };
+        [arvoInput, mistaSelect, mihinSelect].forEach(el => el.addEventListener('input', laske));
+        laske();
+    };
+
+    const alustaPolttoaineMuunnin = () => {
+        const id = 'polttoaine';
+        alustaVakioMuunnin(id, []);
+        const arvoInput = document.getElementById(`${id}-arvo`), tulosInput = document.getElementById(`${id}-tulos`), mistaSelect = document.getElementById(`${id}-yksikko-mista`), mihinSelect = document.getElementById(`${id}-yksikko-mihin`);
+        mistaSelect.innerHTML = ''; mihinSelect.innerHTML = '';
+        const units = [{sym:'l100km',name:'L/100km'},{sym:'mpg_us',name:'MPG (US)'},{sym:'mpg_uk',name:'MPG (UK)'}];
+        units.forEach(u => { mistaSelect.add(new Option(u.name, u.sym)); mihinSelect.add(new Option(u.name, u.sym)); });
+        mihinSelect.selectedIndex=1;
+        const laske = () => {
+            const arvo = parseFloat(arvoInput.value); if(isNaN(arvo) || arvo === 0) { tulosInput.value = '0'; return; }
+            const mista = mistaSelect.value, mihin = mihinSelect.value; let tulos;
+            if(mista === mihin) tulos = arvo;
+            else if(mista === 'l100km') { if(mihin === 'mpg_us') tulos = 235.214 / arvo; else tulos = 282.481 / arvo; }
+            else if(mista === 'mpg_us') { if(mihin === 'l100km') tulos = 235.214 / arvo; else tulos = arvo * 1.20095; }
+            else { if(mihin === 'l100km') tulos = 282.481 / arvo; else tulos = arvo / 1.20095; }
+            tulosInput.value = tulos.toLocaleString('fi-FI',{maximumFractionDigits:2});
+        };
+        [arvoInput, mistaSelect, mihinSelect].forEach(el => el.addEventListener('input', laske));
+        laske();
+    };
 
     const alustaRoomalainenMuunnin = () => {
         const container = document.getElementById('roomalaiset');
