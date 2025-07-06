@@ -1,6 +1,6 @@
 /*
   MK MUUNTIMET
-  Versio 6.2 - Lisätty puuttuvia tilavuusyksiköitä
+  Versio 6.3 - Laajennettu datamuunnin (IEC ja SI)
 */
 document.addEventListener('DOMContentLoaded', () => {
     // --- PERUSRAKENNE JA NAVIGAATIO ---
@@ -30,31 +30,31 @@ document.addEventListener('DOMContentLoaded', () => {
         nopeus: [ { sym: 'm/s', name: 'Metriä/s', kerroin: 1 }, { sym: 'km/h', name: 'Kilometriä/h', kerroin: 1 / 3.6 }, { sym: 'mph', name: 'Mailia/h', kerroin: 0.44704 }, { sym: 'kn', name: 'Solmu', kerroin: 0.514444 } ],
         aika: [ { sym: 'ms', name: 'Millisekunti', plural: 'Millisekunteina', kerroin: 0.001 }, { sym: 's', name: 'Sekunti', plural: 'Sekunteina', kerroin: 1 }, { sym: 'min', name: 'Minuutti', plural: 'Minuutteina', kerroin: 60 }, { sym: 'h', name: 'Tunti', plural: 'Tunteina', kerroin: 3600 }, { sym: 'd', name: 'Päivä', plural: 'Päivinä', kerroin: 86400 }, { sym: 'vk', name: 'Viikko', plural: 'Viikkoina', kerroin: 604800 }, { sym: 'a', name: 'Vuosi (noin)', plural: 'Vuosina', kerroin: 31557600 } ],
         pinta_ala: [ { sym: 'mm²', name: 'Neliömillimetri', kerroin: 0.000001 }, { sym: 'cm²', name: 'Neliösenttimetri', kerroin: 0.0001 }, { sym: 'dm²', name: 'Neliödesimetri', kerroin: 0.01 }, { sym: 'm²', name: 'Neliömetri', kerroin: 1 }, { sym: 'a', name: 'Aari', kerroin: 100 }, { sym: 'ha', name: 'Hehtaari', kerroin: 10000 }, { sym: 'km²', name: 'Neliökilometri', kerroin: 1000000 }, { sym: 'in²', name: 'Neliötuuma', kerroin: 0.00064516 }, { sym: 'ft²', name: 'Neliöjalka', kerroin: 0.092903 }, { sym: 'ac', name: 'Eekkeri', kerroin: 4046.86 }, { sym: 'tynnyrinala', name: 'Tynnyrinala (vanha)', kerroin: 4936.5 }, { sym: 'panninala', name: 'Panninala (vanha)', kerroin: 2468.25 }, { sym: 'kapanala', name: 'Kapanala (vanha)', kerroin: 308.5 } ],
-        tilavuus: [ 
-            { sym: 'mm³', name: 'Kuutiomillimetri', kerroin: 0.000001 },
-            { sym: 'cm³', name: 'Kuutiosenttimetri', kerroin: 0.001 },
-            { sym: 'ml', name: 'Millilitra', kerroin: 0.001 }, 
-            { sym: 'cl', name: 'Senttilitra', kerroin: 0.01 }, 
-            { sym: 'dl', name: 'Desilitra', kerroin: 0.1 }, 
-            { sym: 'dm³', name: 'Kuutiodesimetri', kerroin: 1 },
-            { sym: 'l', name: 'Litra', kerroin: 1 }, 
-            { sym: 'hl', name: 'Hehtolitra', kerroin: 100 },
-            { sym: 'm³', name: 'Kuutiometri', kerroin: 1000 }, 
-            { sym: 'gal_us', name: 'Gallona (US)', kerroin: 3.78541 }, 
-            { sym: 'gal_uk', name: 'Gallona (UK)', kerroin: 4.54609 },
-            { sym: 'kannu', name: 'Kannu (vanha)', kerroin: 2.617 }, 
-            { sym: 'tuoppi', name: 'Tuoppi (vanha)', kerroin: 1.309 }, 
-            { sym: 'kortteli', name: 'Kortteli (vanha)', kerroin: 0.327 },
-            { sym: 'jumpru', name: 'Jumpru (vanha)', kerroin: 0.08175 },
-            { sym: 'kappa', name: 'Kappa (vanha)', kerroin: 4.58 }, 
-            { sym: 'tynnyri_neste', name: 'Tynnyri, neste (vanha)', kerroin: 125.6 },
-            { sym: 'aami', name: 'Aami (vanha)', kerroin: 157 },
-            { sym: 'tynnyri_kuiva', name: 'Tynnyri, kuiva (vanha)', kerroin: 146.5 }
-        ],
+        tilavuus: [ { sym: 'mm³', name: 'Kuutiomillimetri', kerroin: 0.000001 }, { sym: 'cm³', name: 'Kuutiosenttimetri', kerroin: 0.001 }, { sym: 'ml', name: 'Millilitra', kerroin: 0.001 }, { sym: 'cl', name: 'Senttilitra', kerroin: 0.01 }, { sym: 'dl', name: 'Desilitra', kerroin: 0.1 }, { sym: 'dm³', name: 'Kuutiodesimetri', kerroin: 1 }, { sym: 'l', name: 'Litra', kerroin: 1 }, { sym: 'hl', name: 'Hehtolitra', kerroin: 100 }, { sym: 'm³', name: 'Kuutiometri', kerroin: 1000 }, { sym: 'gal_us', name: 'Gallona (US)', kerroin: 3.78541 }, { sym: 'gal_uk', name: 'Gallona (UK)', kerroin: 4.54609 }, { sym: 'kannu', name: 'Kannu (vanha)', kerroin: 2.617 }, { sym: 'tuoppi', name: 'Tuoppi (vanha)', kerroin: 1.309 }, { sym: 'kortteli', name: 'Kortteli (vanha)', kerroin: 0.327 }, { sym: 'jumpru', name: 'Jumpru (vanha)', kerroin: 0.08175 }, { sym: 'kappa', name: 'Kappa (vanha)', kerroin: 4.58 }, { sym: 'tynnyri_neste', name: 'Tynnyri, neste (vanha)', kerroin: 125.6 }, { sym: 'aami', name: 'Aami (vanha)', kerroin: 157 }, { sym: 'tynnyri_kuiva', name: 'Tynnyri, kuiva (vanha)', kerroin: 146.5 } ],
         paine: [ { sym: 'Pa', name: 'Pascal', kerroin: 1 }, { sym: 'kPa', name: 'Kilopascal', kerroin: 1000 }, { sym: 'bar', name: 'Baari', kerroin: 100000 }, { sym: 'psi', name: 'PSI', kerroin: 6894.76 }, { sym: 'atm', name: 'Ilmakehä', kerroin: 101325 } ],
         energia: [ { sym: 'J', name: 'Joule', kerroin: 1 }, { sym: 'kJ', name: 'Kilojoule', kerroin: 1000 }, { sym: 'cal', name: 'Kalori', kerroin: 4.184 }, { sym: 'kcal', name: 'Kilokalori', kerroin: 4184 }, { sym: 'kWh', name: 'Kilowattitunti', kerroin: 3600000 } ],
         teho: [ { sym: 'W', name: 'Watti', kerroin: 1 }, { sym: 'kW', name: 'Kilowatti', kerroin: 1000 }, { sym: 'MW', name: 'Megawatti', kerroin: 1000000 }, { sym: 'hp', name: 'Hevosvoima', kerroin: 745.7 } ],
-        data: [ { sym: 'B', name: 'Tavu', kerroin: 1 }, { sym: 'KiB', name: 'Kibitavu', kerroin: 1024 }, { sym: 'MiB', name: 'Mebitavu', kerroin: 1024**2 }, { sym: 'GiB', name: 'Gibitavu', kerroin: 1024**3 }, { sym: 'TiB', name: 'Teratavu (TiB)', kerroin: 1024**4 } ],
+        data: [
+            // Kymmenjärjestelmä (SI)
+            { sym: 'B', name: 'Tavu (B)', kerroin: 1 },
+            { sym: 'kB', name: 'Kilotavu (kB)', kerroin: 10**3 },
+            { sym: 'MB', name: 'Megatavu (MB)', kerroin: 10**6 },
+            { sym: 'GB', name: 'Gigatavu (GB)', kerroin: 10**9 },
+            { sym: 'TB', name: 'Teratavu (TB)', kerroin: 10**12 },
+            { sym: 'PB', name: 'Petatavu (PB)', kerroin: 10**15 },
+            { sym: 'EB', name: 'Eksatavu (EB)', kerroin: 10**18 },
+            { sym: 'ZB', name: 'Tsettatavu (ZB)', kerroin: 10**21 },
+            { sym: 'YB', name: 'Jottatavu (YB)', kerroin: 10**24 },
+            // Binäärijärjestelmä (IEC)
+            { sym: 'KiB', name: 'Kibitavu (KiB)', kerroin: 1024**1 },
+            { sym: 'MiB', name: 'Mebitavu (MiB)', kerroin: 1024**2 },
+            { sym: 'GiB', name: 'Gibitavu (GiB)', kerroin: 1024**3 },
+            { sym: 'TiB', name: 'Tebitavu (TiB)', kerroin: 1024**4 },
+            { sym: 'PiB', name: 'Pebitavu (PiB)', kerroin: 1024**5 },
+            { sym: 'EiB', name: 'Eksbitavu (EiB)', kerroin: 1024**6 },
+            { sym: 'ZiB', name: 'Tsebitavu (ZiB)', kerroin: 1024**7 },
+            { sym: 'YiB', name: 'Jobitavu (YiB)', kerroin: 1024**8 }
+        ],
         kulma: [ { sym: 'deg', name: 'Aste', kerroin: 1 }, { sym: 'rad', name: 'Radiaani', kerroin: 57.2958 }, { sym: 'grad', name: 'Gooni', kerroin: 0.9 }, { sym: 'rev', name: 'Kierros', kerroin: 360 } ],
         typografia: [ { sym: 'px', name: 'Pikseli (px)'}, { sym: 'pt', name: 'Piste (pt)'}, { sym: 'em', name: 'em'}, { sym: 'rem', name: 'rem'} ]
     };
