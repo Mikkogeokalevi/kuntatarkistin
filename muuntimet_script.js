@@ -1,6 +1,6 @@
 /*
   MK MUUNTIMET
-  Versio 5.0 - Vakaa julkaisu
+  Versio 5.1 - Aika- ja Päivämäärälaskurien parannus
 */
 document.addEventListener('DOMContentLoaded', () => {
     // --- PERUSRAKENNE JA NAVIGAATIO ---
@@ -87,10 +87,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const alustaPaivamaaraLaskuri = () => {
         const container = document.getElementById('paivamaarat');
-        container.innerHTML = `<h4>Päivien erotus</h4><div class="muunnin-ryhma"><label for="date-start">Alkupäivä</label><input type="date" id="date-start"></div><div class="muunnin-ryhma"><label for="date-end">Loppupäivä</label><input type="date" id="date-end"></div><div id="date-diff-result" class="tulos-box" style="display: none;"></div><hr style="margin: 30px 0; border-color: var(--color-border);"><h4>Lisää / Vähennä päiviä</h4><div class="muunnin-ryhma"><label for="calc-date-start">Päivämäärä</label><input type="date" id="calc-date-start"></div><div class="muunnin-ryhma"><label for="calc-days">Päivien lukumäärä (+/-)</label><input type="number" id="calc-days" value="100"></div><div id="calc-date-result" class="tulos-box" style="display: none;"></div>`;
+        container.innerHTML = `<h4>Laske aikaväli</h4><div class="muunnin-ryhma"><label for="date-start">Alkaa</label><input type="datetime-local" id="date-start"></div><div class="muunnin-ryhma"><label for="date-end">Päättyy</label><input type="datetime-local" id="date-end"></div><div id="date-diff-result" class="tulos-box" style="display: none;"></div><hr style="margin: 30px 0; border-color: var(--color-border);"><h4>Laske päivämäärä</h4><div class="muunnin-ryhma"><label for="calc-date-start">Päivämäärä</label><input type="date" id="calc-date-start"></div><div class="muunnin-ryhma"><label for="calc-days">Päivien lukumäärä (+/-)</label><input type="number" id="calc-days" value="100"></div><div id="calc-date-result" class="tulos-box" style="display: none;"></div>`;
         const dateStart = document.getElementById('date-start'), dateEnd = document.getElementById('date-end'), diffResult = document.getElementById('date-diff-result');
         const calcDateStart = document.getElementById('calc-date-start'), calcDays = document.getElementById('calc-days'), calcResult = document.getElementById('calc-date-result');
-        const calculateDiff = () => { if(dateStart.value && dateEnd.value) { const start = new Date(dateStart.value), end = new Date(dateEnd.value), difference = Math.round((end - start) / 864e5); diffResult.textContent = `Erotus: ${difference} päivää`; diffResult.style.display = 'block'; }};
+        
+        function getPreciseDateDiff(d1, d2) {
+            let months = (d2.getFullYear() - d1.getFullYear()) * 12 + (d2.getMonth() - d1.getMonth());
+            let tempD1 = new Date(d1);
+            tempD1.setMonth(tempD1.getMonth() + months);
+            if (tempD1 > d2) {
+                months--;
+                tempD1.setMonth(tempD1.getMonth() - 1);
+            }
+            const remainingMs = d2 - tempD1;
+            const years = Math.floor(months / 12);
+            months %= 12;
+            const days = Math.floor(remainingMs / 864e5);
+            const hours = Math.floor((remainingMs % 864e5) / 36e5);
+            const minutes = Math.floor((remainingMs % 36e5) / 6e4);
+            const seconds = Math.floor((remainingMs % 6e4) / 1000);
+            return { years, months, days, hours, minutes, seconds };
+        }
+
+        const calculateDiff = () => {
+            if(dateStart.value && dateEnd.value) {
+                const start = new Date(dateStart.value);
+                const end = new Date(dateEnd.value);
+                if(start >= end) {
+                    diffResult.innerHTML = "Loppupäivän on oltava alkupäivän jälkeen.";
+                    diffResult.style.display = 'block';
+                    return;
+                }
+                const breakdown = getPreciseDateDiff(start, end);
+                const totalMs = end - start;
+                const totalDays = totalMs / 864e5;
+                const totalHours = totalMs / 36e5;
+                const totalMinutes = totalMs / 6e4;
+                const totalSeconds = totalMs / 1000;
+                
+                let breakdownHtml = `<strong>Tarkka erotus:</strong> ${breakdown.years}v, ${breakdown.months}kk, ${breakdown.days}pv, ${breakdown.hours}h, ${breakdown.minutes}min, ${breakdown.seconds}s`;
+                let totalsHtml = `<hr style="border-color: var(--color-border); margin: 10px 0;">
+                    <p style="margin: 5px 0;"><strong>Yhteensä päivinä:</strong> ${totalDays.toLocaleString('fi-FI', {maximumFractionDigits: 2})}</p>
+                    <p style="margin: 5px 0;"><strong>Yhteensä tunteina:</strong> ${totalHours.toLocaleString('fi-FI', {maximumFractionDigits: 2})}</p>
+                    <p style="margin: 5px 0;"><strong>Yhteensä minuutteina:</strong> ${totalMinutes.toLocaleString('fi-FI', {maximumFractionDigits: 0})}</p>
+                    <p style="margin: 5px 0;"><strong>Yhteensä sekunteina:</strong> ${totalSeconds.toLocaleString('fi-FI', {maximumFractionDigits: 0})}</p>`;
+                
+                diffResult.innerHTML = breakdownHtml + totalsHtml;
+                diffResult.style.display = 'block';
+            }
+        };
         const calculateDate = () => { if(calcDateStart.value && calcDays.value) { const start = new Date(calcDateStart.value), days = parseInt(calcDays.value, 10); start.setDate(start.getDate() + days); calcResult.textContent = `Tulos: ${start.toLocaleDateString('fi-FI')}`; calcResult.style.display = 'block'; }};
         [dateStart, dateEnd].forEach(el => el.addEventListener('input', calculateDiff));
         [calcDateStart, calcDays].forEach(el => el.addEventListener('input', calculateDate));
@@ -113,15 +158,9 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         fns.rot13.d = fns.rot13.e; fns.vigenere.e = (s, k) => fns.vigenere.run(s, k, false); fns.vigenere.d = (s, k) => fns.vigenere.run(s, k, true);
         const muunna = (source) => {
-            const typeVal = elements.type.value;
-            elements.vigenereWrapper.style.display = typeVal === 'vigenere' ? 'block' : 'none';
-            const fn = fns[typeVal];
-            const key = elements.vigenereKey.value;
-            if(source === 'input') {
-                elements.output.value = fn.e(elements.input.value, key);
-            } else {
-                elements.input.value = fn.d(elements.output.value, key);
-            }
+            const typeVal = elements.type.value; elements.vigenereWrapper.style.display = typeVal === 'vigenere' ? 'block' : 'none';
+            const fn = fns[typeVal]; const key = elements.vigenereKey.value;
+            if(source === 'input') { elements.output.value = fn.e(elements.input.value, key); } else { elements.input.value = fn.d(elements.output.value, key); }
         };
         elements.input.addEventListener('input', () => muunna('input'));
         elements.output.addEventListener('input', () => muunna('output'));
@@ -132,10 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const alustaTypografiaMuunnin = () => {
         const id = 'typografia'; const container = document.getElementById(id);
         container.innerHTML = `<div class="yksikko-muunnin">
-            <div class="muunnin-ryhma grid-item-arvo" style="grid-column: 1 / -1;">
-                <label for="typo-base">Perusfonttikoko (px)</label>
-                <input type="number" id="typo-base" value="16" style="max-width: 150px;">
-            </div>
+            <div class="muunnin-ryhma grid-item-arvo" style="grid-column: 1 / -1;"><label for="typo-base">Perusfonttikoko (px)</label><input type="number" id="typo-base" value="16" style="max-width: 150px;"></div>
             <div class="muunnin-ryhma grid-item-arvo"><label for="typografia-arvo">Arvo</label><input type="number" id="typografia-arvo" value="1"></div>
             <div class="muunnin-ryhma grid-item-tulos"><label for="typografia-tulos">Tulos</label><div class="input-wrapper"><input type="text" id="typografia-tulos" readonly><button class="copy-btn" title="Kopioi">📋</button></div></div>
             <div class="muunnin-ryhma grid-item-mista"><label for="typografia-yksikko-mista">Mistä</label><select id="typografia-yksikko-mista"></select></div>
@@ -160,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const alustaAikaMuunnin = () => {
         const container = document.getElementById('aika');
-        container.innerHTML = `<div class="muunnin-ryhma"><label for="aika-arvo">Arvo</label><input type="number" id="aika-arvo" value="1"></div><div class="muunnin-ryhma"><label for="aika-yksikko-mista">Yksikkö</label><select id="aika-yksikko-mista"></select></div><div id="aika-tulokset"></div>`;
+        container.innerHTML = `<div class="muunnin-ryhma"><label for="aika-arvo">Arvo</label><input type="number" id="aika-arvo" value="1"></div><div class="muunnin-ryhma"><label for="aika-yksikko-mista">Yksikkö</label><select id="aika-yksikko-mista"></select></div><div id="aika-tulokset" class="tulos-box"></div>`;
         const arvoInput = document.getElementById('aika-arvo'), yksikkoSelect = document.getElementById('aika-yksikko-mista'), tuloksetDiv = document.getElementById('aika-tulokset');
         yksikot.aika.forEach(y => yksikkoSelect.add(new Option(`${y.plural || y.name} (${y.sym})`, y.sym)));
         yksikkoSelect.value = 'h';
@@ -168,51 +204,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const arvo = parseFloat(arvoInput.value) || 0;
             const mistaKerroin = yksikot.aika.find(y => y.sym === yksikkoSelect.value)?.kerroin || 1;
             const sekunteina = arvo * mistaKerroin;
-            let html = '<div class="tulos-box" style="margin-bottom: 15px;"><strong>Yhteensä:</strong> ' + Math.floor(sekunteina/86400) + ' pv, ' + Math.floor((sekunteina%86400)/3600) + ' h, ' + Math.floor((sekunteina%3600)/60) + ' min ja ' + (sekunteina%60).toFixed(1) + ' s</div>';
-            yksikot.aika.slice().reverse().forEach(y => { html += `<p><strong>${y.plural || y.name}:</strong> ${(sekunteina / y.kerroin).toLocaleString('fi-FI', { maximumFractionDigits: 4 })} ${y.sym}</p>`; });
+            const d = Math.floor(sekunteina/86400), h = Math.floor((sekunteina%86400)/3600), m = Math.floor((sekunteina%3600)/60), s = sekunteina%60;
+            let html = `<p style="margin: 5px 0;"><strong>Yhteensä:</strong> ${d} pv, ${h} h, ${m} min ja ${s.toFixed(1)} s</p><hr style="border-color: var(--color-border); margin: 10px 0;">`;
+            yksikot.aika.slice().reverse().forEach(y => { html += `<p style="margin: 5px 0;"><strong>${y.plural || y.name}:</strong> ${(sekunteina / y.kerroin).toLocaleString('fi-FI', { maximumFractionDigits: 4 })} ${y.sym}</p>`; });
             tuloksetDiv.innerHTML = html;
         };
         [arvoInput, yksikkoSelect].forEach(el => el.addEventListener('input', laske));
         laske();
     };
 
-    const alustaLampotilaMuunnin = () => {
-        const id = 'lampotila'; const container = document.getElementById(id);
-        container.innerHTML = `<div class="yksikko-muunnin">
-            <div class="muunnin-ryhma grid-item-arvo"><label for="${id}-arvo">Arvo</label><input type="number" id="${id}-arvo" value="1"></div>
-            <div class="muunnin-ryhma grid-item-tulos"><label for="${id}-tulos">Tulos</label><div class="input-wrapper"><input type="text" id="${id}-tulos" readonly><button class="copy-btn" title="Kopioi">📋</button></div></div>
-            <div class="muunnin-ryhma grid-item-mista"><label for="${id}-yksikko-mista">Mistä</label><select id="${id}-yksikko-mista"></select></div>
-            <button class="swap-btn grid-item-swap" title="Vaihda">↔</button>
-            <div class="muunnin-ryhma grid-item-mihin"><label for="${id}-yksikko-mihin">Mihin</label><select id="${id}-yksikko-mihin"></select></div>
-        </div>`;
-        const arvoInput = document.getElementById(`${id}-arvo`), tulosInput = document.getElementById(`${id}-tulos`), mistaSelect = document.getElementById(`${id}-yksikko-mista`), mihinSelect = document.getElementById(`${id}-yksikko-mihin`), swapBtn = container.querySelector('.swap-btn'), copyBtn = container.querySelector('.copy-btn');
-        ['Celsius', 'Fahrenheit', 'Kelvin'].forEach(key => { mistaSelect.add(new Option(key, key)); mihinSelect.add(new Option(key, key)); });
-        mihinSelect.value = 'Fahrenheit';
-        const laske = () => { let arvo = parseFloat(arvoInput.value) || 0; let tulos; if (mistaSelect.value === 'Fahrenheit') arvo = (arvo - 32) * 5/9; else if (mistaSelect.value === 'Kelvin') arvo = arvo - 273.15; if (mihinSelect.value === 'Celsius') tulos = arvo; else if (mihinSelect.value === 'Fahrenheit') tulos = arvo * 9/5 + 32; else if (mihinSelect.value === 'Kelvin') tulos = arvo + 273.15; tulosInput.value = tulos.toLocaleString('fi-FI', { maximumFractionDigits: 2 }); };
-        swapBtn.addEventListener('click', () => { const temp = mistaSelect.selectedIndex; mistaSelect.selectedIndex = mihinSelect.selectedIndex; mihinSelect.selectedIndex = temp; laske(); });
-        copyBtn.addEventListener('click', () => { navigator.clipboard.writeText(tulosInput.value).then(() => { const originalText = copyBtn.textContent; copyBtn.textContent = '✅'; setTimeout(() => copyBtn.textContent = originalText, 1500); }); });
-        [arvoInput, mistaSelect, mihinSelect].forEach(el => el.addEventListener('input', laske));
-        laske();
-    };
-
-    const alustaPolttoaineMuunnin = () => {
-        const id = 'polttoaine'; const container = document.getElementById(id);
-        container.innerHTML = `<div class="yksikko-muunnin">
-            <div class="muunnin-ryhma grid-item-arvo"><label for="${id}-arvo">Arvo</label><input type="number" id="${id}-arvo" value="1"></div>
-            <div class="muunnin-ryhma grid-item-tulos"><label for="${id}-tulos">Tulos</label><div class="input-wrapper"><input type="text" id="${id}-tulos" readonly><button class="copy-btn" title="Kopioi">📋</button></div></div>
-            <div class="muunnin-ryhma grid-item-mista"><label for="${id}-yksikko-mista">Mistä</label><select id="${id}-yksikko-mista"></select></div>
-            <button class="swap-btn grid-item-swap" title="Vaihda">↔</button>
-            <div class="muunnin-ryhma grid-item-mihin"><label for="${id}-yksikko-mihin">Mihin</label><select id="${id}-yksikko-mihin"></select></div>
-        </div>`;
-        const arvoInput = document.getElementById(`${id}-arvo`), tulosInput = document.getElementById(`${id}-tulos`), mistaSelect = document.getElementById(`${id}-yksikko-mista`), mihinSelect = document.getElementById(`${id}-yksikko-mihin`), swapBtn = container.querySelector('.swap-btn'), copyBtn = container.querySelector('.copy-btn');
-        const units = [{sym:'l100km',name:'L/100km'},{sym:'mpg_us',name:'MPG (US)'},{sym:'mpg_uk',name:'MPG (UK)'}];
-        units.forEach(u => { mistaSelect.add(new Option(u.name, u.sym)); mihinSelect.add(new Option(u.name, u.sym)); });
-        mihinSelect.selectedIndex=1;
-        const laske=()=>{const arvo=parseFloat(arvoInput.value);if(isNaN(arvo)||arvo===0){tulosInput.value='0';return} const mista=mistaSelect.value,mihin=mihinSelect.value;let tulos;if(mista===mihin)tulos=arvo;else if(mista==='l100km'){if(mihin==='mpg_us')tulos=235.214/arvo;else tulos=282.481/arvo}else if(mista==='mpg_us'){if(mihin==='l100km')tulos=235.214/arvo;else tulos=arvo*1.20095}else{if(mihin==='l100km')tulos=282.481/arvo;else tulos=arvo/1.20095}tulosInput.value=tulos.toLocaleString('fi-FI',{maximumFractionDigits:2})};
-        swapBtn.addEventListener('click', () => { const temp = mistaSelect.selectedIndex; mistaSelect.selectedIndex = mihinSelect.selectedIndex; mihinSelect.selectedIndex = temp; laske(); });
-        copyBtn.addEventListener('click', () => { navigator.clipboard.writeText(tulosInput.value).then(() => { const originalText = copyBtn.textContent; copyBtn.textContent = '✅'; setTimeout(() => copyBtn.textContent = originalText, 1500); }); });
-        [arvoInput,mistaSelect,mihinSelect].forEach(el=>el.addEventListener('input',laske));laske();
-    };
+    const alustaLampotilaMuunnin = () => { alustaVakioMuunnin('lampotila', []); const id='lampotila'; const container=document.getElementById(id); const arvoInput=document.getElementById(`${id}-arvo`),tulosInput=document.getElementById(`${id}-tulos`),mistaSelect=document.getElementById(`${id}-yksikko-mista`),mihinSelect=document.getElementById(`${id}-yksikko-mihin`);mistaSelect.innerHTML = '';mihinSelect.innerHTML = '';['Celsius','Fahrenheit','Kelvin'].forEach(key=>{mistaSelect.add(new Option(key,key));mihinSelect.add(new Option(key,key))});mihinSelect.value='Fahrenheit';const laske=()=>{let arvo=parseFloat(arvoInput.value)||0;let tulos;if(mistaSelect.value==='Fahrenheit')arvo=(arvo-32)*5/9;else if(mistaSelect.value==='Kelvin')arvo=arvo-273.15;if(mihinSelect.value==='Celsius')tulos=arvo;else if(mihinSelect.value==='Fahrenheit')tulos=arvo*9/5+32;else if(mihinSelect.value==='Kelvin')tulos=arvo+273.15;tulosInput.value=tulos.toLocaleString('fi-FI',{maximumFractionDigits:2})};[arvoInput,mistaSelect,mihinSelect].forEach(el=>el.addEventListener('input',laske));laske(); };
+    const alustaPolttoaineMuunnin = () => { alustaVakioMuunnin('polttoaine', []); const id='polttoaine';const container=document.getElementById(id);const arvoInput=document.getElementById(`${id}-arvo`),tulosInput=document.getElementById(`${id}-tulos`),mistaSelect=document.getElementById(`${id}-yksikko-mista`),mihinSelect=document.getElementById(`${id}-yksikko-mihin`);mistaSelect.innerHTML = '';mihinSelect.innerHTML = '';const units=[{sym:'l100km',name:'L/100km'},{sym:'mpg_us',name:'MPG (US)'},{sym:'mpg_uk',name:'MPG (UK)'}];units.forEach(u=>{mistaSelect.add(new Option(u.name,u.sym));mihinSelect.add(new Option(u.name,u.sym))});mihinSelect.selectedIndex=1;const laske=()=>{const arvo=parseFloat(arvoInput.value);if(isNaN(arvo)||arvo===0){tulosInput.value='0';return}const mista=mistaSelect.value,mihin=mihinSelect.value;let tulos;if(mista===mihin)tulos=arvo;else if(mista==='l100km'){if(mihin==='mpg_us')tulos=235.214/arvo;else tulos=282.481/arvo}else if(mista==='mpg_us'){if(mihin==='l100km')tulos=235.214/arvo;else tulos=arvo*1.20095}else{if(mihin==='l100km')tulos=282.481/arvo;else tulos=arvo/1.20095}tulosInput.value=tulos.toLocaleString('fi-FI',{maximumFractionDigits:2})};[arvoInput,mistaSelect,mihinSelect].forEach(el=>el.addEventListener('input',laske));laske();};
 
     const alustaRoomalainenMuunnin = () => {
         const container = document.getElementById('roomalaiset');
