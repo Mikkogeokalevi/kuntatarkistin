@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MK Muuntimet</title>
     <style>
-        /* MK Muuntimet, Versio 2.8 - Korjattu mobiiliasettelu ja alustusbugi */
+        /* MK Muuntimet, Versio 2.9 - Kriittinen korjaus alustuslogiikkaan ja mobiilinavigaatioon */
         :root {
             --color-bg: #212529; --color-surface: #343A40; --color-card: #495057; 
             --color-border: #6c757d; --color-text-primary: #F8F9FA; --color-text-secondary: #adb5bd; 
@@ -120,7 +120,7 @@
     <script>
     /*
       MK MUUNTIMET
-      Versio 2.8 - Kriittinen korjaus muuntimien alustukseen
+      Versio 2.9 - Kriittinen korjaus muuntimien alustukseen ja mobiilinavigaatioon.
     */
     document.addEventListener('DOMContentLoaded', () => {
         // --- VÄLILEHTIEN LOGIIKKA ---
@@ -156,6 +156,7 @@
             mobiiliNav.add(option);
         });
         
+        // --- KOORDINAATTIMUUNNIN ---
         const alustaKoordinaattiMuunnin = () => {
             const container = document.getElementById('koordinaatit');
             container.innerHTML = `<div class="muunnin-ryhma"><label for="dd-input">Desimaaliasteet (DD)</label><input type="text" id="dd-input" placeholder="esim. 60.9814, 25.6601"></div><div class="muunnin-ryhma"><label for="ddm-input">Asteet & Desimaaliminuutit (DDM)</label><input type="text" id="ddm-input" placeholder="esim. N 60° 58.884' E 025° 39.606'"></div><div class="muunnin-ryhma"><label for="dms-input">Asteet, Minuutit & Sekunnit (DMS)</label><input type="text" id="dms-input" placeholder="esim. 60°58'53.0&quot;N 25°39'36.4&quot;E"></div>`;
@@ -175,6 +176,7 @@
             const muotoileDMS = (lat, lon) => { const f = (v,h1,h2) => { const deg=Math.floor(Math.abs(v)), min=Math.floor((Math.abs(v)-deg)*60), sec=(((Math.abs(v)-deg)*60-min)*60).toFixed(1); return `${deg}°${min}'${sec}"${v>=0?h1:h2}`; }; return `${f(lat,'N','S')} ${f(lon,'E','W')}`; };
         };
 
+        // --- YKSIKKÖMUUNTIMIEN DATA ---
         const yksikot = {
             pituus: [ { sym: 'mm', name: 'Millimetri', kerroin: 0.001 }, { sym: 'cm', name: 'Senttimetri', kerroin: 0.01 }, { sym: 'm', name: 'Metri', kerroin: 1 }, { sym: 'km', name: 'Kilometri', kerroin: 1000 }, { sym: 'in', name: 'Tuuma', kerroin: 0.0254 }, { sym: 'ft', name: 'Jalka', kerroin: 0.3048 }, { sym: 'yd', name: 'Jaardi', kerroin: 0.9144 }, { sym: 'mi', name: 'Maili', kerroin: 1609.34 }, { sym: 'nmi', name: 'Meripeninkulma', kerroin: 1852 }, { sym: 'fur', name: 'Virsta (furlong)', kerroin: 201.168 }, { sym: 'kyynärä', name: 'Kyynärä (vanha)', kerroin: 0.594 }, { sym: 'peninkulma', name: 'Peninkulma (vanha)', kerroin: 10688 } ],
             massa: [ { sym: 'mg', name: 'Milligramma', kerroin: 0.001 }, { sym: 'g', name: 'Gramma', kerroin: 1 }, { sym: 'kg', name: 'Kilogramma', kerroin: 1000 }, { sym: 't', name: 'Tonni', kerroin: 1000000 }, { sym: 'oz', name: 'Unssi', kerroin: 28.3495 }, { sym: 'lb', name: 'Naula (pauna)', kerroin: 453.592 }, { sym: 'st', name: 'Stone', kerroin: 6350.29 }, { sym: 'ct', name: 'Karaatti', kerroin: 0.2 } ],
@@ -302,11 +304,16 @@
 
         // Alustetaan kaikki muuntimet
         alustaKoordinaattiMuunnin();
-        Object.keys(yksikot).forEach(key => { if(key !== 'aika') alustaVakioMuunnin(key, yksikot[key]); });
-        alustaLampotilaMuunnin();
         alustaAikaMuunnin();
         alustaLukujarjestelmaMuunnin();
         alustaRoomalainenMuunnin();
+        alustaLampotilaMuunnin();
+        // Käydään loput läpi dynaamisesti
+        Object.keys(yksikot).forEach(key => {
+            if (!['aika'].includes(key)) { // Nämä alustettiin jo erikseen
+                alustaVakioMuunnin(key, yksikot[key]);
+            }
+        });
     });
     </script>
 </body>
