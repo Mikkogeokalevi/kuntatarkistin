@@ -1,11 +1,12 @@
 /*
   MIKKOKALEVIN KUNTATARKISTIN
-  Versio 29.4 - Monipuolinen haku (paikannimi, osoite, koordinaatit)
+  Versio 29.5 - Lisätty tuki DMS-koordinaattimuodolle (esim. Google Maps)
 */
 
 // --- VERSIOHISTORIAN DATA ---
 const versiohistoriaData = [
-    { versio: "29.4", kuvaus: ["Laajennettu Haku-välilehden toiminnallisuutta: haku toimii nyt koordinaattien lisäksi myös paikannimillä ja osoitteilla."] },
+    { versio: "29.5", kuvaus: ["Parannettu koordinaattien tunnistusta: lisätty tuki DMS-muodolle (esim. 60°56'06.3\"N...)."] },
+    { versio: "29.4", kuvaus: ["Laajennettu Haku-välilehden toiminnallisuutta paikannimillä ja osoitteilla."] },
     { versio: "29.3", kuvaus: ["Parannettu tulostietojen näyttöä: näytetään täysi osoite ja maakunta vain, jos ne ovat saatavilla."] },
     { versio: "29.2", kuvaus: ["Korjattu hakuehdotusten näkymiseen liittyvä CSS-ongelma iPhone-laitteilla."] },
     { versio: "29.1", kuvaus: ["Lisätty 'Täytyy käydä'-listalle tulostustoiminto."] },
@@ -46,9 +47,23 @@ const tuoTehtavalistaInput = document.getElementById('tuo-tehtavalista-input');
 const tehtavaHakuSpinner = document.getElementById('tehtava-haku-spinner');
 const tulostaTehtavalistaNappi = document.getElementById('tulosta-tehtavalista');
 
-// ... (kaikki globaalit muuttujat pysyvät ennallaan) ...
-let map, marker, currentTileLayer, etaisyysPisteet = [], etaisyysMarkerit = [], etaisyysViiva, sijaintiHistoria = [], kuntaloki = [], tehtavaLista = [], tehtavaMarkerit = [], kayttoTila = 'haku', viimeisinGpsSijainti = null, viimeisinTulosData = null, hakuAjastin;
+let map;
+let marker;
+let currentTileLayer;
+let etaisyysPisteet = [];
+let etaisyysMarkerit = [];
+let etaisyysViiva;
+let sijaintiHistoria = [];
+let kuntaloki = [];
+let tehtavaLista = [];
+let tehtavaMarkerit = [];
+let kayttoTila = 'haku';
+let viimeisinGpsSijainti = null;
+let viimeisinTulosData = null;
+let hakuAjastin;
+
 const MAX_ETAISYYS_PISTEET = 30;
+
 const tallennettuHistoria = localStorage.getItem('mk_kuntatarkistin_historia');
 if (tallennettuHistoria) sijaintiHistoria = JSON.parse(tallennettuHistoria);
 const tallennettuLoki = localStorage.getItem('mk_kuntatarkistin_loki');
@@ -56,7 +71,6 @@ if (tallennettuLoki) kuntaloki = JSON.parse(tallennettuLoki);
 const tallennettuTehtavalista = localStorage.getItem('mk_kuntatarkistin_tehtavalista');
 if (tallennettuTehtavalista) tehtavaLista = JSON.parse(tallennettuTehtavalista);
 
-// TAPAHTUMANKUUNTELIJAT
 document.addEventListener('DOMContentLoaded', () => {
     asetaTallennettuTeema();
     const tallennettuTyyli = localStorage.getItem('mk_kuntatarkistin_karttatyyli');
@@ -67,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 haeSijaintiNappi.addEventListener('click', haeGPSsijainti);
-naytaKoordinaatitNappi.addEventListener('click', haeManuaalisesti); // Tämä kutsuu nyt uutta älykkäämpää funktiota
+naytaKoordinaatitNappi.addEventListener('click', haeManuaalisesti);
 karttaTyyli.addEventListener('change', vaihdaKarttaTyyli);
 teemaValitsin.addEventListener('change', vaihdaTeema);
 tyhjennaPisteetNappi.addEventListener('click', tyhjennaEtaisyysPisteet);
@@ -84,8 +98,6 @@ vieTehtavalistaNappi.addEventListener('click', () => vieData(tehtavaLista, 'teht
 tuoTehtavalistaInput.addEventListener('change', (e) => tuoData(e, 'tehtavalista'));
 tulostaTehtavalistaNappi.addEventListener('click', tulostaTehtavalista);
 window.addEventListener('afterprint', () => { document.body.classList.remove('tulostus-tila'); });
-
-// ... (kaikki vanhat apufunktiot pysyvät ennallaan, paitsi haeManuaalisesti ja uusi haePaikannimella) ...
 
 let nappiaKasitelty = false;
 const handleKeskitys = (e) => {
@@ -113,7 +125,46 @@ function setButtonsDisabled(disabled) { haeSijaintiNappi.disabled = disabled; na
 function naytaViesti(viesti, tyyppi = 'info') { const div = document.createElement('div'); div.className = tyyppi === 'error' ? 'virhe-viesti' : 'onnistui-viesti'; div.textContent = viesti; document.body.appendChild(div); setTimeout(() => div.remove(), 4000); }
 function initMap() { map = L.map('kartta-container').setView([60.98, 25.66], 10); vaihdaKarttaTyyli(); map.on('click', onMapClick); }
 function vaihdaKarttaTyyli() { if (currentTileLayer) map.removeLayer(currentTileLayer); const tyyli = karttaTyyli.value; let uusiTaso; switch(tyyli) { case 'cartodb': uusiTaso = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap contributors &copy; CARTO' }); break; case 'satellite': uusiTaso = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri' }); break; case 'terrain': uusiTaso = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { attribution: 'Map data: &copy; OpenStreetMap, &copy; OpenTopoMap' }); break; default: uusiTaso = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }); } currentTileLayer = uusiTaso.addTo(map); localStorage.setItem('mk_kuntatarkistin_karttatyyli', tyyli); }
-function parseCoordinates(input) { input = input.trim(); const ddmRegex = /([ns])\s*(\d{1,3})[°\s]+([\d.]+)'?[\s,]*([ew])\s*(\d{1,3})[°\s]+([\d.]+)'?/i; const ddmMatch = input.match(ddmRegex); if (ddmMatch) { let lat_deg = parseFloat(ddmMatch[2]), lat_min = parseFloat(ddmMatch[3]), lat = lat_deg + lat_min / 60; if (ddmMatch[1].toUpperCase() === 'S') lat = -lat; let lon_deg = parseFloat(ddmMatch[5]), lon_min = parseFloat(ddmMatch[6]), lon = lon_deg + lon_min / 60; if (ddmMatch[4].toUpperCase() === 'W') lon = -lon; return { lat, lon }; } else { const parts = input.split(/[,;\s]/).filter(Boolean); if (parts.length === 2) { const lat = parseFloat(parts[0]), lon = parseFloat(parts[1]); if (!isNaN(lat) && !isNaN(lon)) return { lat, lon }; } } return null; }
+
+function parseCoordinates(input) {
+    input = input.trim();
+
+    // 1. Kokeillaan DMS-muotoa (Asteet, Minuutit, Sekunnit), esim. 60°56'06.3"N 25°59'47.3"E
+    const dmsRegex = /(\d{1,3})[°\s]+(\d{1,2})['\s]+([\d\.]+)"?\s*([ns])[\s,]+(\d{1,3})[°\s]+(\d{1,2})['\s]+([\d\.]+)"?\s*([ew])/i;
+    const dmsMatch = input.match(dmsRegex);
+    if (dmsMatch) {
+        let lat = parseFloat(dmsMatch[1]) + parseFloat(dmsMatch[2]) / 60 + parseFloat(dmsMatch[3]) / 3600;
+        if (dmsMatch[4].toUpperCase() === 'S') lat = -lat;
+
+        let lon = parseFloat(dmsMatch[5]) + parseFloat(dmsMatch[6]) / 60 + parseFloat(dmsMatch[7]) / 3600;
+        if (dmsMatch[8].toUpperCase() === 'W') lon = -lon;
+        
+        if (!isNaN(lat) && !isNaN(lon)) return { lat, lon };
+    }
+    
+    // 2. Kokeillaan DDM-muotoa, esim. N 60° 55.690' E 025° 59.412'
+    const ddmRegex = /([ns])\s*(\d{1,3})[°\s]+([\d.]+)'?[\s,]*([ew])\s*(\d{1,3})[°\s]+([\d.]+)'?/i;
+    const ddmMatch = input.match(ddmRegex);
+    if (ddmMatch) {
+        let lat_deg = parseFloat(ddmMatch[2]), lat_min = parseFloat(ddmMatch[3]), lat = lat_deg + lat_min / 60;
+        if (ddmMatch[1].toUpperCase() === 'S') lat = -lat;
+        let lon_deg = parseFloat(ddmMatch[5]), lon_min = parseFloat(ddmMatch[6]), lon = lon_deg + lon_min / 60;
+        if (ddmMatch[4].toUpperCase() === 'W') lon = -lon;
+        
+        if (!isNaN(lat) && !isNaN(lon)) return { lat, lon };
+    }
+    
+    // 3. Kokeillaan DD-muotoa, esim. 60.98, 25.66
+    const parts = input.replace(/,/g, ' ').split(/\s+/).filter(Boolean);
+    if (parts.length === 2) {
+        const lat = parseFloat(parts[0]);
+        const lon = parseFloat(parts[1]);
+        if (!isNaN(lat) && !isNaN(lon)) return { lat, lon };
+    }
+    
+    return null;
+}
+
 function formatCoordinatesToDDM(lat, lon) { const formatPart = (value, hemi1, hemi2) => { const hemisphere = value >= 0 ? hemi1 : hemi2; const absValue = Math.abs(value); const degrees = Math.floor(absValue); const minutes = (absValue - degrees) * 60; const paddedDegrees = (hemi1 === 'E') ? degrees.toString().padStart(3, '0') : degrees; return `${hemisphere} ${paddedDegrees}° ${minutes.toFixed(3)}'`; }; return `${formatPart(lat, 'N', 'S')} ${formatPart(lon, 'E', 'W')}`; }
 function luoKopioiNappi(teksti) { const nappi = document.createElement('button'); nappi.className = 'kopioi-nappi'; nappi.textContent = 'Kopioi'; nappi.onclick = () => { navigator.clipboard.writeText(teksti).then(() => naytaViesti('Kopioitu leikepöydälle!', 'success'), () => naytaViesti('Kopiointi epäonnistui', 'error')); }; return nappi; }
 function paivitaKaikkiListat() { paivitaHistoria(); paivitaLoki(); naytaTehtavalista(); naytaVersiohistoria(); }
@@ -123,57 +174,9 @@ function lisaaEtaisyyspiste(lat, lon) {if (etaisyysPisteet.length >= MAX_ETAISYY
 function tyhjennaEtaisyysPisteet() {etaisyysPisteet = [];etaisyysMarkerit.forEach(m => map.removeLayer(m));etaisyysMarkerit = [];if (etaisyysViiva) map.removeLayer(etaisyysViiva);etaisyysTulos.innerHTML = '';document.getElementById('etaisyys-pisteet').innerHTML = '<p>Klikkaa karttaa.</p>';}
 function vaihdaKayttoTila(uusiTila) {kayttoTila = uusiTila;if (uusiTila === 'haku') {tilaHakuNappi.classList.add('aktiivinen-tila');tilaEtaisyysNappi.classList.remove('aktiivinen-tila');etaisyysLaatikko.style.display = 'none';} else {tilaHakuNappi.classList.remove('aktiivinen-tila');tilaEtaisyysNappi.classList.add('aktiivinen-tila');etaisyysLaatikko.style.display = 'block';}}
 function haeGPSsijainti() {if (!("geolocation" in navigator)) return naytaViesti('GPS ei käytettävissä', 'error');setButtonsDisabled(true);tulosAlue.innerHTML = '<div class="lataus-spinner"></div><p style="text-align: center;">Haetaan GPS...</p>';navigator.geolocation.getCurrentPosition(onGPSSuccess, onGPSError, { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });}
-
-function haeManuaalisesti() {
-    const hakuTermi = koordinaatitInput.value.trim();
-    if (!hakuTermi) return;
-
-    // Yritetään ensin tulkita syöte koordinaatteina
-    const coords = parseCoordinates(hakuTermi);
-
-    if (coords) {
-        // Jos onnistui, käsitellään koordinaatteina
-        map.setView([coords.lat, coords.lon], 14);
-        paivitaSijaintitiedot(coords.lat, coords.lon, "Koordinaattihaku");
-    } else {
-        // Muuten käsitellään paikannimenä
-        haePaikannimella(hakuTermi);
-    }
-}
-
-async function haePaikannimella(paikannimi) {
-    setButtonsDisabled(true);
-    // Näytetään latausindikaattori päätulosalueella
-    tulosAlue.innerHTML = '<div class="lataus-spinner"></div><p style="text-align: center;">Haetaan paikkaa...</p>';
-    
-    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(paikannimi)}&format=json&countrycodes=fi&limit=1`;
-    
-    try {
-        const response = await fetch(url, { headers: { 'User-Agent': 'MikkokalevinKuntatarkistin/1.0' } });
-        if (!response.ok) throw new Error("Paikanhaku epäonnistui");
-
-        const data = await response.json();
-        if (data.length === 0) {
-            naytaViesti("Paikkaa ei löytynyt. Yritä tarkentaa hakua.", "error");
-            tulosAlue.innerHTML = '<p style="text-align: center;">Paikkaa ei löytynyt.</p>';
-            return;
-        }
-
-        const tulos = data[0];
-        const lat = parseFloat(tulos.lat);
-        const lon = parseFloat(tulos.lon);
-
-        map.setView([lat, lon], 13);
-        paivitaSijaintitiedot(lat, lon, tulos.display_name.split(',')[0].trim());
-
-    } catch (error) {
-        console.error("Virhe paikannimihaussa:", error);
-        naytaViesti("Paikanhaussa tapahtui virhe.", "error");
-    } finally {
-        setButtonsDisabled(false);
-    }
-}
-
+function haeManuaalisesti() {const hakuTermi = koordinaatitInput.value.trim();if (!hakuTermi) return;const coords = parseCoordinates(hakuTermi);if (coords) {map.setView([coords.lat, coords.lon], 14);paivitaSijaintitiedot(coords.lat, coords.lon, "Koordinaattihaku");} else {haePaikannimella(hakuTermi);}}
+async function haePaikannimella(paikannimi) {setButtonsDisabled(true);tulosAlue.innerHTML = '<div class="lataus-spinner"></div><p style="text-align: center;">Haetaan paikkaa...</p>';const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(paikannimi)}&format=json&countrycodes=fi&limit=1`;try {const response = await fetch(url, { headers: { 'User-Agent': 'MikkokalevinKuntatarkistin/1.0' } });if (!response.ok) throw new Error("Paikanhaku epäonnistui");const data = await response.json();if (data.length === 0) {naytaViesti("Paikkaa ei löytynyt. Yritä tarkentaa hakua.", "error");tulosAlue.innerHTML = '<p style="text-align: center;">Paikkaa ei löytynyt.</p>';return;}
+const tulos = data[0];const lat = parseFloat(tulos.lat);const lon = parseFloat(tulos.lon);map.setView([lat, lon], 13);paivitaSijaintitiedot(lat, lon, tulos.display_name.split(',')[0].trim());} catch (error) {console.error("Virhe paikannimihaussa:", error);naytaViesti("Paikanhaussa tapahtui virhe.", "error");} finally {setButtonsDisabled(false);}}
 function onGPSSuccess(position) {const { latitude: lat, longitude: lon } = position.coords;viimeisinGpsSijainti = [lat, lon];keskitaNappi.style.display = 'block';map.setView([lat, lon], 15);paivitaSijaintitiedot(lat, lon, "Oma sijainti");}
 function onMapClick(e) {const { lat, lng: lon } = e.latlng;if (kayttoTila === 'etaisyys') {lisaaEtaisyyspiste(lat, lon);} else {paivitaSijaintitiedot(lat, lon, "Klikattu sijainti");}}
 function keskitäKartta() {if (viimeisinGpsSijainti) {map.setView(viimeisinGpsSijainti, 15);naytaViesti("Kartta keskitetty!");} else {naytaViesti("Sijaintia ei haettu.", "error");}}
@@ -237,21 +240,16 @@ function lueURLJaAsetaSijainti() {if (window.location.hash) {try {const hash = d
 function vieData(data, tiedostonimi) { if (data.length === 0) { naytaViesti("Lista on tyhjä, ei mitään vietävää.", "error"); return; } const jsonString = JSON.stringify(data, null, 2); const blob = new Blob([jsonString], { type: "application/json;charset=utf-8" }); const linkki = document.createElement("a"); const url = URL.createObjectURL(blob); linkki.setAttribute("href", url); linkki.setAttribute("download", tiedostonimi); linkki.style.visibility = 'hidden'; document.body.appendChild(linkki); linkki.click(); document.body.removeChild(linkki); URL.revokeObjectURL(url); }
 function tuoData(event, tyyppi) { const tiedosto = event.target.files[0]; if (!tiedosto) return; const lukija = new FileReader(); lukija.onload = function(e) { try { const data = JSON.parse(e.target.result); if (tyyppi === 'loki') { if (confirm("Haluatko korvata nykyisen lokin tuodulla tiedolla?")) { kuntaloki = data; localStorage.setItem('mk_kuntatarkistin_loki', JSON.stringify(kuntaloki)); paivitaLoki(); naytaViesti("Kuntaloki tuotu onnistuneesti!", "success"); } } else if (tyyppi === 'tehtavalista') { if (confirm("Haluatko korvata nykyisen tehtävälistan tuodulla tiedolla?")) { tehtavaLista = data; tallennaJaPaivitaTehtavalista(); naytaViesti("Tehtävälista tuotu onnistuneesti!", "success"); } } } catch (error) { naytaViesti("Virheellinen tai korruptoitunut tiedosto.", "error"); } finally { event.target.value = null; } }; lukija.readAsText(tiedosto); }
 function tulostaTehtavalista() {
-    document.querySelectorAll('.piilota-tulostuksessa').forEach(el => el.classList.remove('piilota-tulostuksessa'));
     const kaikkiOsat = document.querySelectorAll('.teksti-alue > .huomio-laatikko');
     kaikkiOsat.forEach(osa => {
-        if (!osa.classList.contains('tulostettava-osio')) {
+        if (!osa.contains(valilehtiContainer)) {
             osa.classList.add('piilota-tulostuksessa');
         }
     });
-    valilehtiContainer.classList.add('piilota-tulostuksessa');
-    document.querySelector('#tehtavat .data-hallinta-container').classList.add('piilota-tulostuksessa');
-    document.querySelector('#loki .data-hallinta-container').classList.add('piilota-tulostuksessa');
-    document.querySelector('#historia button').classList.add('piilota-tulostuksessa');
-
     document.body.classList.add('tulostus-tila');
     window.print();
 }
 window.addEventListener('afterprint', () => {
     document.body.classList.remove('tulostus-tila');
+    document.querySelectorAll('.piilota-tulostuksessa').forEach(el => el.classList.remove('piilota-tulostuksessa'));
 });
