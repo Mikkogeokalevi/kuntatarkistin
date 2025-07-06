@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MK Muuntimet</title>
     <style>
-        /* MK Muuntimet, Versio 2.4 */
+        /* MK Muuntimet, Versio 2.5 */
         :root {
             --color-bg: #212529; --color-surface: #343A40; --color-card: #495057; 
             --color-border: #6c757d; --color-text-primary: #F8F9FA; --color-text-secondary: #adb5bd; 
@@ -111,7 +111,7 @@
     <script>
     /*
       MK MUUNTIMET
-      Versio 2.4 - Lisätty Teho-muunnin ja selvennetty datayksiköitä
+      Versio 2.5 - Lisätty Teho-muunnin ja korjattu aikamuuntimen kielioppi
     */
     document.addEventListener('DOMContentLoaded', () => {
         // --- VÄLILEHTIEN LOGIIKKA ---
@@ -137,8 +137,18 @@
             const ddInput = document.getElementById('dd-input');
             const ddmInput = document.getElementById('ddm-input');
             const dmsInput = document.getElementById('dms-input');
-            const paivitaKoordinaatit = (lat, lon, alkuperainenKentta) => { if (isNaN(lat) || isNaN(lon)) return; if (alkuperainenKentta !== 'dd') ddInput.value = `${lat.toFixed(6)}, ${lon.toFixed(6)}`; if (alkuperainenKentta !== 'ddm') ddmInput.value = muotoileDDM(lat, lon); if (alkuperainenKentta !== 'dms') dmsInput.value = muotoileDMS(lat, lon); };
-            const kasitteleKoordinaattiSyote = (e) => { const input = e.target.value; const kentta = e.target.id.split('-')[0]; const coords = parseKoordinaatit(input); if (coords) { paivitaKoordinaatit(coords.lat, coords.lon, kentta); }};
+            const paivitaKoordinaatit = (lat, lon, alkuperainenKentta) => {
+                if (isNaN(lat) || isNaN(lon)) return;
+                if (alkuperainenKentta !== 'dd') ddInput.value = `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+                if (alkuperainenKentta !== 'ddm') ddmInput.value = muotoileDDM(lat, lon);
+                if (alkuperainenKentta !== 'dms') dmsInput.value = muotoileDMS(lat, lon);
+            };
+            const kasitteleKoordinaattiSyote = (e) => {
+                const input = e.target.value;
+                const kentta = e.target.id.split('-')[0];
+                const coords = parseKoordinaatit(input);
+                if (coords) { paivitaKoordinaatit(coords.lat, coords.lon, kentta); }
+            };
             [ddInput, ddmInput, dmsInput].forEach(input => input.addEventListener('input', kasitteleKoordinaattiSyote));
             const parseKoordinaatit = (input) => {
                 input = input.trim();
@@ -163,7 +173,7 @@
             paine: [ { sym: 'Pa', name: 'Pascal', kerroin: 1 }, { sym: 'kPa', name: 'Kilopascal', kerroin: 1000 }, { sym: 'bar', name: 'Baari', kerroin: 100000 }, { sym: 'atm', name: 'Ilmakehä', kerroin: 101325 }, { sym: 'psi', name: 'PSI', kerroin: 6894.76 } ],
             energia: [ { sym: 'J', name: 'Joule', kerroin: 1 }, { sym: 'kJ', name: 'Kilojoule', kerroin: 1000 }, { sym: 'cal', name: 'Kalori', kerroin: 4.184 }, { sym: 'kcal', name: 'Kilokalori', kerroin: 4184 }, { sym: 'kWh', name: 'Kilowattitunti', kerroin: 3600000 } ],
             teho: [ { sym: 'W', name: 'Watti', kerroin: 1 }, { sym: 'kW', name: 'Kilowatti', kerroin: 1000 }, { sym: 'MW', name: 'Megawatti', kerroin: 1000000 }, { sym: 'hp', name: 'Hevosvoima', kerroin: 745.7 } ],
-            data: [ { sym: 'B', name: 'Tavu', kerroin: 1 }, { sym: 'KiB', name: 'Kilotavu (KiB)', kerroin: 1024 }, { sym: 'MiB', name: 'Megatavu (MiB)', kerroin: 1024**2 }, { sym: 'GiB', name: 'Gigatavu (GiB)', kerroin: 1024**3 }, { sym: 'TiB', name: 'Teratavu (TiB)', kerroin: 1024**4 } ],
+            data: [ { sym: 'B', name: 'Tavu', kerroin: 1 }, { sym: 'KiB', name: 'Kibitavu (1024 B)', kerroin: 1024 }, { sym: 'MiB', name: 'Mebitavu', kerroin: 1024**2 }, { sym: 'GiB', name: 'Gibitavu', kerroin: 1024**3 }, { sym: 'TiB', name: 'Tebitavu', kerroin: 1024**4 } ],
             kulma: [ { sym: 'deg', name: 'Aste', kerroin: 1 }, { sym: 'rad', name: 'Radiaani', kerroin: 57.2958 }, { sym: 'grad', name: 'Gooni', kerroin: 0.9 }, { sym: 'rev', name: 'Kierros', kerroin: 360 } ]
         };
 
@@ -186,6 +196,7 @@
             [arvoInput, mistaSelect, mihinSelect].forEach(el => el.addEventListener('input', laske));
             laske();
         };
+        
         const alustaLampotilaMuunnin = () => {
             document.getElementById('lampotila').innerHTML = luoVakioMuunninHTML('lampotila');
             const arvoInput = document.getElementById('lampotila-arvo');
@@ -206,6 +217,7 @@
             [arvoInput, mistaSelect, mihinSelect].forEach(el => el.addEventListener('input', laske));
             laske();
         };
+
         const alustaAikaMuunnin = () => {
             const container = document.getElementById('aika');
             container.innerHTML = `<div class="yksikko-muunnin"><div><label for="aika-arvo">Arvo</label><input type="number" id="aika-arvo" value="1"></div><div></div><div><label for="aika-yksikko-mista">Yksikkö</label><select id="aika-yksikko-mista"></select></div></div><div id="aika-tulokset" class="aika-tulos-laatikko"></div>`;
@@ -230,6 +242,7 @@
             [arvoInput, yksikkoSelect].forEach(el => el.addEventListener('input', laske));
             laske();
         };
+
         const alustaLukujarjestelmaMuunnin = () => {
             const container = document.getElementById('luvut');
             container.innerHTML = `
@@ -250,9 +263,14 @@
                 });
             });
         };
+        
         const alustaRoomalainenMuunnin = () => {
             const container = document.getElementById('roomalaiset');
-            container.innerHTML = `<div class="yksikko-muunnin"><div><label for="rooma-arabialainen">Numero</label><input type="number" id="rooma-arabialainen" placeholder="esim. 1984"></div><div class="nuoli">&harr;</div><div><label for="rooma-roomalainen">Roomalainen numero</label><input type="text" id="rooma-roomalainen" placeholder="esim. MCMLXXXIV"></div></div>`;
+            container.innerHTML = `<div class="yksikko-muunnin">
+                <div><label for="rooma-arabialainen">Numero</label><input type="number" id="rooma-arabialainen" placeholder="esim. 1984"></div>
+                <div class="nuoli">&harr;</div>
+                <div><label for="rooma-roomalainen">Roomalainen numero</label><input type="text" id="rooma-roomalainen" placeholder="esim. MCMLXXXIV"></div>
+            </div>`;
             const arabInput = document.getElementById('rooma-arabialainen');
             const roomaInput = document.getElementById('rooma-roomalainen');
             const arabToRoman = (num) => { if (isNaN(num) || num < 1 || num > 3999) return ''; const map = { M: 1000, CM: 900, D: 500, CD: 400, C: 100, XC: 90, L: 50, XL: 40, X: 10, IX: 9, V: 5, IV: 4, I: 1 }; let result = ''; for (let key in map) { while (num >= map[key]) { result += key; num -= map[key]; } } return result; };
@@ -271,6 +289,7 @@
         alustaVakioMuunnin('tilavuus', yksikot.tilavuus);
         alustaVakioMuunnin('paine', yksikot.paine);
         alustaVakioMuunnin('energia', yksikot.energia);
+        alustaVakioMuunnin('teho', yksikot.teho);
         alustaVakioMuunnin('data', yksikot.data);
         alustaVakioMuunnin('kulma', yksikot.kulma);
         alustaAikaMuunnin();
