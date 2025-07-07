@@ -1,0 +1,164 @@
+{
+    "pituus": [
+        { "sym": "mm", "name": "Millimetri", "kerroin": 0.001, "selite": "Metrin tuhannesosa. Yleinen teknisissä piirustuksissa ja pienten esineiden mittaamisessa." },
+        { "sym": "cm", "name": "Senttimetri", "kerroin": 0.01, "selite": "Metrin sadasosa. Arkikäytössä yleinen pituusmitta." },
+        { "sym": "m", "name": "Metri", "kerroin": 1, "selite": "SI-järjestelmän pituuden perusyksikkö. Määritelty etäisyydeksi, jonka valo kulkee tyhjiössä 1/299 792 458 sekunnissa." },
+        { "sym": "km", "name": "Kilometri", "kerroin": 1000, "selite": "1000 metriä. Yleinen etäisyyksien ja matkojen yksikkö." },
+        { "sym": "in", "name": "Tuuma (eng.)", "kerroin": 0.0254, "selite": "Standardi englantilainen tuuma (international inch). Käytössä laajasti Yhdysvalloissa ja Isossa-Britanniassa. Tarkalleen 2.54 cm." },
+        { "sym": "ft", "name": "Jalka (eng.)", "kerroin": 0.3048, "selite": "Standardi englantilainen jalka (international foot), 12 tuumaa. Yleinen pituusyksikkö mm. ilmailussa ja rakentamisessa." },
+        { "sym": "yd", "name": "Jaardi (eng.)", "kerroin": 0.9144, "selite": "3 jalkaa eli 36 tuumaa. Käytetään mm. tekstiili- ja rakennusaloilla, ja amerikkalaisessa jalkapallossa." },
+        { "sym": "mi", "name": "Maili (eng.)", "kerroin": 1609.34, "selite": "1760 jaardia. Yleinen tie-etäisyyksien mitta Yhdysvalloissa ja Isossa-Britanniassa." },
+        { "sym": "dm", "name": "Desimetri", "kerroin": 0.1, "tyyppi": "harvinainen", "selite": "Metrin kymmenesosa. Käytetään harvemmin, mutta esiintyy joissain yhteyksissä, kuten tilavuuden määrittelyssä (dm³ = litra)." },
+        { "sym": "dam", "name": "Dekametri", "kerroin": 10, "tyyppi": "harvinainen", "selite": "10 metriä. Harvinainen yksikkö arkikäytössä." },
+        { "sym": "hm", "name": "Hehtometri", "kerroin": 100, "tyyppi": "harvinainen", "selite": "100 metriä. Harvinainen yksikkö arkikäytössä." },
+        { "sym": "nmi", "name": "Meripeninkulma", "kerroin": 1852, "tyyppi": "harvinainen", "selite": "Merenkulussa ja ilmailussa käytetty pituusmitta, joka vastaa yhtä leveysasteen minuuttia maan pinnalla." },
+        { "sym": "fathom", "name": "Fathom (Syli, eng.)", "kerroin": 1.8288, "tyyppi": "harvinainen", "selite": "Erityisesti meren syvyyden mittaamiseen käytetty yksikkö, vastaa 6 jalkaa." },
+        { "sym": "ch", "name": "Chain (Ketju)", "kerroin": 20.1168, "tyyppi": "harvinainen", "selite": "Vanha englantilainen maanmittausyksikkö (66 jalkaa), yleinen vanhoissa kartoissa ja kiinteistöasiakirjoissa." },
+        { "sym": "fur", "name": "Furlong (Vakomitta)", "kerroin": 201.168, "tyyppi": "harvinainen", "selite": "Perinteinen kyntövaon pituus, 10 ketjua. Yhä käytössä hevosurheilussa etäisyyksien mittana." },
+        { "sym": "league", "name": "League (Peninkulma, eng.)", "kerroin": 4828.032, "tyyppi": "harvinainen", "selite": "Historiallinen matkan yksikkö, alun perin noin tunnin kävelymatka. Yleensä 3 mailia." },
+        { "sym": "syli", "name": "Syli (vanha)", "kerroin": 1.781, "tyyppi": "harvinainen", "selite": "Vanha suomalainen pituusmitta, joka perustui levitettyjen käsivarsien kärkien väliseen etäisyyteen." },
+        { "sym": "kyynärä", "name": "Kyynärä (vanha)", "kerroin": 0.5937, "tyyppi": "harvinainen", "selite": "Vanha suomalainen pituusmitta, joka vastasi etäisyyttä kyynärpäästä sormenpäihin." },
+        { "sym": "cubit", "name": "Cubit (Kyynärä, raam.)", "kerroin": 0.4572, "tyyppi": "harvinainen", "selite": "Muinainen pituusyksikkö, joka perustui kyynärvarren pituuteen. Yleinen historiallisissa ja uskonnollisissa teksteissä." },
+        { "sym": "pied", "name": "Kuninkaanjalka (Pied du roi)", "kerroin": 0.3248, "tyyppi": "harvinainen", "selite": "Ranskaa ennen metrijärjestelmää käytetty pituusmitta, joka oli hieman englantilaista jalkaa pidempi." },
+        { "sym": "A", "name": "Ångström", "kerroin": 0.0000000001, "tyyppi": "harvinainen", "selite": "Atomien ja molekyylien mittakaavassa käytetty pituusyksikkö, 0.1 nanometriä. Yleinen kemiassa ja fysiikassa." },
+        { "sym": "shaku", "name": "Shaku (Japani)", "kerroin": 0.303, "tyyppi": "harvinainen", "selite": "Perinteinen japanilainen pituusyksikkö, joka on peräisin Kiinasta. Käytetty arkkitehtuurissa ja puusepäntöissä." },
+        { "sym": "smoot", "name": "Smoot", "kerroin": 1.7018, "tyyppi": "harvinainen", "selite": "Leikkimielinen pituusyksikkö, joka perustuu Oliver R. Smootin pituuteen (n. 1.7 m). Käytetään Harvard Bridgen pituuden mittaamiseen." }
+    ],
+    "massa": [
+        { "sym": "g", "name": "Gramma", "kerroin": 1, "selite": "SI-järjestelmän massan perusyksikön tuhannesosa. Yleinen keittiössä ja laboratoriossa." },
+        { "sym": "kg", "name": "Kilogramma", "kerroin": 1000, "selite": "SI-järjestelmän massan perusyksikkö. Määritelty Planckin vakion avulla." },
+        { "sym": "t", "name": "Tonni", "kerroin": 1000000, "selite": "1000 kilogrammaa. Käytetään suurten massojen, kuten ajoneuvojen ja rahdin, yhteydessä." },
+        { "sym": "oz", "name": "Unssi", "kerroin": 28.3495, "selite": "Avoirdupois-järjestelmän painoyksikkö, 1/16 naulaa. Yleinen USA:ssa." },
+        { "sym": "lb", "name": "Naula (pauna)", "kerroin": 453.592, "selite": "Avoirdupois-naula, 16 unssia. Laajasti käytössä USA:ssa." },
+        { "sym": "st", "name": "Stone", "kerroin": 6350.29, "tyyppi": "harvinainen", "selite": "Brittiläinen painoyksikkö, 14 naulaa. Käytetään usein henkilön painon ilmoittamiseen." },
+        { "sym": "luoti", "name": "Luoti (vanha)", "kerroin": 13.28, "tyyppi": "harvinainen", "selite": "Vanha suomalainen painoyksikkö." },
+        { "sym": "leiviskä", "name": "Leiviskä (vanha)", "kerroin": 8500, "tyyppi": "harvinainen", "selite": "Vanha suomalainen painoyksikkö, 20 naulaa." },
+        { "sym": "dg", "name": "Desigramma", "kerroin": 0.1, "tyyppi": "harvinainen", "selite": "Gramman kymmenesosa." },
+        { "sym": "cg", "name": "Senttigramma", "kerroin": 0.01, "tyyppi": "harvinainen", "selite": "Gramman sadasosa." },
+        { "sym": "mg", "name": "Milligramma", "kerroin": 0.001, "tyyppi": "harvinainen", "selite": "Gramman tuhannesosa. Käytetään lääketieteessä ja kemiassa." },
+        { "sym": "µg", "name": "Mikrogramma", "kerroin": 0.000001, "tyyppi": "harvinainen", "selite": "Gramman miljoonasosa. Käytetään lääketieteessä ja biokemiassa." },
+        { "sym": "ng", "name": "Nanogramma", "kerroin": 0.000000001, "tyyppi": "harvinainen", "selite": "Gramman miljardisosa." },
+        { "sym": "dag", "name": "Dekagramma", "kerroin": 10, "tyyppi": "harvinainen", "selite": "10 grammaa. Yleinen keittiömitta joissain Euroopan maissa." },
+        { "sym": "hg", "name": "Hehtogramma", "kerroin": 100, "tyyppi": "harvinainen", "selite": "100 grammaa." },
+        { "sym": "Mg", "name": "Megagramma", "kerroin": 1000000, "tyyppi": "harvinainen", "selite": "Miljoona grammaa, sama kuin tonni." },
+        { "sym": "Gg", "name": "Gigagramma", "kerroin": 1000000000, "tyyppi": "harvinainen", "selite": "Miljardi grammaa, sama kuin kilotonni." },
+        { "sym": "ct", "name": "Karaatti", "kerroin": 0.2, "tyyppi": "harvinainen", "selite": "Jalokivien, kuten timanttien, painoyksikkö. Tarkalleen 0.2 grammaa." },
+        { "sym": "pood", "name": "Puuta (Pood)", "kerroin": 16380.5, "tyyppi": "harvinainen", "selite": "Vanha venäläinen painoyksikkö, noin 16.4 kg. Käytetty mm. kahvikuissa ja tykinkuulissa." },
+        { "sym": "kin", "name": "Kin (Japani)", "kerroin": 600, "tyyppi": "harvinainen", "selite": "Japanilainen painoyksikkö, perinteisesti 600 grammaa. Vastaa 'Catty'-yksikköä." },
+        { "sym": "jin", "name": "Jin (Kiina)", "kerroin": 500, "tyyppi": "harvinainen", "selite": "Moderni kiinalainen painoyksikkö, tarkalleen 500 grammaa. Vastaa 'Catty'-yksikköä." }
+    ],
+    "data": [
+        { "sym": "B", "name": "Tavu (B)", "kerroin": 1, "selite": "Datan perusyksikkö, tyypillisesti 8 bittiä. Voi edustaa yhtä merkkiä." },
+        { "sym": "kB", "name": "Kilotavu (kB)", "kerroin": 1000, "selite": "1000 tavua. Käytetään tiedostojen kokojen ilmoittamiseen (SI-standardi)." },
+        { "sym": "MB", "name": "Megatavu (MB)", "kerroin": 1000000, "selite": "Miljoona tavua. Yleinen yksikkö esimerkiksi valokuville ja musiikille." },
+        { "sym": "GB", "name": "Gigatavu (GB)", "kerroin": 1000000000, "selite": "Miljardi tavua. Yleinen yksikkö tallennuslaitteille, kuten muistitikuille ja kiintolevyille." },
+        { "sym": "TB", "name": "Teratavu (TB)", "kerroin": 1000000000000, "selite": "Biljoona (tuhat miljardia) tavua. Yleinen suurten kiintolevyjen ja datakeskusten yksikkö." },
+        { "sym": "KiB", "name": "Kibitavu (KiB)", "kerroin": 1024, "tyyppi": "harvinainen", "selite": "Binäärinen vastine kilotavulle (2^10 = 1024 tavua). Käytössä ohjelmoinnissa ja käyttöjärjestelmissä." },
+        { "sym": "MiB", "name": "Mebitavu (MiB)", "kerroin": 1048576, "tyyppi": "harvinainen", "selite": "Binäärinen vastine megatavulle (2^20 tavua). Käytetään tarkassa muistin määrän ilmoittamisessa." },
+        { "sym": "GiB", "name": "Gibitavu (GiB)", "kerroin": 1073741824, "tyyppi": "harvinainen", "selite": "Binäärinen vastine gigatavulle (2^30 tavua). Esim. Windows näyttää kiintolevyn koon gibitavuina, vaikka myyntipakkaus käyttää gigatavuja." },
+        { "sym": "TiB", "name": "Tebitavu (TiB)", "kerroin": 1099511627776, "tyyppi": "harvinainen", "selite": "Binäärinen vastine teratavulle (2^40 tavua)." },
+        { "sym": "PB", "name": "Petatavu (PB)", "kerroin": 1000000000000000, "tyyppi": "harvinainen", "selite": "Tuhat teratavua. Käytetään suurimpien datakeskusten ja tieteellisen datan yhteydessä." },
+        { "sym": "EB", "name": "Eksatavu (EB)", "kerroin": 1000000000000000000, "tyyppi": "harvinainen", "selite": "Miljoona teratavua. Kuvaa globaalin internet-liikenteen mittakaavaa." },
+        { "sym": "ZB", "name": "Tsettatavu (ZB)", "kerroin": 1000000000000000000000, "tyyppi": "harvinainen", "selite": "Miljardi teratavua. Kuvaa koko maailman digitaalisen datan määrää." },
+        { "sym": "YB", "name": "Jottatavu (YB)", "kerroin": 1000000000000000000000000, "tyyppi": "harvinainen", "selite": "Biljoona teratavua. Teoreettinen yksikkö tulevaisuuden datamäärille." },
+        { "sym": "PiB", "name": "Pebitavu (PiB)", "kerroin": 1125899906842624, "tyyppi": "harvinainen", "selite": "Binäärinen vastine petatavulle (2^50 tavua)." },
+        { "sym": "EiB", "name": "Eksbitavu (EiB)", "kerroin": 1152921504606846976, "tyyppi": "harvinainen", "selite": "Binäärinen vastine eksatavulle (2^60 tavua)." },
+        { "sym": "ZiB", "name": "Tsebitavu (ZiB)", "kerroin": 1180591620717411303424, "tyyppi": "harvinainen", "selite": "Binäärinen vastine tsettatavulle (2^70 tavua)." },
+        { "sym": "YiB", "name": "Jobitavu (YiB)", "kerroin": 1208925819614629174706176, "tyyppi": "harvinainen", "selite": "Binäärinen vastine jottatavulle (2^80 tavua)." }
+    ],
+    "apteekkari_massa": [
+        { "sym": "gr", "name": "Grain (Jyvä)", "kerroin": 0.0647989, "selite": "Perusyksikkö, johon monet historialliset painojärjestelmät perustuvat." },
+        { "sym": "scruple", "name": "Scruple (Skruple)", "kerroin": 1.29598, "selite": "Vanha apteekkarien käyttämä painoyksikkö, vastaa 20 jyvää." },
+        { "sym": "dram_ap", "name": "Dram, apteekkarin", "kerroin": 3.88793, "selite": "Apteekkarin drakma, vastaa 3 skruplea tai 60 jyvää." },
+        { "sym": "oz_ap", "name": "Ounce, apteekkarin", "kerroin": 31.1035, "selite": "Apteekkarin unssi, 8 drakmaa tai 480 jyvää. Vastaa kooltaan Troy-unssia." },
+        { "sym": "lb_ap", "name": "Pound, apteekkarin", "kerroin": 373.242, "selite": "Apteekkarin naula, 12 apteekkarin unssia. Kevyempi kuin tavallinen naula." }
+    ],
+    "pinta_ala": [
+        { "sym": "cm²", "name": "Neliösenttimetri", "kerroin": 0.0001, "selite": "Pinta-ala, jonka sivut ovat 1 cm x 1 cm." },
+        { "sym": "m²", "name": "Neliömetri", "kerroin": 1, "selite": "Pinta-alan SI-perusyksikkö. Neliö, jonka sivut ovat 1 m x 1 m." },
+        { "sym": "ha", "name": "Hehtaari", "kerroin": 10000, "selite": "100 aaria tai 10 000 m². Yleinen yksikkö maa- ja metsätaloudessa." },
+        { "sym": "km²", "name": "Neliökilometri", "kerroin": 1000000, "selite": "Neliö, jonka sivut ovat 1 km x 1 km. Käytetään suurten alueiden, kuten maiden, pinta-alojen ilmoittamiseen." },
+        { "sym": "in²", "name": "Neliötuuma", "kerroin": 0.00064516, "selite": "Neliö, jonka sivu on 1 tuuma." },
+        { "sym": "ft²", "name": "Neliöjalka", "kerroin": 0.092903, "selite": "Neliö, jonka sivu on 1 jalka. Yleinen rakennusalalla USA:ssa." },
+        { "sym": "ac", "name": "Eekkeri", "kerroin": 4046.86, "selite": "Yleinen maan pinta-alan yksikkö englanninkielisissä maissa. Noin 40% hehtaarista." },
+        { "sym": "a", "name": "Aari", "kerroin": 100, "tyyppi": "harvinainen", "selite": "100 neliömetriä. Neliö, jonka sivut ovat 10 m x 10 m." },
+        { "sym": "rood", "name": "Rood", "kerroin": 1011.71, "tyyppi": "harvinainen", "selite": "Neljäsosa eekkeriä, vanha englantilainen maanmittayksikkö." },
+        { "sym": "sq_perch", "name": "Square perch", "kerroin": 25.2929, "tyyppi": "harvinainen", "selite": "Vanha maanmittauksen perusyksikkö." },
+        { "sym": "barn", "name": "Lato (Barn)", "kerroin": 0.0000000000000000000000000001, "tyyppi": "harvinainen", "selite": "Ydinfysiikan poikkipinta-alan yksikkö. Käytetään kuvaamaan todennäköisyyttä tietylle vuorovaikutukselle. Yksi lato on n. atomiytimen poikkipinta-ala." }
+    ],
+    "tilavuus": [
+        { "sym": "ml", "name": "Millilitra", "kerroin": 0.001, "selite": "Litran tuhannesosa. Sama kuin kuutiosenttimetri (cm³)." },
+        { "sym": "cl", "name": "Senttilitra", "kerroin": 0.01, "selite": "Litran sadasosa. Yleinen juoma-annosten kokona." },
+        { "sym": "dl", "name": "Desilitra", "kerroin": 0.1, "selite": "Litran kymmenesosa. Yleinen ruoanlaitossa." },
+        { "sym": "l", "name": "Litra", "kerroin": 1, "selite": "Yleinen tilavuuden yksikkö, vastaa kuutiodesimetriä (dm³)." },
+        { "sym": "m³", "name": "Kuutiometri", "kerroin": 1000, "selite": "Tilavuuden SI-perusyksikkö. Kuutio, jonka sivut ovat 1 m x 1 m x 1 m." },
+        { "sym": "tl", "name": "Teelusikka", "kerroin": 0.005, "selite": "Epävirallinen keittiömitta, standardoitu 5 ml:ksi." },
+        { "sym": "rkl", "name": "Ruokalusikka", "kerroin": 0.015, "selite": "Epävirallinen keittiömitta, 3 teelusikkaa eli 15 ml." },
+        { "sym": "cup_us", "name": "Cup (US)", "kerroin": 0.236588, "selite": "Amerikkalainen keittiömitta, n. 2.4 dl." },
+        { "sym": "gal_us", "name": "Gallona (US)", "kerroin": 3.78541, "selite": "Amerikkalainen nestemitta, 4 kvarttia eli 128 nesteunssia." },
+        { "sym": "peck_uk", "name": "Peck (UK)", "kerroin": 9.09218, "tyyppi": "harvinainen", "selite": "Vanha brittiläinen kuivan aineen mitta, 2 gallonaa." },
+        { "sym": "bushel_uk", "name": "Bushel (UK)", "kerroin": 36.36872, "tyyppi": "harvinainen", "selite": "Yleinen viljan mitta, 8 gallonaa." },
+        { "sym": "hogshead", "name": "Hogshead (tynnyri)", "kerroin": 238.66, "tyyppi": "harvinainen", "selite": "Suuri historiallinen tynnyrimitta, jonka koko vaihteli juoman ja aikakauden mukaan." },
+        { "sym": "kannu", "name": "Kannu (vanha)", "kerroin": 2.617, "tyyppi": "harvinainen", "selite": "Vanha suomalainen tilavuusmitta, kaksi tuoppia." },
+        { "sym": "koku", "name": "Koku (Japani)", "kerroin": 180.39, "tyyppi": "harvinainen", "selite": "Historiallinen japanilainen riisin tilavuusmitta, n. 180 litraa. Edusti yhden ihmisen vuodessa syömää riisimäärää." },
+        { "sym": "board_foot", "name": "Lankkujalka", "kerroin": 2.35974, "tyyppi": "harvinainen", "selite": "Puutavaran tilavuuden mittayksikkö (1 jalka x 1 jalka x 1 tuuma). Käytössä Pohjois-Amerikassa." }
+    ],
+    "voima": [
+        { "sym": "N", "name": "Newton", "kerroin": 1, "selite": "Voiman SI-perusyksikkö. Voima, joka antaa 1 kg massalle 1 m/s² kiihtyvyyden." },
+        { "sym": "dyn", "name": "Dyne", "kerroin": 0.00001, "tyyppi": "harvinainen", "selite": "Vanhan CGS-järjestelmän voiman yksikkö. Voima, joka antaa 1 g massalle 1 cm/s² kiihtyvyyden." },
+        { "sym": "pdl", "name": "Poundal", "kerroin": 0.138255, "tyyppi": "harvinainen", "selite": "Vanha brittiläinen absoluuttisen järjestelmän voiman yksikkö. Voima, joka antaa 1 naulan massalle 1 ft/s² kiihtyvyyden." }
+    ],
+    "nopeus": [
+        { "sym": "m/s", "name": "Metriä/s", "kerroin": 1, "selite": "Nopeuden SI-perusyksikkö." },
+        { "sym": "km/h", "name": "Kilometriä/h", "kerroin": 0.277778, "selite": "Yleinen nopeusyksikkö tieliikenteessä." },
+        { "sym": "mph", "name": "Mailia/h", "kerroin": 0.44704, "selite": "Nopeusyksikkö englanninkielisissä maissa (miles per hour)." },
+        { "sym": "kn", "name": "Solmu", "kerroin": 0.514444, "selite": "Merenkulun ja ilmailun nopeusyksikkö, yksi meripeninkulma tunnissa." },
+        { "sym": "c", "name": "Valonnopeus (c)", "kerroin": 299792458, "tyyppi": "harvinainen", "selite": "Suurin mahdollinen nopeus, jolla informaatio voi edetä tyhjiössä." }
+    ],
+    "aika": [
+        { "sym": "ms", "name": "Millisekunti", "plural": "Millisekunteina", "kerroin": 0.001, "selite": "Sekunnin tuhannesosa." },
+        { "sym": "s", "name": "Sekunti", "plural": "Sekunteina", "kerroin": 1, "selite": "Ajan SI-perusyksikkö." },
+        { "sym": "min", "name": "Minuutti", "plural": "Minuutteina", "kerroin": 60, "selite": "60 sekuntia." },
+        { "sym": "h", "name": "Tunti", "plural": "Tunteina", "kerroin": 3600, "selite": "60 minuuttia." },
+        { "sym": "d", "name": "Päivä", "plural": "Päivinä", "kerroin": 86400, "selite": "24 tuntia." },
+        { "sym": "vk", "name": "Viikko", "plural": "Viikkoina", "kerroin": 604800, "selite": "7 päivää." }
+    ],
+    "ruoanlaitto": [
+        { "name": "Vehnäjauho", "g_per_dl": 65 }, { "name": "Sokeri, hieno", "g_per_dl": 85 }, { "name": "Suola, hieno", "g_per_dl": 120 },
+        { "name": "Kaakaojauhe", "g_per_dl": 40 }, { "name": "Vesi / Maito", "g_per_dl": 100 }, { "name": "Öljy", "g_per_dl": 90 },
+        { "name": "Riisi, keittämätön", "g_per_dl": 85 }, { "name": "Kaurahiutale", "g_per_dl": 35 }
+    ],
+    "typografia": [
+        { "sym": "px", "name": "Pikseli (px)", "selite": "Näytön pienin kuvapiste, web-suunnittelun perusyksikkö. Sen fyysinen koko riippuu näytön resoluutiosta."},
+        { "sym": "pt", "name": "Piste (pt)", "selite": "Perinteinen painotuotteiden yksikkö. Standardoitu 1/72 tuumaksi."},
+        { "sym": "em", "name": "em", "selite": "Suhteellinen yksikkö, joka vastaa elementin omaa perittyä fonttikokoa. Jos fonttikoko on 16px, 2em on 32px."},
+        { "sym": "rem", "name": "rem", "selite": "Suhteellinen yksikkö, joka vastaa dokumentin juurielementin (html) fonttikokoa. Helpottaa skaalautuvien asettelujen luomista."},
+        { "sym": "cic", "name": "Cicero", "tyyppi": "harvinainen", "selite": "Eurooppalainen typografian yksikkö, n. 12 Didot-pistettä. Perinteinen ranskalainen vastine Pica-yksikölle."}
+    ],
+    "paine": [
+        { "sym": "Pa", "name": "Pascal", "kerroin": 1, "selite": "Paineen SI-perusyksikkö. Vastaa yhden newtonin voimaa neliömetrin alalla." },
+        { "sym": "kPa", "name": "Kilopascal", "kerroin": 1000, "selite": "1000 Pascalia. Yleinen sää- ja ilmanpainetiedoissa." },
+        { "sym": "bar", "name": "Baari", "kerroin": 100000, "selite": "Noin yksi ilmakehän paine. Käytetään yleisesti paineen mittauksessa, esim. renkaissa." },
+        { "sym": "psi", "name": "PSI", "kerroin": 6894.76, "selite": "Paunaa per neliötuuma (Pounds per Square Inch). Yleinen yksikkö USA:ssa." },
+        { "sym": "atm", "name": "Ilmakehä", "kerroin": 101325, "selite": "Normaali ilmanpaine merenpinnan tasolla. Standardoitu vertailuarvo." }
+    ],
+    "energia": [
+        { "sym": "J", "name": "Joule", "kerroin": 1, "selite": "Energian SI-perusyksikkö." },
+        { "sym": "kJ", "name": "Kilojoule", "kerroin": 1000, "selite": "1000 Joulea. Yleinen ravintoenergian merkintätapa SI-järjestelmässä." },
+        { "sym": "cal", "name": "Kalori", "kerroin": 4.184, "selite": "Vanha energian yksikkö, erityisesti lämpöopissa. Energiamäärä, joka lämmittää 1g vettä 1°C." },
+        { "sym": "kcal", "name": "Kilokalori", "kerroin": 4184, "selite": "Ravintoenergian yleinen yksikkö, puhekielessä usein 'kalori'. Vastaa 1000 kaloria." },
+        { "sym": "kWh", "name": "Kilowattitunti", "kerroin": 3600000, "selite": "Sähköenergian laskutusyksikkö. Tunnin ajan käytetty kilowatin teho." }
+    ],
+    "teho": [
+        { "sym": "W", "name": "Watti", "kerroin": 1, "selite": "Tehon SI-perusyksikkö. Vastaa yhtä joulea sekunnissa." },
+        { "sym": "kW", "name": "Kilowatti", "kerroin": 1000, "selite": "1000 Wattia. Yleinen sähkölaitteiden ja moottoreiden tehon yksikkö." },
+        { "sym": "MW", "name": "Megawatti", "kerroin": 1000000, "selite": "Miljoona Wattia. Käytetään voimalaitosten tehon ilmaisemiseen." },
+        { "sym": "hp", "name": "Hevosvoima", "kerroin": 745.7, "selite": "Historiallinen tehon yksikkö, joka perustuu hevosen arvioituun voimantuottoon. Yleinen autojen tehon ilmoittamisessa." }
+    ],
+    "kulma": [
+        { "sym": "deg", "name": "Aste", "kerroin": 1, "selite": "Ympyrän 360. osa. Yleisin kulman mittayksikkö." },
+        { "sym": "rad", "name": "Radiaani", "kerroin": 57.2958, "selite": "Kulma, jota vastaava kaari on säteen mittainen. Matemaattisesti ja fysiikassa perustavanlaatuinen yksikkö." },
+        { "sym": "grad", "name": "Gooni", "kerroin": 0.9, "selite": "Ympyrän 400. osa. Käytetään maanmittauksessa ja tykistössä, koska suora kulma on kätevästi 100 goonia." },
+        { "sym": "rev", "name": "Kierros", "kerroin": 360, "selite": "Täysi 360 asteen kierros. Käytetään pyörimisnopeuksien yhteydessä (RPM = kierrosta minuutissa)." }
+    ]
+}

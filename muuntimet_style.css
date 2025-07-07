@@ -1,4 +1,4 @@
-/* MK Muuntimet, Versio 6.5 - Korjattu mobiilinäkymän vaihtonappi */
+/* MK Muuntimet, Versio 11.0 - Sanasto-haku ja selitteet muuntimissa */
 :root {
     --color-bg: #212529; --color-surface: #343A40; --color-card: #495057; 
     --color-border: #6c757d; --color-text-primary: #F8F9FA; --color-text-secondary: #adb5bd; 
@@ -32,7 +32,7 @@ html, body {
     color: var(--color-text-primary); border-radius: 8px;
     font-family: monospace; font-size: 1em; transition: all 0.2s ease;
 }
-.muunnin-ryhma input:focus, .muunnin-ryhma select:focus, .muunnin-ryhma textarea:focus {
+.muunnin-ryhma input:focus, .muunnin-ryhma select:focus, .muunnin-ryhma textarea:focus, #sanasto-haku:focus {
     outline: none; border-color: var(--color-accent-yellow);
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-yellow) 25%, transparent);
 }
@@ -58,6 +58,41 @@ html, body {
 #mobile-menu-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; z-index: 1001; }
 #mobile-menu-toggle .bar { display: block; width: 25px; height: 3px; margin: 5px auto; background-color: var(--color-text-primary); transition: 0.4s; }
 
+.bmi-result-box {
+    padding: 20px; border-radius: 8px; margin-top: 20px; font-size: 1.2em;
+    font-weight: bold; text-align: center; color: var(--color-text-primary);
+    transition: background-color 0.5s ease;
+}
+.bmi-result-box span { display: block; font-size: 0.8em; font-weight: normal; margin-top: 5px; color: var(--color-text-secondary); }
+
+/* SANASTON TYYLIT */
+#sanasto-haku {
+    width: 100%; box-sizing: border-box; padding: 12px; margin-bottom: 20px;
+    background-color: var(--color-bg); border: 1px solid var(--color-border);
+    color: var(--color-text-primary); border-radius: 8px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 1em;
+}
+.yksikko-lista-osio { margin-bottom: 25px; }
+.yksikko-lista-osio h3 { color: var(--color-accent-yellow); border-bottom: 1px solid var(--color-border); padding-bottom: 5px; font-weight: 500;}
+.yksikko-lista-osio ul { list-style: none; padding-left: 0; }
+.yksikko-lista-osio li { background-color: var(--color-bg); padding: 10px; border-radius: 6px; margin-bottom: 8px; border-left: 3px solid var(--color-accent-green); }
+.yksikko-lista-osio li strong { color: var(--color-text-primary); }
+.yksikko-lista-osio li span { font-size: 0.9em; color: var(--color-text-secondary); display: block; margin-top: 4px; }
+
+/* MUUNTIMEN SELITELAATIKON TYYLIT */
+.selite-laatikko {
+    font-size: 0.85em; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--color-text-secondary); background-color: var(--color-bg);
+    padding: 10px; margin-top: 8px; border-radius: 6px;
+    border-left: 3px solid var(--color-accent-blue);
+    min-height: 1.5em;
+    transition: opacity 0.3s;
+}
+.selite-laatikko:empty { display: none; }
+.selite-laatikko strong { color: var(--color-text-primary); }
+
+
 @media screen and (max-width: 800px) {
     .sisalto-laatikko { margin: 10px auto; }
     .paaotsikko { font-size: 1.5em; }
@@ -66,13 +101,8 @@ html, body {
     .valilehdet.active-menu-class { display: flex; }
     .valilehdet .valilehti-nappi { width: 100%; text-align: left; padding: 12px 15px; border-bottom: 1px solid var(--color-border); }
     
-    .yksikko-muunnin {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
+    .yksikko-muunnin { display: flex; flex-direction: column; gap: 15px; }
     .muunnin-ryhma { margin-bottom: 0; }
-    /* TÄMÄ ON KORJATTU KOHTA: Sääntö koskee nyt vain muunnin-ryhmiä, ei vaihtonappia */
     .yksikko-muunnin > .muunnin-ryhma { width: 100%; } 
     
     .grid-item-arvo   { order: 1; }
