@@ -1,6 +1,6 @@
 /*
   MK MUUNTIMET
-  Versio 12.0 - Datan lataus JSON-tiedostosta
+  Versio 14.0 - Prosentti-, kalori- ja värilaskurit
 */
 document.addEventListener('DOMContentLoaded', () => {
     
@@ -309,67 +309,224 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
 
-        // UUSI FUNKTIO ALV-LASKURILLE
-        const alustaAlvLaskuri = () => {
+        // PÄIVITETTY ALV-LASKURI -> PROSENTTILASKURI
+        const alustaProsenttiLaskuri = () => {
             const container = document.getElementById('alv');
             if (!container) return;
             container.innerHTML = `
-                <div class="muunnin-ryhma">
-                    <label for="alv-kanta">ALV-kanta</label>
-                    <select id="alv-kanta">
-                        <option value="0.24">Yleinen kanta (24%)</option>
-                        <option value="0.14">Alennettu kanta (14%)</option>
-                        <option value="0.10">Alennettu kanta (10%)</option>
-                    </select>
+                <div class="muunnin-ryhma" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <label for="prosentti-tyyppi">Laskentatapa</label>
+                        <select id="prosentti-tyyppi">
+                            <option value="lisays">Lisäys (esim. ALV)</option>
+                            <option value="alennus">Alennus</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="prosentti-kanta">Prosentti (%)</label>
+                        <input type="number" id="prosentti-kanta" value="25.5">
+                    </div>
                 </div>
                 <div class="muunnin-ryhma" style="margin-top: 20px;">
-                    <label for="alv-hinta-verollinen">Hinta (sis. ALV)</label>
-                    <input type="number" id="alv-hinta-verollinen" placeholder="124.00">
+                    <label for="prosentti-alkuperainen">Alkuperäinen hinta</label>
+                    <input type="number" id="prosentti-alkuperainen" placeholder="100.00">
                 </div>
                 <div class="muunnin-ryhma">
-                    <label for="alv-hinta-veroton">Hinta (ilman ALV)</label>
-                    <input type="number" id="alv-hinta-veroton" placeholder="100.00">
+                    <label for="prosentti-loppuhinta">Loppuhinta</label>
+                    <input type="number" id="prosentti-loppuhinta" placeholder="125.50">
                 </div>
                 <div class="tulos-box" style="margin-top: 20px;">
-                    <strong>ALV:n osuus:</strong> <span id="alv-osuus">24.00</span> €
+                    <strong>Muutoksen (alennus/vero) määrä:</strong> <span id="prosentti-erotus">25.50</span> €
                 </div>
             `;
 
-            const kantaSelect = document.getElementById('alv-kanta');
-            const verollinenInput = document.getElementById('alv-hinta-verollinen');
-            const verotonInput = document.getElementById('alv-hinta-veroton');
-            const osuusSpan = document.getElementById('alv-osuus');
+            const tyyppiSelect = document.getElementById('prosentti-tyyppi');
+            const kantaInput = document.getElementById('prosentti-kanta');
+            const alkuperainenInput = document.getElementById('prosentti-alkuperainen');
+            const loppuInput = document.getElementById('prosentti-loppuhinta');
+            const erotusSpan = document.getElementById('prosentti-erotus');
 
-            const laske = (muutoksenLähde) => {
-                const kanta = parseFloat(kantaSelect.value);
-                let verollinen = parseFloat(verollinenInput.value) || 0;
-                let veroton = parseFloat(verotonInput.value) || 0;
+            const laske = (muutoksenLahde) => {
+                const onLisays = tyyppiSelect.value === 'lisays';
+                const kanta = parseFloat(kantaInput.value) / 100 || 0;
+                let alku = parseFloat(alkuperainenInput.value) || 0;
+                let loppu = parseFloat(loppuInput.value) || 0;
 
-                if (muutoksenLähde === 'verollinen') {
-                    if (verollinen > 0) {
-                        veroton = verollinen / (1 + kanta);
-                        verotonInput.value = veroton.toFixed(2);
-                    } else {
-                         verotonInput.value = '';
-                    }
-                } else if (muutoksenLähde === 'veroton') {
-                    if (veroton > 0) {
-                        verollinen = veroton * (1 + kanta);
-                        verollinenInput.value = verollinen.toFixed(2);
-                    } else {
-                        verollinenInput.value = '';
-                    }
+                if (muutoksenLahde === 'alkuperainen') {
+                    loppu = onLisays ? alku * (1 + kanta) : alku * (1 - kanta);
+                    if (alku > 0) loppuInput.value = loppu.toFixed(2); else loppuInput.value = '';
+                } else { // 'loppuhinta' tai kanta/tyyppi muuttunut
+                    alku = onLisays ? loppu / (1 + kanta) : loppu / (1 - kanta);
+                    if(loppu > 0) alkuperainenInput.value = alku.toFixed(2); else alkuperainenInput.value = '';
                 }
                 
-                const veronOsuus = verollinen - veroton;
-                osuusSpan.textContent = veronOsuus.toFixed(2);
+                const erotus = Math.abs(loppu - alku);
+                erotusSpan.textContent = erotus.toFixed(2);
             };
+
+            [tyyppiSelect, kantaInput].forEach(el => el.addEventListener('input', () => laske('alkuperainen')));
+            alkuperainenInput.addEventListener('input', () => laske('alkuperainen'));
+            loppuInput.addEventListener('input', () => laske('loppuhinta'));
             
-            kantaSelect.addEventListener('input', () => laske('verollinen'));
-            verollinenInput.addEventListener('input', () => laske('verollinen'));
-            verotonInput.addEventListener('input', () => laske('veroton'));
+            laske('alkuperainen'); // Aja kerran alussa
+        };
+        
+        // UUSI FUNKTIO: KALORILASKURI
+        const alustaKaloriLaskuri = () => {
+            const container = document.getElementById('kalorit');
+            if(!container) return;
+            container.innerHTML = `
+                <div class="yksikko-muunnin" style="grid-template-columns: 1fr 1fr; gap: 15px;">
+                     <div class="muunnin-ryhma">
+                        <label for="kalori-ika">Ikä (vuosia)</label>
+                        <input type="number" id="kalori-ika" value="30">
+                    </div>
+                    <div class="muunnin-ryhma">
+                        <label for="kalori-sukupuoli">Sukupuoli</label>
+                        <select id="kalori-sukupuoli">
+                            <option value="mies">Mies</option>
+                            <option value="nainen">Nainen</option>
+                        </select>
+                    </div>
+                    <div class="muunnin-ryhma">
+                        <label for="kalori-pituus">Pituus (cm)</label>
+                        <input type="number" id="kalori-pituus" value="180">
+                    </div>
+                    <div class="muunnin-ryhma">
+                        <label for="kalori-paino">Paino (kg)</label>
+                        <input type="number" id="kalori-paino" value="80">
+                    </div>
+                </div>
+                 <div class="muunnin-ryhma" style="margin-top: 15px;">
+                    <label for="kalori-aktiivisuus">Aktiivisuustaso</label>
+                    <select id="kalori-aktiivisuus">
+                        <option value="1.2">Kevyt (vähän tai ei lainkaan liikuntaa)</option>
+                        <option value="1.375">Kohtalainen (1-3 kertaa viikossa)</option>
+                        <option value="1.55">Aktiivinen (3-5 kertaa viikossa)</option>
+                        <option value="1.725">Erittäin aktiivinen (6-7 kertaa viikossa)</option>
+                        <option value="1.9">Huippu-aktiivinen (raskas työ/harjoittelu)</option>
+                    </select>
+                </div>
+                <div id="kalori-tulos" class="tulos-box" style="margin-top: 20px; display: none;"></div>
+            `;
+
+            const
+                ikaInput = document.getElementById('kalori-ika'),
+                spSelect = document.getElementById('kalori-sukupuoli'),
+                pituusInput = document.getElementById('kalori-pituus'),
+                painoInput = document.getElementById('kalori-paino'),
+                aktiivisuusSelect = document.getElementById('kalori-aktiivisuus'),
+                tulosBox = document.getElementById('kalori-tulos');
+
+            const laskeKalorit = () => {
+                const ika = parseInt(ikaInput.value),
+                      pituus = parseInt(pituusInput.value),
+                      paino = parseInt(painoInput.value),
+                      onMies = spSelect.value === 'mies',
+                      kerroin = parseFloat(aktiivisuusSelect.value);
+
+                if(!ika || !pituus || !paino) {
+                    tulosBox.style.display = 'none';
+                    return;
+                }
+                
+                // Mifflin-St Jeor -kaava BMR:lle
+                let bmr = (10 * paino) + (6.25 * pituus) - (5 * ika);
+                bmr += onMies ? 5 : -161;
+
+                const tdee = bmr * kerroin;
+
+                tulosBox.innerHTML = `
+                    <p style="margin: 5px 0;"><strong>Perusaineenvaihdunta (BMR):</strong> ${bmr.toFixed(0)} kcal/vrk</p>
+                    <p style="margin: 5px 0;"><strong>Kokonaiskulutus (TDEE):</strong> ${tdee.toFixed(0)} kcal/vrk</p>
+                    <div class="selite-laatikko" style="margin-top: 10px; font-size: 0.8em;">BMR on energiamäärä, jonka keho kuluttaa levossa. TDEE arvioi kokonaiskulutuksen aktiivisuustaso huomioiden.</div>
+                `;
+                tulosBox.style.display = 'block';
+            };
+            [ikaInput, spSelect, pituusInput, painoInput, aktiivisuusSelect].forEach(el => el.addEventListener('input', laskeKalorit));
+            laskeKalorit();
         };
 
+        // UUSI FUNKTIO: VÄRIMUUNNIN
+        const alustaVariMuunnin = () => {
+            const container = document.getElementById('varit');
+            if(!container) return;
+            container.innerHTML = `
+                <div class="yksikko-muunnin" style="grid-template-columns: 100px 1fr; gap: 15px;">
+                    <div id="vari-esikatselu" style="width: 100px; height: 100px; border-radius: 8px; border: 1px solid var(--color-border); background-color: #90EE90; grid-row: 1 / 4;"></div>
+                    <div class="muunnin-ryhma">
+                        <label for="vari-hex">HEX</label>
+                        <input type="text" id="vari-hex" value="#90EE90">
+                    </div>
+                    <div class="muunnin-ryhma">
+                        <label for="vari-rgb">RGB</label>
+                        <input type="text" id="vari-rgb" value="rgb(144, 238, 144)">
+                    </div>
+                    <div class="muunnin-ryhma">
+                        <label for="vari-hsl">HSL</label>
+                        <input type="text" id="vari-hsl" value="hsl(120, 73%, 75%)">
+                    </div>
+                </div>
+            `;
+            
+            const hexInput = document.getElementById('vari-hex');
+            const rgbInput = document.getElementById('vari-rgb');
+            const hslInput = document.getElementById('vari-hsl');
+            const preview = document.getElementById('vari-esikatselu');
+
+            let lastValidColor = '#90EE90';
+            
+            const updateColors = (source, value) => {
+                let r, g, b, h, s, l;
+                
+                try {
+                    if (source === 'hex') {
+                        const hex = value.startsWith('#') ? value : '#' + value;
+                        if (!/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex) && !/^#([A-Fa-f0-9]{6})$/.test(hex)) throw new Error('Invalid HEX');
+                        let shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+                        const fullHex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+                        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(fullHex);
+                        r = parseInt(result[1], 16); g = parseInt(result[2], 16); b = parseInt(result[3], 16);
+                    } else if (source === 'rgb') {
+                        const match = value.match(/(\d+),\s*(\d+),\s*(\d+)/);
+                        if (!match) throw new Error('Invalid RGB');
+                        [r, g, b] = [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])];
+                        if (r > 255 || g > 255 || b > 255) throw new Error('Invalid RGB');
+                    } else if (source === 'hsl') {
+                         const match = value.match(/(\d+),\s*(\d+)%?,\s*(\d+)%?/);
+                         if (!match) throw new Error('Invalid HSL');
+                         [h, s, l] = [parseInt(match[1]), parseInt(match[2]) / 100, parseInt(match[3]) / 100];
+                         if (h > 360 || s > 1 || l > 1) throw new Error('Invalid HSL');
+                         let c = (1 - Math.abs(2 * l - 1)) * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = l - c/2, rp, gp, bp;
+                         if (0<=h&&h<60) {[rp,gp,bp]=[c,x,0]} else if (60<=h&&h<120) {[rp,gp,bp]=[x,c,0]} else if (120<=h&&h<180){[rp,gp,bp]=[0,c,x]} else if (180<=h&&h<240){[rp,gp,bp]=[0,x,c]} else if (240<=h&&h<300){[rp,gp,bp]=[x,0,c]} else {[rp,gp,bp]=[c,0,x]};
+                         [r,g,b] = [(rp+m)*255, (gp+m)*255, (bp+m)*255];
+                    }
+
+                    if (source !== 'hex') hexInput.value = `#${((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1).toUpperCase()}`;
+                    if (source !== 'rgb') rgbInput.value = `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
+                    
+                    if (source !== 'hsl') {
+                        const r_norm = r/255, g_norm = g/255, b_norm = b/255;
+                        const cmax = Math.max(r_norm, g_norm, b_norm), cmin = Math.min(r_norm, g_norm, b_norm);
+                        const delta = cmax - cmin;
+                        h = delta === 0 ? 0 : 60 * (cmax === r_norm ? ((g_norm - b_norm) / delta) % 6 : (cmax === g_norm ? (b_norm - r_norm) / delta + 2 : (r_norm - g_norm) / delta + 4));
+                        h = Math.round(h < 0 ? h + 360 : h);
+                        l = (cmax + cmin) / 2;
+                        s = delta === 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+                        hslInput.value = `hsl(${h}, ${Math.round(s*100)}%, ${Math.round(l*100)}%)`;
+                    }
+                    
+                    lastValidColor = hexInput.value;
+                    preview.style.backgroundColor = lastValidColor;
+                } catch (e) {
+                   preview.style.backgroundColor = lastValidColor; // Palauta viimeisin validi väri
+                }
+            };
+
+            hexInput.addEventListener('input', () => updateColors('hex', hexInput.value));
+            rgbInput.addEventListener('input', () => updateColors('rgb', rgbInput.value));
+            hslInput.addEventListener('input', () => updateColors('hsl', hslInput.value));
+        };
 
         const initializers = [
             { id: 'koordinaatit', func: alustaKoordinaattiMuunnin },
@@ -392,13 +549,15 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'kulma', func: () => alustaVakioMuunnin('kulma', yksikot.kulma) },
             { id: 'lampotila', func: alustaLampotilaMuunnin },
             { id: 'roomalaiset', func: alustaRoomalainenMuunnin },
-            { id: 'luvut', func: alustaLukujarjestelmaMuunnin },
-            { id: 'ruoanlaitto', func: alustaRuoanlaittoMuunnin },
-            { id: 'verensokeri', func: alustaVerensokeriMuunnin },
-            { id: 'bmi', func: alustaBmiLaskuri },
-            { id: 'yksikkosanasto', func: alustaYksikkoSanasto },
-            // LISÄTÄÄN UUSI ALUSTAJA TÄNNE
-            { id: 'alv', func: alustaAlvLaskuri },
+            { id: "luvut", func: alustaLukujarjestelmaMuunnin },
+            { id: "ruoanlaitto", func: alustaRuoanlaittoMuunnin },
+            { id: "verensokeri", func: alustaVerensokeriMuunnin },
+            { id: "bmi", func: alustaBmiLaskuri },
+            { id: "yksikkosanasto", func: alustaYksikkoSanasto },
+            // PÄIVITETYT JA UUDET ALUSTAJAT TÄNNE
+            { id: 'alv', func: alustaProsenttiLaskuri },
+            { id: 'kalorit', func: alustaKaloriLaskuri },
+            { id: 'varit', func: alustaVariMuunnin },
         ];
 
         initializers.forEach(init => {
