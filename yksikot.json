@@ -27,7 +27,12 @@
         { "sym": "pied", "name": "Kuninkaanjalka (Pied du roi)", "kerroin": 0.3248, "tyyppi": "harvinainen", "selite": "Ranskaa ennen metrijärjestelmää käytetty pituusmitta, joka oli hieman englantilaista jalkaa pidempi." },
         { "sym": "A", "name": "Ångström", "kerroin": 1e-10, "tyyppi": "harvinainen", "selite": "Atomien ja molekyylien mittakaavassa käytetty pituusyksikkö, 0.1 nanometriä. Yleinen kemiassa ja fysiikassa." },
         { "sym": "shaku", "name": "Shaku (Japani)", "kerroin": 0.303, "tyyppi": "harvinainen", "selite": "Perinteinen japanilainen pituusyksikkö, joka on peräisin Kiinasta. Käytetty arkkitehtuurissa ja puusepäntöissä." },
-        { "sym": "smoot", "name": "Smoot", "kerroin": 1.7018, "tyyppi": "harvinainen", "selite": "Leikkimielinen pituusyksikkö, joka perustuu Oliver R. Smootin pituuteen (n. 1.7 m). Käytetään Harvard Bridgen pituuden mittaamiseen." }
+        { "sym": "smoot", "name": "Smoot", "kerroin": 1.7018, "tyyppi": "harvinainen", "selite": "Leikkimielinen pituusyksikkö, joka perustuu Oliver R. Smootin pituuteen (n. 1.7 m). Käytetään Harvard Bridgen pituuden mittaamiseen." },
+        { "sym": "virsta_ru", "name": "Virsta (Venäjä)", "kerroin": 1066.8, "tyyppi": "harvinainen", "selite": "Vanha venäläinen pituusmitta (Verst), 500 sazhenia." },
+        { "sym": "stadion", "name": "Stadion (Antiikki)", "kerroin": 185, "tyyppi": "harvinainen", "selite": "Antiikin kreikkalainen pituusmitta, jonka tarkka pituus vaihteli, mutta oli tyypillisesti n. 185 metriä." },
+        { "sym": "pes", "name": "Roomalainen jalka (pes)", "kerroin": 0.296, "tyyppi": "harvinainen", "selite": "Rooman valtakunnan peruspituusmitta." },
+        { "sym": "hand", "name": "Kämmen (Hand)", "kerroin": 0.1016, "tyyppi": "harvinainen", "selite": "Yksikkö hevosten korkeuden mittaamiseen, vastaa 4 tuumaa." },
+        { "sym": "barleycorn", "name": "Ohranjyvä (Barleycorn)", "kerroin": 0.00846, "tyyppi": "harvinainen", "selite": "Historiallinen englantilainen yksikkö, 1/3 tuumaa." }
     ],
     "massa": [
         { "sym": "g", "name": "Gramma", "kerroin": 1, "selite": "SI-järjestelmän massan perusyksikön tuhannesosa. Yleinen keittiössä ja laboratoriossa." },
@@ -40,6 +45,10 @@
         { "sym": "lb_t", "name": "Troy-naula", "kerroin": 373.24172, "tyyppi": "harvinainen", "selite": "12 Troy-unssia. Vanha jalometallien ja apteekkitavaroiden mittayksikkö." },
         { "sym": "luoti", "name": "Luoti (vanha)", "kerroin": 13.28, "tyyppi": "harvinainen", "selite": "Vanha suomalainen painoyksikkö." },
         { "sym": "leiviskä", "name": "Leiviskä (vanha)", "kerroin": 8500, "tyyppi": "harvinainen", "selite": "Vanha suomalainen painoyksikkö, 20 naulaa." },
+        { "sym": "livre", "name": "Livre (Ranska)", "kerroin": 489.5, "tyyppi": "harvinainen", "selite": "Vanha ranskalainen naula ennen metrijärjestelmää." },
+        { "sym": "arroba", "name": "Arroba (Espanja/Portugali)", "kerroin": 11500, "tyyppi": "harvinainen", "selite": "Vanha painoyksikkö (n. 11.5 kg) ja myös tilavuusyksikkö." },
+        { "sym": "deben", "name": "Deben (Egypti)", "kerroin": 91, "tyyppi": "harvinainen", "selite": "Muinaisen Egyptin painoyksikkö, erityisesti metallien punnitsemiseen." },
+        { "sym": "mina", "name": "Miina (Antiikki)", "kerroin": 434, "tyyppi": "harvinainen", "selite": "Antiikin kreikkalainen painoyksikkö." },
         { "sym": "dg", "name": "Desigramma", "kerroin": 0.1, "tyyppi": "harvinainen", "selite": "Gramman kymmenesosa." },
         { "sym": "cg", "name": "Senttigramma", "kerroin": 0.01, "tyyppi": "harvinainen", "selite": "Gramman sadasosa." },
         { "sym": "mg", "name": "Milligramma", "kerroin": 0.001, "tyyppi": "harvinainen", "selite": "Gramman tuhannesosa. Käytetään lääketieteessä ja kemiassa." },
@@ -93,7 +102,9 @@
         { "sym": "ac", "name": "Eekkeri", "kerroin": 4046.86, "selite": "Yleinen maan pinta-alan yksikkö englanninkielisissä maissa. Noin 40% hehtaarista." },
         { "sym": "rood", "name": "Rood", "kerroin": 1011.71, "tyyppi": "harvinainen", "selite": "Neljäsosa eekkeriä, vanha englantilainen maanmittayksikkö." },
         { "sym": "sq_perch", "name": "Square perch", "kerroin": 25.2929, "tyyppi": "harvinainen", "selite": "Vanha maanmittauksen perusyksikkö." },
-        { "sym": "barn", "name": "Lato (Barn)", "kerroin": 1e-28, "tyyppi": "harvinainen", "selite": "Ydinfysiikan poikkipinta-alan yksikkö. Käytetään kuvaamaan todennäköisyyttä tietylle vuorovaikutukselle. Yksi lato on n. atomiytimen poikkipinta-ala." }
+        { "sym": "barn", "name": "Lato (Barn)", "kerroin": 1e-28, "tyyppi": "harvinainen", "selite": "Ydinfysiikan poikkipinta-alan yksikkö. Käytetään kuvaamaan todennäköisyyttä tietylle vuorovaikutukselle. Yksi lato on n. atomiytimen poikkipinta-ala." },
+        { "sym": "morgen", "name": "Morgen (Saksa)", "kerroin": 2553, "tyyppi": "harvinainen", "selite": "Historiallinen saksalainen maa-alan mitta, joka vastasi 'aamupäivän kyntöalaa'." },
+        { "sym": "hide", "name": "Hide (Englanti)", "kerroin": 485623, "tyyppi": "harvinainen", "selite": "Vanha anglosaksinen maa-alan mitta, joka riitti yhden perheen elättämiseen (n. 120 eekkeriä)." }
     ],
     "tilavuus": [
         { "sym": "ml", "name": "Millilitra", "kerroin": 0.001, "selite": "Litran tuhannesosa. Sama kuin kuutiosenttimetri (cm³)." },
@@ -109,6 +120,9 @@
         { "sym": "gal_us", "name": "Gallona (US)", "kerroin": 3.78541, "selite": "Amerikkalainen nestemitta, 4 kvarttia eli 128 nesteunssia." },
         { "sym": "pt_uk", "name": "Pintti (UK)", "kerroin": 0.568261, "tyyppi": "harvinainen", "selite": "Brittiläinen (Imperial) pintti, 20 nesteunssia. Noin 20% suurempi kuin US pintti." },
         { "sym": "gal_uk", "name": "Gallona (UK)", "kerroin": 4.54609, "tyyppi": "harvinainen", "selite": "Brittiläinen (Imperial) gallona, 4 kvarttia. Noin 20% suurempi kuin US gallona." },
+        { "sym": "vedro_ru", "name": "Vedro (Venäjä)", "kerroin": 12.299, "tyyppi": "harvinainen", "selite": "Vanha venäläinen nesteen tilavuusmitta, 'sanko'." },
+        { "sym": "amphora", "name": "Amphora (Antiikki)", "kerroin": 26.2, "tyyppi": "harvinainen", "selite": "Rooman valtakunnan yleinen tilavuusmitta viinille ja öljylle." },
+        { "sym": "firkin", "name": "Firkin (UK)", "kerroin": 40.9148, "tyyppi": "harvinainen", "selite": "Vanha englantilainen oluttynnyrin mitta, 9 imperial gallonaa." },
         { "sym": "peck_uk", "name": "Peck (UK)", "kerroin": 9.09218, "tyyppi": "harvinainen", "selite": "Vanha brittiläinen kuivan aineen mitta, 2 gallonaa." },
         { "sym": "bushel_uk", "name": "Bushel (UK)", "kerroin": 36.36872, "tyyppi": "harvinainen", "selite": "Yleinen viljan mitta, 8 gallonaa." },
         { "sym": "hogshead", "name": "Hogshead (tynnyri)", "kerroin": 238.66, "tyyppi": "harvinainen", "selite": "Suuri historiallinen tynnyrimitta, jonka koko vaihteli juoman ja aikakauden mukaan." },
