@@ -64,7 +64,7 @@
         { "sym": "jin", "name": "Jin (Kiina)", "kerroin": 500, "tyyppi": "harvinainen", "selite": "Moderni kiinalainen painoyksikkö, tarkalleen 500 grammaa. Vastaa 'Catty'-yksikköä." }
     ],
     "data": [
-        { "sym": "b", "name": "Bitti (b)", "kerroin": 0.125, "selite": "Pienin datan yksikkö." },
+        { "sym": "b", "name": "Bitti (b)", "kerroin": 0.125, "selite": "Pienin datan yksikkö, joka voi olla arvoltaan 0 tai 1. Kahdeksan bittiä muodostaa yleensä yhden tavun." },
         { "sym": "B", "name": "Tavu (B)", "kerroin": 1, "selite": "Datan perusyksikkö, tyypillisesti 8 bittiä. Voi edustaa yhtä merkkiä." },
         { "sym": "kB", "name": "Kilotavu (kB)", "kerroin": 1000, "selite": "1000 tavua. Käytetään tiedostojen kokojen ilmoittamiseen (SI-standardi)." },
         { "sym": "MB", "name": "Megatavu (MB)", "kerroin": 1000000, "selite": "Miljoona tavua. Yleinen yksikkö esimerkiksi valokuville ja musiikille." },
