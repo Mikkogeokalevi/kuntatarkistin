@@ -1,6 +1,6 @@
 /*
   MK MUUNTIMET
-  Versio 17.1 - 99 Kaikki funktiot mukana
+  Versio 17.2 - Lopullinen korjaus
 */
 document.addEventListener('DOMContentLoaded', () => {
     
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const seliteMihin = document.getElementById(`${id}-selite-mihin`);
             
             if (yksikkoData.length > 0) {
-                 yksikkoData.sort((a, b) => {
+                yksikkoData.sort((a, b) => {
                     const aHarvinainen = a.tyyppi && a.tyyppi.toLowerCase().includes('harvinainen'), bHarvinainen = b.tyyppi && b.tyyppi.toLowerCase().includes('harvinainen');
                     if (aHarvinainen && !bHarvinainen) return 1; if (!aHarvinainen && bHarvinainen) return -1;
                     if(a.kerroin === b.kerroin) return a.name.localeCompare(b.name);
@@ -64,18 +64,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 [mistaSelect, mihinSelect].forEach(select => {
                     select.innerHTML = '';
-                    const groups = {};
+                    const yleisetGroup = document.createElement('optgroup'); yleisetGroup.label = 'Yleiset yksiköt';
+                    const harvinaisetGroup = document.createElement('optgroup'); harvinaisetGroup.label = 'Harvinaiset / Vanhat';
+                    let onHarvinaisia = false;
                     yksikkoData.forEach(y => {
-                        const groupLabel = y.tyyppi || 'Yleiset yksiköt';
-                        if(!groups[groupLabel]) {
-                            groups[groupLabel] = document.createElement('optgroup');
-                            groups[groupLabel].label = groupLabel.charAt(0).toUpperCase() + groupLabel.slice(1).replace(/_/g, ' ');
-                        }
                         const option = new Option(y.name, y.sym);
                         if (y.selite) { option.title = y.selite; }
-                        groups[groupLabel].appendChild(option);
+                        if (y.tyyppi === 'harvinainen') { harvinaisetGroup.appendChild(option); onHarvinaisia = true; } else { yleisetGroup.appendChild(option); }
                     });
-                     Object.keys(groups).sort().forEach(key => select.appendChild(groups[key]));
+                    select.appendChild(yleisetGroup);
+                    if (onHarvinaisia) select.appendChild(harvinaisetGroup);
                 });
                 if(mihinSelect.options.length > 1) mihinSelect.selectedIndex = 1;
             }
@@ -148,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const container = document.getElementById('aika');
             if (!container) return;
             container.innerHTML = `<div class="muunnin-ryhma"><label for="aika-arvo">Arvo</label><input type="number" id="aika-arvo" value="1"></div><div class="muunnin-ryhma"><label for="aika-yksikko-mista">Yksikkö</label><select id="aika-yksikko-mista"></select></div><div id="aika-tulokset" class="tulos-box"></div>`;
-            const arvoInput=document.getElementById('aika-arvo'),yksikkoSelect=document.getElementById('aika-yksikko-mista'),tuloksetDiv=document.getElementById('aika-tulokset');yksikot.aika.forEach(y=>yksikkoSelect.add(new Option(`${y.plural||y.name} (${y.sym})`,y.sym)));yksikkoSelect.value='h';const laske=()=>{const arvo=parseFloat(arvoInput.value)||0;const mistaKerroin=yksikot.aika.find(y=>y.sym===yksikkoSelect.value)?.kerroin||1;const sekunteina=arvo*mistaKerroin;const d=Math.floor(sekunteina/86400),h=Math.floor((sekunteina%86400)/3600),m=Math.floor((sekunteina%3600)/60),s=sekunteina%60;let html=`<p style="margin: 5px 0;"><strong>Yhteensä:</strong> ${d} pv, ${h} h, ${m} min ja ${s.toFixed(1)} s</p><hr style="border-color: var(--color-border); margin: 10px 0;">`;yksikot.aika.slice().reverse().forEach(y=>{html+=`<p style="margin: 5px 0;"><strong>${y.plural||y.name}:</strong> ${(sekunteina/y.kerroin).toLocaleString('fi-FI',{maximumFractionDigits:4})} ${y.sym}</p>`});tuloksetDiv.innerHTML=html};[arvoInput,yksikkoSelect].forEach(el=>el.addEventListener('input',laske));laske();
+            const arvoInput=document.getElementById('aika-arvo'),yksikkoSelect=document.getElementById('aika-yksikko-mista'),tuloksetDiv=document.getElementById('aika-tulokset');(yksikot.aika || []).forEach(y=>yksikkoSelect.add(new Option(`${y.plural||y.name} (${y.sym})`,y.sym)));yksikkoSelect.value='h';const laske=()=>{const arvo=parseFloat(arvoInput.value)||0;const mistaKerroin=(yksikot.aika || []).find(y=>y.sym===yksikkoSelect.value)?.kerroin||1;const sekunteina=arvo*mistaKerroin;const d=Math.floor(sekunteina/86400),h=Math.floor((sekunteina%86400)/3600),m=Math.floor((sekunteina%3600)/60),s=sekunteina%60;let html=`<p style="margin: 5px 0;"><strong>Yhteensä:</strong> ${d} pv, ${h} h, ${m} min ja ${s.toFixed(1)} s</p><hr style="border-color: var(--color-border); margin: 10px 0;">`;(yksikot.aika || []).slice().reverse().forEach(y=>{html+=`<p style="margin: 5px 0;"><strong>${y.plural||y.name}:</strong> ${(sekunteina/y.kerroin).toLocaleString('fi-FI',{maximumFractionDigits:4})} ${y.sym}</p>`});tuloksetDiv.innerHTML=html};[arvoInput,yksikkoSelect].forEach(el=>el.addEventListener('input',laske));laske();
         };
 
         const alustaLampotilaMuunnin = () => {
@@ -197,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const alustaRuoanlaittoMuunnin = () => {
             const id = 'ruoanlaitto';
             const container = document.getElementById(id);
-            if (!container) return;
+            if (!container || !yksikot.ruoanlaitto) return;
             container.innerHTML = `<div class="muunnin-ryhma"><label for="${id}-ainesosa">Ainesosa</label><select id="${id}-ainesosa"></select></div><div class="yksikko-muunnin" style="grid-template-columns: 1fr 1fr;"><div class="muunnin-ryhma" style="grid-column: 1;"><label for="${id}-dl">Tilavuus (dl)</label><input type="number" id="${id}-dl" value="1"></div><div class="muunnin-ryhma" style="grid-column: 2;"><label for="${id}-g">Paino (g)</label><input type="number" id="${id}-g"></div></div>`;
             const ainesosaSelect = document.getElementById(`${id}-ainesosa`), dlInput = document.getElementById(`${id}-dl`), gInput = document.getElementById(`${id}-g`);
             yksikot.ruoanlaitto.forEach((item, index) => ainesosaSelect.add(new Option(item.name, index)));
