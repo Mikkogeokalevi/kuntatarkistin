@@ -32,7 +32,10 @@
         { "sym": "stadion", "name": "Stadion (Antiikki)", "kerroin": 185, "tyyppi": "harvinainen", "selite": "Antiikin kreikkalainen pituusmitta, jonka tarkka pituus vaihteli, mutta oli tyypillisesti n. 185 metriä." },
         { "sym": "pes", "name": "Roomalainen jalka (pes)", "kerroin": 0.296, "tyyppi": "harvinainen", "selite": "Rooman valtakunnan peruspituusmitta." },
         { "sym": "hand", "name": "Kämmen (Hand)", "kerroin": 0.1016, "tyyppi": "harvinainen", "selite": "Yksikkö hevosten korkeuden mittaamiseen, vastaa 4 tuumaa." },
-        { "sym": "barleycorn", "name": "Ohranjyvä (Barleycorn)", "kerroin": 0.00846, "tyyppi": "harvinainen", "selite": "Historiallinen englantilainen yksikkö, 1/3 tuumaa." }
+        { "sym": "barleycorn", "name": "Ohranjyvä (Barleycorn)", "kerroin": 0.00846, "tyyppi": "harvinainen", "selite": "Historiallinen englantilainen yksikkö, 1/3 tuumaa." },
+        { "sym": "peninkulma_fi", "name": "Peninkulma (Suomi)", "kerroin": 10000, "tyyppi": "harvinainen", "selite": "Vanha suomalainen matkan yksikkö, joka metrijärjestelmän myötä vakiintui tarkalleen 10 kilometriksi." },
+        { "sym": "virsta_fi", "name": "Virsta (Suomi)", "kerroin": 1068.8, "tyyppi": "harvinainen", "selite": "Ruotsin vallan aikainen virsta, noin 1069 metriä. Erotuksena venäläisestä virstasta." },
+        { "sym": "vaaksa_fi", "name": "Vaaksa (Suomi)", "kerroin": 0.1484, "tyyppi": "harvinainen", "selite": "Peukalon ja etusormen (tai pikkusormen) levitettyjen kärkien välinen mitta, noin 15 cm." }
     ],
     "massa": [
         { "sym": "g", "name": "Gramma", "kerroin": 1, "selite": "SI-järjestelmän massan perusyksikön tuhannesosa. Yleinen keittiössä ja laboratoriossa." },
@@ -45,6 +48,8 @@
         { "sym": "lb_t", "name": "Troy-naula", "kerroin": 373.24172, "tyyppi": "harvinainen", "selite": "12 Troy-unssia. Vanha jalometallien ja apteekkitavaroiden mittayksikkö." },
         { "sym": "luoti", "name": "Luoti (vanha)", "kerroin": 13.28, "tyyppi": "harvinainen", "selite": "Vanha suomalainen painoyksikkö." },
         { "sym": "leiviskä", "name": "Leiviskä (vanha)", "kerroin": 8500, "tyyppi": "harvinainen", "selite": "Vanha suomalainen painoyksikkö, 20 naulaa." },
+        { "sym": "naula_fi", "name": "Naula (Suomi)", "kerroin": 425.6, "tyyppi": "harvinainen", "selite": "Vanha suomalainen painoyksikkö, noin 425 grammaa. Jaettiin 32 luotiin." },
+        { "sym": "markka_paino", "name": "Markka (paino, Suomi)", "kerroin": 212.8, "tyyppi": "harvinainen", "selite": "Puoli naulaa, noin 213 grammaa. Käytettiin erityisesti metallien punnitsemiseen." },
         { "sym": "livre", "name": "Livre (Ranska)", "kerroin": 489.5, "tyyppi": "harvinainen", "selite": "Vanha ranskalainen naula ennen metrijärjestelmää." },
         { "sym": "arroba", "name": "Arroba (Espanja/Portugali)", "kerroin": 11500, "tyyppi": "harvinainen", "selite": "Vanha painoyksikkö (n. 11.5 kg) ja myös tilavuusyksikkö." },
         { "sym": "deben", "name": "Deben (Egypti)", "kerroin": 91, "tyyppi": "harvinainen", "selite": "Muinaisen Egyptin painoyksikkö, erityisesti metallien punnitsemiseen." },
@@ -101,6 +106,7 @@
         { "sym": "in²", "name": "Neliötuuma", "kerroin": 0.00064516, "selite": "Neliö, jonka sivu on 1 tuuma." },
         { "sym": "ft²", "name": "Neliöjalka", "kerroin": 0.092903, "selite": "Neliö, jonka sivu on 1 jalka. Yleinen rakennusalalla USA:ssa." },
         { "sym": "ac", "name": "Eekkeri", "kerroin": 4046.86, "selite": "Yleinen maan pinta-alan yksikkö englanninkielisissä maissa. Noin 40% hehtaarista." },
+        { "sym": "kappamaa_fi", "name": "Kappamaa (Suomi)", "kerroin": 154.3, "tyyppi": "harvinainen", "selite": "Ala, jolle voitiin kylvää kapan verran viljaa." },
         { "sym": "rood", "name": "Rood", "kerroin": 1011.71, "tyyppi": "harvinainen", "selite": "Neljäsosa eekkeriä, vanha englantilainen maanmittayksikkö." },
         { "sym": "sq_perch", "name": "Square perch", "kerroin": 25.2929, "tyyppi": "harvinainen", "selite": "Vanha maanmittauksen perusyksikkö." },
         { "sym": "sq_rod", "name": "Square Rod", "kerroin": 25.2929, "tyyppi": "harvinainen", "selite": "Sama kuin 'square perch'. Vanha englantilainen maanmittayksikkö." },
@@ -133,6 +139,8 @@
         { "sym": "bushel_uk", "name": "Bushel (UK)", "kerroin": 36.36872, "tyyppi": "harvinainen", "selite": "Yleinen viljan mitta, 8 gallonaa." },
         { "sym": "hogshead", "name": "Hogshead (tynnyri)", "kerroin": 238.66, "tyyppi": "harvinainen", "selite": "Suuri historiallinen tynnyrimitta, jonka koko vaihteli juoman ja aikakauden mukaan." },
         { "sym": "kannu", "name": "Kannu (vanha)", "kerroin": 2.617, "tyyppi": "harvinainen", "selite": "Vanha suomalainen tilavuusmitta, kaksi tuoppia." },
+        { "sym": "tuoppi_fi", "name": "Tuoppi (Suomi)", "kerroin": 1.3085, "tyyppi": "harvinainen", "selite": "Puolikas kannua, noin 1.3 litraa." },
+        { "sym": "kappa_fi", "name": "Kappa (Suomi)", "kerroin": 4.58, "tyyppi": "harvinainen", "selite": "Erityisesti viljan mittaamiseen käytetty astia, noin 4.6 litraa." },
         { "sym": "koku", "name": "Koku (Japani)", "kerroin": 180.39, "tyyppi": "harvinainen", "selite": "Historiallinen japanilainen riisin tilavuusmitta, n. 180 litraa. Edusti yhden ihmisen vuodessa syömää riisimäärää." },
         { "sym": "board_foot", "name": "Lankkujalka", "kerroin": 2.35974, "tyyppi": "harvinainen", "selite": "Puutavaran tilavuuden mittayksikkö (1 jalka x 1 jalka x 1 tuuma). Käytössä Pohjois-Amerikassa." }
     ],
@@ -150,17 +158,22 @@
         { "sym": "mach", "name": "Mach", "kerroin": 343, "tyyppi": "harvinainen", "selite": "Äänennopeus ilmassa merenpinnan tasolla." }
     ],
     "aika": [
+        { "sym": "ns", "name": "Nanosekunti", "plural": "Nanosekunteina", "kerroin": 1e-9, "tyyppi": "harvinainen", "selite": "Sekunnin miljardisosa." },
+        { "sym": "µs", "name": "Mikrosekunti", "plural": "Mikrosekunteina", "kerroin": 1e-6, "tyyppi": "harvinainen", "selite": "Sekunnin miljoonasosa." },
         { "sym": "ms", "name": "Millisekunti", "plural": "Millisekunteina", "kerroin": 0.001, "selite": "Sekunnin tuhannesosa." },
         { "sym": "s", "name": "Sekunti", "plural": "Sekunteina", "kerroin": 1, "selite": "Ajan SI-perusyksikkö." },
         { "sym": "min", "name": "Minuutti", "plural": "Minuutteina", "kerroin": 60, "selite": "60 sekuntia." },
         { "sym": "h", "name": "Tunti", "plural": "Tunteina", "kerroin": 3600, "selite": "60 minuuttia." },
         { "sym": "d", "name": "Päivä", "plural": "Päivinä", "kerroin": 86400, "selite": "24 tuntia." },
-        { "sym": "vk", "name": "Viikko", "plural": "Viikkoina", "kerroin": 604800, "selite": "7 päivää." }
+        { "sym": "vk", "name": "Viikko", "plural": "Viikkoina", "kerroin": 604800, "selite": "7 päivää." },
+        { "sym": "fortnight", "name": "Fortnight", "plural": "Fortnighteina", "kerroin": 1209600, "tyyppi": "harvinainen", "selite": "Kaksi viikkoa (14 päivää)." },
+        { "sym": "shake", "name": "Shake", "plural": "Shakeina", "kerroin": 1e-8, "tyyppi": "harvinainen", "selite": "Epävirallinen ydinfysiikan yksikkö, 10 nanosekuntia." }
     ],
     "ruoanlaitto": [
         { "name": "Vehnäjauho", "g_per_dl": 65 }, { "name": "Sokeri, hieno", "g_per_dl": 85 }, { "name": "Suola, hieno", "g_per_dl": 120 },
         { "name": "Kaakaojauhe", "g_per_dl": 40 }, { "name": "Vesi / Maito", "g_per_dl": 100 }, { "name": "Öljy", "g_per_dl": 90 },
-        { "name": "Riisi, keittämätön", "g_per_dl": 85 }, { "name": "Kaurahiutale", "g_per_dl": 35 }
+        { "name": "Riisi, keittämätön", "g_per_dl": 85 }, { "name": "Kaurahiutale", "g_per_dl": 35 }, { "name": "Perunajauho", "g_per_dl": 80 },
+        { "name": "Mannasuurimot", "g_per_dl": 70 }, { "name": "Korppujauho", "g_per_dl": 50 }, { "name": "Siirappi", "g_per_dl": 140 }
     ],
     "typografia": [
         { "sym": "px", "name": "Pikseli (px)", "selite": "Näytön pienin kuvapiste, web-suunnittelun perusyksikkö. Sen fyysinen koko riippuu näytön resoluutiosta."},
@@ -222,17 +235,6 @@
         { "sym": "rad", "name": "Rad", "kerroin": 0.01, "tyyppi": "Absorboitunut annos", "selite": "Vanha absorboituneen annoksen yksikkö." },
         { "sym": "Sv", "name": "Sievert", "kerroin": 1, "tyyppi": "Ekvivalenttiannos", "selite": "Sädeannoksen ekvivalentin SI-yksikkö, kuvaa säteilyn biologista vaikutusta." },
         { "sym": "rem", "name": "Rem", "kerroin": 0.01, "tyyppi": "Ekvivalenttiannos", "selite": "Vanha ekvivalenttiannoksen yksikkö." }
-    ],
-    "vanhat_suomalaiset": [
-        { "sym": "peninkulma", "name": "Peninkulma", "kerroin": 10000, "tyyppi": "Pituus", "selite": "Vanha suomalainen matkan yksikkö, joka metrijärjestelmän myötä vakiintui tarkalleen 10 kilometriksi." },
-        { "sym": "virsta_fi", "name": "Virsta", "kerroin": 1068.8, "tyyppi": "Pituus", "selite": "Ruotsin vallan aikainen virsta, noin 1069 metriä. Erotuksena venäläisestä virstasta." },
-        { "sym": "vaaksa", "name": "Vaaksa", "kerroin": 0.1484, "tyyppi": "Pituus", "selite": "Peukalon ja etusormen (tai pikkusormen) levitettyjen kärkien välinen mitta, noin 15 cm." },
-        { "sym": "kyynara_fi", "name": "Kyynärä", "kerroin": 0.5938, "tyyppi": "Pituus", "selite": "Vanha pituusmitta, joka vastasi etäisyyttä kyynärpäästä sormenpäihin (n. 59 cm)." },
-        { "sym": "tuoppi", "name": "Tuoppi", "kerroin": 1.3085, "tyyppi": "Tilavuus", "selite": "Puolikas kannua, noin 1.3 litraa." },
-        { "sym": "kappa", "name": "Kappa", "kerroin": 4.58, "tyyppi": "Tilavuus", "selite": "Erityisesti viljan mittaamiseen käytetty astia, noin 4.6 litraa." },
-        { "sym": "naula_fi", "name": "Naula", "kerroin": 425.6, "tyyppi": "Massa", "selite": "Vanha suomalainen painoyksikkö, noin 425 grammaa. Jaettiin 32 luotiin." },
-        { "sym": "markka_paino", "name": "Markka (paino)", "kerroin": 212.8, "tyyppi": "Massa", "selite": "Puoli naulaa, noin 213 grammaa. Käytettiin erityisesti metallien punnitsemiseen." },
-        { "sym": "kappamaa", "name": "Kappamaa", "kerroin": 154.3, "tyyppi": "Pinta-ala", "selite": "Ala, jolle voitiin kylvää kapan verran viljaa." }
     ],
     "valo": [
         { "sym": "lx", "name": "Luksi (lux)", "kerroin": 1, "tyyppi": "Valaistusvoimakkuus", "selite": "SI-yksikkö valaistusvoimakkuudelle. Vastaa yhtä luumenia neliömetrillä (lm/m²)." },
