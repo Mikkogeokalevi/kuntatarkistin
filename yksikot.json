@@ -66,6 +66,7 @@
     "data": [
         { "sym": "b", "name": "Bitti (b)", "kerroin": 0.125, "selite": "Pienin datan yksikkö, joka voi olla arvoltaan 0 tai 1. Kahdeksan bittiä muodostaa yleensä yhden tavun." },
         { "sym": "B", "name": "Tavu (B)", "kerroin": 1, "selite": "Datan perusyksikkö, tyypillisesti 8 bittiä. Voi edustaa yhtä merkkiä." },
+        { "sym": "nibble", "name": "Nybble (Puolitavu)", "kerroin": 0.5, "tyyppi": "harvinainen", "selite": "Neljän bitin ryhmä, eli puolet tavusta. Voi esittää yhden heksadesimaalinumeron." },
         { "sym": "kB", "name": "Kilotavu (kB)", "kerroin": 1000, "selite": "1000 tavua. Käytetään tiedostojen kokojen ilmoittamiseen (SI-standardi)." },
         { "sym": "MB", "name": "Megatavu (MB)", "kerroin": 1000000, "selite": "Miljoona tavua. Yleinen yksikkö esimerkiksi valokuville ja musiikille." },
         { "sym": "GB", "name": "Gigatavu (GB)", "kerroin": 1000000000, "selite": "Miljardi tavua. Yleinen yksikkö tallennuslaitteille, kuten muistitikuille ja kiintolevyille." },
@@ -102,6 +103,8 @@
         { "sym": "ac", "name": "Eekkeri", "kerroin": 4046.86, "selite": "Yleinen maan pinta-alan yksikkö englanninkielisissä maissa. Noin 40% hehtaarista." },
         { "sym": "rood", "name": "Rood", "kerroin": 1011.71, "tyyppi": "harvinainen", "selite": "Neljäsosa eekkeriä, vanha englantilainen maanmittayksikkö." },
         { "sym": "sq_perch", "name": "Square perch", "kerroin": 25.2929, "tyyppi": "harvinainen", "selite": "Vanha maanmittauksen perusyksikkö." },
+        { "sym": "sq_rod", "name": "Square Rod", "kerroin": 25.2929, "tyyppi": "harvinainen", "selite": "Sama kuin 'square perch'. Vanha englantilainen maanmittayksikkö." },
+        { "sym": "township", "name": "Township (US)", "kerroin": 93239571.9, "tyyppi": "harvinainen", "selite": "Maanmittausyksikkö Yhdysvalloissa, alue, joka on 6 x 6 mailia, eli 36 neliömailia." },
         { "sym": "barn", "name": "Lato (Barn)", "kerroin": 1e-28, "tyyppi": "harvinainen", "selite": "Ydinfysiikan poikkipinta-alan yksikkö. Käytetään kuvaamaan todennäköisyyttä tietylle vuorovaikutukselle. Yksi lato on n. atomiytimen poikkipinta-ala." },
         { "sym": "morgen", "name": "Morgen (Saksa)", "kerroin": 2553, "tyyppi": "harvinainen", "selite": "Historiallinen saksalainen maa-alan mitta, joka vastasi 'aamupäivän kyntöalaa'." },
         { "sym": "hide", "name": "Hide (Englanti)", "kerroin": 485623, "tyyppi": "harvinainen", "selite": "Vanha anglosaksinen maa-alan mitta, joka riitti yhden perheen elättämiseen (n. 120 eekkeriä)." }
@@ -125,6 +128,7 @@
         { "sym": "vedro_ru", "name": "Vedro (Venäjä)", "kerroin": 12.299, "tyyppi": "harvinainen", "selite": "Vanha venäläinen nesteen tilavuusmitta." },
         { "sym": "amphora", "name": "Amphora (Antiikki)", "kerroin": 26.2, "tyyppi": "harvinainen", "selite": "Rooman valtakunnan yleinen tilavuusmitta." },
         { "sym": "firkin", "name": "Firkin (UK)", "kerroin": 40.9148, "tyyppi": "harvinainen", "selite": "Vanha englantilainen oluttynnyrin mitta." },
+        { "sym": "gill_uk", "name": "Gill (UK)", "kerroin": 0.142065, "tyyppi": "harvinainen", "selite": "Brittiläinen tilavuusmitta, neljäsosa pinttiä." },
         { "sym": "peck_uk", "name": "Peck (UK)", "kerroin": 9.09218, "tyyppi": "harvinainen", "selite": "Vanha brittiläinen kuivan aineen mitta, 2 gallonaa." },
         { "sym": "bushel_uk", "name": "Bushel (UK)", "kerroin": 36.36872, "tyyppi": "harvinainen", "selite": "Yleinen viljan mitta, 8 gallonaa." },
         { "sym": "hogshead", "name": "Hogshead (tynnyri)", "kerroin": 238.66, "tyyppi": "harvinainen", "selite": "Suuri historiallinen tynnyrimitta, jonka koko vaihteli juoman ja aikakauden mukaan." },
@@ -193,7 +197,7 @@
         { "sym": "grad", "name": "Gooni", "kerroin": 0.9, "selite": "Ympyrän 400. osa. Käytetään maanmittauksessa ja tykistössä, koska suora kulma on kätevästi 100 goonia." },
         { "sym": "rev", "name": "Kierros", "kerroin": 360, "selite": "Täysi 360 asteen kierros. Käytetään pyörimisnopeuksien yhteydessä (RPM = kierrosta minuutissa)." }
     ],
- "sahko": [
+    "sahko": [
         { "sym": "V", "name": "Voltti", "kerroin": 1, "tyyppi": "Jännite", "selite": "Sähköjännitteen SI-yksikkö." },
         { "sym": "mV", "name": "Millivoltti", "kerroin": 0.001, "tyyppi": "Jännite", "selite": "Voltin tuhannesosa." },
         { "sym": "A", "name": "Ampeeri", "kerroin": 1, "tyyppi": "Sähkövirta", "selite": "Sähkövirran SI-yksikkö." },
@@ -218,5 +222,23 @@
         { "sym": "rad", "name": "Rad", "kerroin": 0.01, "tyyppi": "Absorboitunut annos", "selite": "Vanha absorboituneen annoksen yksikkö." },
         { "sym": "Sv", "name": "Sievert", "kerroin": 1, "tyyppi": "Ekvivalenttiannos", "selite": "Sädeannoksen ekvivalentin SI-yksikkö, kuvaa säteilyn biologista vaikutusta." },
         { "sym": "rem", "name": "Rem", "kerroin": 0.01, "tyyppi": "Ekvivalenttiannos", "selite": "Vanha ekvivalenttiannoksen yksikkö." }
+    ],
+    "vanhat_suomalaiset": [
+        { "sym": "peninkulma", "name": "Peninkulma", "kerroin": 10000, "tyyppi": "Pituus", "selite": "Vanha suomalainen matkan yksikkö, joka metrijärjestelmän myötä vakiintui tarkalleen 10 kilometriksi." },
+        { "sym": "virsta_fi", "name": "Virsta", "kerroin": 1068.8, "tyyppi": "Pituus", "selite": "Ruotsin vallan aikainen virsta, noin 1069 metriä. Erotuksena venäläisestä virstasta." },
+        { "sym": "vaaksa", "name": "Vaaksa", "kerroin": 0.1484, "tyyppi": "Pituus", "selite": "Peukalon ja etusormen (tai pikkusormen) levitettyjen kärkien välinen mitta, noin 15 cm." },
+        { "sym": "kyynara_fi", "name": "Kyynärä", "kerroin": 0.5938, "tyyppi": "Pituus", "selite": "Vanha pituusmitta, joka vastasi etäisyyttä kyynärpäästä sormenpäihin (n. 59 cm)." },
+        { "sym": "tuoppi", "name": "Tuoppi", "kerroin": 1.3085, "tyyppi": "Tilavuus", "selite": "Puolikas kannua, noin 1.3 litraa." },
+        { "sym": "kappa", "name": "Kappa", "kerroin": 4.58, "tyyppi": "Tilavuus", "selite": "Erityisesti viljan mittaamiseen käytetty astia, noin 4.6 litraa." },
+        { "sym": "naula_fi", "name": "Naula", "kerroin": 425.6, "tyyppi": "Massa", "selite": "Vanha suomalainen painoyksikkö, noin 425 grammaa. Jaettiin 32 luotiin." },
+        { "sym": "markka_paino", "name": "Markka (paino)", "kerroin": 212.8, "tyyppi": "Massa", "selite": "Puoli naulaa, noin 213 grammaa. Käytettiin erityisesti metallien punnitsemiseen." },
+        { "sym": "kappamaa", "name": "Kappamaa", "kerroin": 154.3, "tyyppi": "Pinta-ala", "selite": "Ala, jolle voitiin kylvää kapan verran viljaa." }
+    ],
+    "valo": [
+        { "sym": "lx", "name": "Luksi (lux)", "kerroin": 1, "tyyppi": "Valaistusvoimakkuus", "selite": "SI-yksikkö valaistusvoimakkuudelle. Vastaa yhtä luumenia neliömetrillä (lm/m²)." },
+        { "sym": "fc", "name": "Foot-candle", "kerroin": 10.764, "tyyppi": "Valaistusvoimakkuus", "selite": "Englantilainen valaistusvoimakkuuden yksikkö, vastaa yhtä luumenia neliöjalalla." },
+        { "sym": "ph", "name": "Phot", "kerroin": 10000, "tyyppi": "Valaistusvoimakkuus", "selite": "Vanha CGS-järjestelmän yksikkö, vastaa yhtä luumenia neliösenttimetrillä." },
+        { "sym": "lm", "name": "Luumen (lumen)", "kerroin": 1, "tyyppi": "Valovirta", "selite": "Valovirran SI-yksikkö. Kuvaa valonlähteen kokonaissäteilyn määrää." },
+        { "sym": "cd", "name": "Kandela (candela)", "kerroin": 1, "tyyppi": "Valovoima", "selite": "Valovoiman SI-yksikkö. Kuvaa valon määrää tiettyyn suuntaan. (Huom: Ei suoraan muunnettavissa luumeniin ilman avaruuskulmaa)." }
     ]
 }
