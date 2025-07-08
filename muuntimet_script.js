@@ -360,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
             luoValitsimet();
         };
 
-        const initializers = [
+const initializers = [
             { id: 'koordinaatit', func: alustaKoordinaattiMuunnin }, { id: 'paivamaarat', func: alustaPaivamaaraLaskuri },
             { id: 'teksti', func: alustaTekstiMuunnin }, { id: 'aika', func: alustaAikaMuunnin },
             { id: 'pituus', func: () => alustaVakioMuunnin('pituus', yksikot.pituus || []) },
@@ -376,14 +376,19 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'data', func: () => alustaVakioMuunnin('data', yksikot.data || []) },
             { id: 'paine', func: () => alustaVakioMuunnin('paine', yksikot.paine || []) },
             { id: 'kulma', func: () => alustaVakioMuunnin('kulma', yksikot.kulma || []) },
-            { id: 'typografia', func: () => alustaVakioMuunnin('typografia', yksikot.typografia || []) },
+            { id: 'typografia', func: alustaTypografiaMuunnin },
             { id: 'ruoanlaitto', func: alustaRuoanlaittoMuunnin },
             { id: 'apteekkari_massa', func: () => alustaVakioMuunnin('apteekkari_massa', yksikot.apteekkari_massa || []) },
-            { id: 'lampotila', func: alustaLampotilaMuunnin }, { id: 'roomalaiset', func: alustaRoomalainenMuunnin }, 
-            { id: 'luvut', func: alustaLukujarjestelmaMuunnin }, { id: "verensokeri", func: alustaVerensokeriMuunnin }, 
-            { id: "bmi", func: alustaBmiLaskuri }, { id: "yksikkosanasto", func: alustaYksikkoSanasto }, 
-            { id: 'prosentti', func: alustaProsenttiLaskuri }, { id: 'kalorit', func: alustaKaloriLaskuri }, 
-            { id: 'numerot', func: alustaNumeroTyokalut }, { id: 'vastus', func: alustaVastusLaskuri }, 
+            { id: 'lampotila', func: alustaLampotilaMuunnin }, 
+            { id: 'roomalaiset', func: alustaRoomalainenMuunnin }, 
+            { id: 'luvut', func: alustaLukujarjestelmaMuunnin }, 
+            { id: "verensokeri", func: alustaVerensokeriMuunnin }, 
+            { id: "bmi", func: alustaBmiLaskuri }, 
+            { id: "yksikkosanasto", func: alustaYksikkoSanasto }, 
+            { id: 'prosentti', func: alustaProsenttiLaskuri }, 
+            { id: 'kalorit', func: alustaKaloriLaskuri }, 
+            { id: 'numerot', func: alustaNumeroTyokalut }, 
+            { id: 'vastus', func: alustaVastusLaskuri }, 
             { id: 'varit', func: alustaVariMuunnin }
         ];
 
