@@ -64,7 +64,7 @@
         { "sym": "jin", "name": "Jin (Kiina)", "kerroin": 500, "tyyppi": "harvinainen", "selite": "Moderni kiinalainen painoyksikkö, tarkalleen 500 grammaa. Vastaa 'Catty'-yksikköä." }
     ],
     "data": [
-        { "sym": "b", "name": "Bitti (b)", "kerroin": 0.125, "selite": "Pienin datan yksikkö, joka voi olla arvoltaan 0 tai 1. Kahdeksan bittiä muodostaa yleensä yhden tavun." },
+        { "sym": "b", "name": "Bitti (b)", "kerroin": 0.125, "selite": "Pienin datan yksikkö." },
         { "sym": "B", "name": "Tavu (B)", "kerroin": 1, "selite": "Datan perusyksikkö, tyypillisesti 8 bittiä. Voi edustaa yhtä merkkiä." },
         { "sym": "kB", "name": "Kilotavu (kB)", "kerroin": 1000, "selite": "1000 tavua. Käytetään tiedostojen kokojen ilmoittamiseen (SI-standardi)." },
         { "sym": "MB", "name": "Megatavu (MB)", "kerroin": 1000000, "selite": "Miljoona tavua. Yleinen yksikkö esimerkiksi valokuville ja musiikille." },
@@ -118,11 +118,13 @@
         { "sym": "rkl", "name": "Ruokalusikka", "kerroin": 0.015, "selite": "Epävirallinen keittiömitta, 3 teelusikkaa eli 15 ml." },
         { "sym": "cup_us", "name": "Cup (US)", "kerroin": 0.236588, "selite": "Amerikkalainen keittiömitta, n. 2.4 dl." },
         { "sym": "gal_us", "name": "Gallona (US)", "kerroin": 3.78541, "selite": "Amerikkalainen nestemitta, 4 kvarttia eli 128 nesteunssia." },
-        { "sym": "pt_uk", "name": "Pintti (UK)", "kerroin": 0.568261, "tyyppi": "harvinainen", "selite": "Brittiläinen (Imperial) pintti, 20 nesteunssia. Noin 20% suurempi kuin US pintti." },
-        { "sym": "gal_uk", "name": "Gallona (UK)", "kerroin": 4.54609, "tyyppi": "harvinainen", "selite": "Brittiläinen (Imperial) gallona, 4 kvarttia. Noin 20% suurempi kuin US gallona." },
-        { "sym": "vedro_ru", "name": "Vedro (Venäjä)", "kerroin": 12.299, "tyyppi": "harvinainen", "selite": "Vanha venäläinen nesteen tilavuusmitta, 'sanko'." },
-        { "sym": "amphora", "name": "Amphora (Antiikki)", "kerroin": 26.2, "tyyppi": "harvinainen", "selite": "Rooman valtakunnan yleinen tilavuusmitta viinille ja öljylle." },
-        { "sym": "firkin", "name": "Firkin (UK)", "kerroin": 40.9148, "tyyppi": "harvinainen", "selite": "Vanha englantilainen oluttynnyrin mitta, 9 imperial gallonaa." },
+        { "sym": "gal_uk", "name": "Gallona (UK)", "kerroin": 4.54609, "tyyppi": "harvinainen" },
+        { "sym": "pt_uk", "name": "Pintti (UK)", "kerroin": 0.568261, "tyyppi": "harvinainen", "selite": "Brittiläinen (Imperial) pintti." },
+        { "sym": "pint_dry_us", "name": "Pintti (US, kuiva)", "kerroin": 0.55061, "tyyppi": "harvinainen" },
+        { "sym": "barrel_oil", "name": "Tynnyri (öljy)", "kerroin": 158.987, "tyyppi": "harvinainen" },
+        { "sym": "vedro_ru", "name": "Vedro (Venäjä)", "kerroin": 12.299, "tyyppi": "harvinainen", "selite": "Vanha venäläinen nesteen tilavuusmitta." },
+        { "sym": "amphora", "name": "Amphora (Antiikki)", "kerroin": 26.2, "tyyppi": "harvinainen", "selite": "Rooman valtakunnan yleinen tilavuusmitta." },
+        { "sym": "firkin", "name": "Firkin (UK)", "kerroin": 40.9148, "tyyppi": "harvinainen", "selite": "Vanha englantilainen oluttynnyrin mitta." },
         { "sym": "peck_uk", "name": "Peck (UK)", "kerroin": 9.09218, "tyyppi": "harvinainen", "selite": "Vanha brittiläinen kuivan aineen mitta, 2 gallonaa." },
         { "sym": "bushel_uk", "name": "Bushel (UK)", "kerroin": 36.36872, "tyyppi": "harvinainen", "selite": "Yleinen viljan mitta, 8 gallonaa." },
         { "sym": "hogshead", "name": "Hogshead (tynnyri)", "kerroin": 238.66, "tyyppi": "harvinainen", "selite": "Suuri historiallinen tynnyrimitta, jonka koko vaihteli juoman ja aikakauden mukaan." },
@@ -140,7 +142,8 @@
         { "sym": "km/h", "name": "Kilometriä/h", "kerroin": 0.277778, "selite": "Yleinen nopeusyksikkö tieliikenteessä." },
         { "sym": "mph", "name": "Mailia/h", "kerroin": 0.44704, "selite": "Nopeusyksikkö englanninkielisissä maissa (miles per hour)." },
         { "sym": "kn", "name": "Solmu", "kerroin": 0.514444, "selite": "Merenkulun ja ilmailun nopeusyksikkö, yksi meripeninkulma tunnissa." },
-        { "sym": "c", "name": "Valonnopeus (c)", "kerroin": 299792458, "tyyppi": "harvinainen", "selite": "Suurin mahdollinen nopeus, jolla informaatio voi edetä tyhjiössä." }
+        { "sym": "c", "name": "Valonnopeus (c)", "kerroin": 299792458, "tyyppi": "harvinainen", "selite": "Suurin mahdollinen nopeus, jolla informaatio voi edetä tyhjiössä." },
+        { "sym": "mach", "name": "Mach", "kerroin": 343, "tyyppi": "harvinainen", "selite": "Äänennopeus ilmassa merenpinnan tasolla." }
     ],
     "aika": [
         { "sym": "ms", "name": "Millisekunti", "plural": "Millisekunteina", "kerroin": 0.001, "selite": "Sekunnin tuhannesosa." },
@@ -189,5 +192,31 @@
         { "sym": "rad", "name": "Radiaani", "kerroin": 57.2958, "selite": "Kulma, jota vastaava kaari on säteen mittainen. Matemaattisesti ja fysiikassa perustavanlaatuinen yksikkö." },
         { "sym": "grad", "name": "Gooni", "kerroin": 0.9, "selite": "Ympyrän 400. osa. Käytetään maanmittauksessa ja tykistössä, koska suora kulma on kätevästi 100 goonia." },
         { "sym": "rev", "name": "Kierros", "kerroin": 360, "selite": "Täysi 360 asteen kierros. Käytetään pyörimisnopeuksien yhteydessä (RPM = kierrosta minuutissa)." }
+    ],
+    "sahko": [
+        { "sym": "V", "name": "Voltti", "kerroin": 1, "tyyppi": "Jännite" },
+        { "sym": "mV", "name": "Millivoltti", "kerroin": 0.001, "tyyppi": "Jännite" },
+        { "sym": "A", "name": "Ampeeri", "kerroin": 1, "tyyppi": "Sähkövirta" },
+        { "sym": "mA", "name": "Milliampeeri", "kerroin": 0.001, "tyyppi": "Sähkövirta" },
+        { "sym": "Ω", "name": "Ohmi", "kerroin": 1, "tyyppi": "Resistanssi" },
+        { "sym": "kΩ", "name": "Kilo-ohmi", "kerroin": 1000, "tyyppi": "Resistanssi" },
+        { "sym": "C", "name": "Coulombi", "kerroin": 1, "tyyppi": "Sähkövaraus" },
+        { "sym": "Ah", "name": "Ampeeritunti", "kerroin": 3600, "tyyppi": "Sähkövaraus" },
+        { "sym": "F", "name": "Faradi", "kerroin": 1, "tyyppi": "Kapasitanssi" },
+        { "sym": "µF", "name": "Mikrofaradi", "kerroin": 1e-6, "tyyppi": "Kapasitanssi" },
+        { "sym": "nF", "name": "Nanofaradi", "kerroin": 1e-9, "tyyppi": "Kapasitanssi" },
+        { "sym": "H", "name": "Henry", "kerroin": 1, "tyyppi": "Induktanssi" },
+        { "sym": "Hz", "name": "Hertsi", "kerroin": 1, "tyyppi": "Taajuus" },
+        { "sym": "kHz", "name": "Kilohertsi", "kerroin": 1000, "tyyppi": "Taajuus" },
+        { "sym": "statV", "name": "Statvoltti", "kerroin": 299.79, "tyyppi": "Harvinaiset (CGS)" },
+        { "sym": "abA", "name": "Abampeeri", "kerroin": 10, "tyyppi": "Harvinaiset (CGS)" }
+    ],
+    "sateily": [
+        { "sym": "Bq", "name": "Becquerel", "kerroin": 1, "tyyppi": "Aktiivisuus" },
+        { "sym": "Ci", "name": "Curie", "kerroin": 3.7e10, "tyyppi": "Aktiivisuus" },
+        { "sym": "Gy", "name": "Gray", "kerroin": 1, "tyyppi": "Absorboitunut annos" },
+        { "sym": "rad", "name": "Rad", "kerroin": 0.01, "tyyppi": "Absorboitunut annos" },
+        { "sym": "Sv", "name": "Sievert", "kerroin": 1, "tyyppi": "Ekvivalenttiannos" },
+        { "sym": "rem", "name": "Rem", "kerroin": 0.01, "tyyppi": "Ekvivalenttiannos" }
     ]
 }
