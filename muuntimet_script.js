@@ -309,6 +309,68 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
 
+        // UUSI FUNKTIO ALV-LASKURILLE
+        const alustaAlvLaskuri = () => {
+            const container = document.getElementById('alv');
+            if (!container) return;
+            container.innerHTML = `
+                <div class="muunnin-ryhma">
+                    <label for="alv-kanta">ALV-kanta</label>
+                    <select id="alv-kanta">
+                        <option value="0.24">Yleinen kanta (24%)</option>
+                        <option value="0.14">Alennettu kanta (14%)</option>
+                        <option value="0.10">Alennettu kanta (10%)</option>
+                    </select>
+                </div>
+                <div class="muunnin-ryhma" style="margin-top: 20px;">
+                    <label for="alv-hinta-verollinen">Hinta (sis. ALV)</label>
+                    <input type="number" id="alv-hinta-verollinen" placeholder="124.00">
+                </div>
+                <div class="muunnin-ryhma">
+                    <label for="alv-hinta-veroton">Hinta (ilman ALV)</label>
+                    <input type="number" id="alv-hinta-veroton" placeholder="100.00">
+                </div>
+                <div class="tulos-box" style="margin-top: 20px;">
+                    <strong>ALV:n osuus:</strong> <span id="alv-osuus">24.00</span> €
+                </div>
+            `;
+
+            const kantaSelect = document.getElementById('alv-kanta');
+            const verollinenInput = document.getElementById('alv-hinta-verollinen');
+            const verotonInput = document.getElementById('alv-hinta-veroton');
+            const osuusSpan = document.getElementById('alv-osuus');
+
+            const laske = (muutoksenLähde) => {
+                const kanta = parseFloat(kantaSelect.value);
+                let verollinen = parseFloat(verollinenInput.value) || 0;
+                let veroton = parseFloat(verotonInput.value) || 0;
+
+                if (muutoksenLähde === 'verollinen') {
+                    if (verollinen > 0) {
+                        veroton = verollinen / (1 + kanta);
+                        verotonInput.value = veroton.toFixed(2);
+                    } else {
+                         verotonInput.value = '';
+                    }
+                } else if (muutoksenLähde === 'veroton') {
+                    if (veroton > 0) {
+                        verollinen = veroton * (1 + kanta);
+                        verollinenInput.value = verollinen.toFixed(2);
+                    } else {
+                        verollinenInput.value = '';
+                    }
+                }
+                
+                const veronOsuus = verollinen - veroton;
+                osuusSpan.textContent = veronOsuus.toFixed(2);
+            };
+            
+            kantaSelect.addEventListener('input', () => laske('verollinen'));
+            verollinenInput.addEventListener('input', () => laske('verollinen'));
+            verotonInput.addEventListener('input', () => laske('veroton'));
+        };
+
+
         const initializers = [
             { id: 'koordinaatit', func: alustaKoordinaattiMuunnin },
             { id: 'paivamaarat', func: alustaPaivamaaraLaskuri },
@@ -335,6 +397,8 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'verensokeri', func: alustaVerensokeriMuunnin },
             { id: 'bmi', func: alustaBmiLaskuri },
             { id: 'yksikkosanasto', func: alustaYksikkoSanasto },
+            // LISÄTÄÄN UUSI ALUSTAJA TÄNNE
+            { id: 'alv', func: alustaAlvLaskuri },
         ];
 
         initializers.forEach(init => {
