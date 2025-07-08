@@ -165,18 +165,59 @@ document.addEventListener('DOMContentLoaded', () => {
             laske();
         };
 
-        const alustaPolttoaineMuunnin = () => {
+const alustaPolttoaineMuunnin = () => {
             const id = 'polttoaine';
-            const container = document.getElementById(id);
-            if (!container) return;
+            // Tämä muunnin ei käytä yksikot.json-dataa, joten alustetaan tyhjällä taulukolla
             alustaVakioMuunnin(id, []);
-            const arvoInput=document.getElementById(`${id}-arvo`),tulosInput=document.getElementById(`${id}-tulos`),mistaSelect=document.getElementById(`${id}-yksikko-mista`),mihinSelect=document.getElementById(`${id}-yksikko-mihin`);
-            mistaSelect.innerHTML='';mihinSelect.innerHTML='';
-            const units=[{sym:'l100km',name:'L/100km'},{sym:'mpg_us',name:'MPG (US)'},{sym:'mpg_uk',name:'MPG (UK)'}];
-            units.forEach(u=>{mistaSelect.add(new Option(u.name,u.sym));mihinSelect.add(new Option(u.name,u.sym))});
-            mihinSelect.selectedIndex=1;
-            const laske=()=>{const arvo=parseFloat(arvoInput.value);if(isNaN(arvo)||arvo===0){tulosInput.value='0';return}const mista=mistaSelect.value,mihin=mihinSelect.value;let tulos;if(mista===mihin)tulos=arvo;else if(mista==='l100km'){if(mihin==='mpg_us')tulos=235.214/arvo;else tulos=282.481/arvo}else if(mista==='mpg_us'){if(mihin==='l100km')tulos=235.214/arvo;else tulos=arvo*1.20095}else{if(mihin==='l100km')tulos=282.481/arvo;else tulos=arvo/1.20095}tulosInput.value=tulos.toLocaleString('fi-FI',{maximumFractionDigits:2})};
-            [arvoInput,mistaSelect,mihinSelect].forEach(el=>el.addEventListener('input',laske));
+            
+            // Haetaan elementit ja ylikirjoitetaan niiden sisältö ja toiminnallisuus
+            const arvoInput = document.getElementById(`${id}-arvo`);
+            const tulosInput = document.getElementById(`${id}-tulos`);
+            const mistaSelect = document.getElementById(`${id}-yksikko-mista`);
+            const mihinSelect = document.getElementById(`${id}-yksikko-mihin`);
+
+            mistaSelect.innerHTML = '';
+            mihinSelect.innerHTML = '';
+            
+            const units = [
+                { sym: 'l100km', name: 'L/100km' },
+                { sym: 'mpg_us', name: 'MPG (US)' },
+                { sym: 'mpg_uk', name: 'MPG (UK)' }
+            ];
+
+            units.forEach(u => {
+                mistaSelect.add(new Option(u.name, u.sym));
+                mihinSelect.add(new Option(u.name, u.sym));
+            });
+
+            mihinSelect.selectedIndex = 1;
+
+            const laske = () => {
+                const arvo = parseFloat(arvoInput.value);
+                if (isNaN(arvo) || arvo === 0) {
+                    tulosInput.value = '0';
+                    return;
+                }
+                const mista = mistaSelect.value;
+                const mihin = mihinSelect.value;
+                let tulos;
+
+                if (mista === mihin) {
+                    tulos = arvo;
+                } else if (mista === 'l100km') {
+                    if (mihin === 'mpg_us') tulos = 235.214 / arvo;
+                    else tulos = 282.481 / arvo; // MPG (UK)
+                } else if (mista === 'mpg_us') {
+                    if (mihin === 'l100km') tulos = 235.214 / arvo;
+                    else tulos = arvo * 1.20095; // to MPG (UK)
+                } else { // from mpg_uk
+                    if (mihin === 'l100km') tulos = 282.481 / arvo;
+                    else tulos = arvo / 1.20095; // to MPG (US)
+                }
+                tulosInput.value = tulos.toLocaleString('fi-FI', { maximumFractionDigits: 2 });
+            };
+
+            [arvoInput, mistaSelect, mihinSelect].forEach(el => el.addEventListener('input', laske));
             laske();
         };
 
