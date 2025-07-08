@@ -1,6 +1,6 @@
 /*
   MK MUUNTIMET
-  Versio 17.1 - Kaikki funktiot mukana
+  Versio 17.1 - 99 Kaikki funktiot mukana
 */
 document.addEventListener('DOMContentLoaded', () => {
     
