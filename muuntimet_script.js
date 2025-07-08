@@ -1,6 +1,6 @@
 /*
   MK MUUNTIMET
-  Versio 15.2 - Korjaus ja kaikki osat mukana
+  Versio 16.0 - Sähkö- ja säteily-muuntimet lisätty
 */
 document.addEventListener('DOMContentLoaded', () => {
     
@@ -56,23 +56,43 @@ document.addEventListener('DOMContentLoaded', () => {
             const seliteMihin = document.getElementById(`${id}-selite-mihin`);
             
             if (yksikkoData.length > 0) {
-                yksikkoData.sort((a, b) => {
-                    const aHarvinainen = a.tyyppi === 'harvinainen', bHarvinainen = b.tyyppi === 'harvinainen';
-                    if (aHarvinainen && !bHarvinainen) return 1; if (!aHarvinainen && bHarvinainen) return -1;
-                    return a.kerroin - b.kerroin;
-                });
+                 const hasSubTypes = yksikkoData.every(y => y.tyyppi) && new Set(yksikkoData.map(y => y.tyyppi)).size > 1 && !yksikkoData.some(y => y.tyyppi === 'harvinainen');
+
                 [mistaSelect, mihinSelect].forEach(select => {
                     select.innerHTML = '';
-                    const yleisetGroup = document.createElement('optgroup'); yleisetGroup.label = 'Yleiset yksiköt';
-                    const harvinaisetGroup = document.createElement('optgroup'); harvinaisetGroup.label = 'Harvinaiset / Erikoiset';
-                    let onHarvinaisia = false;
-                    yksikkoData.forEach(y => {
-                        const option = new Option(y.name, y.sym);
-                        if (y.selite) { option.title = y.selite; }
-                        if (y.tyyppi === 'harvinainen') { harvinaisetGroup.appendChild(option); onHarvinaisia = true; } else { yleisetGroup.appendChild(option); }
-                    });
-                    select.appendChild(yleisetGroup);
-                    if (onHarvinaisia) select.appendChild(harvinaisetGroup);
+                    if (hasSubTypes) {
+                        const groups = {};
+                        yksikkoData.forEach(y => {
+                            if (!groups[y.tyyppi]) { groups[y.tyyppi] = []; }
+                            groups[y.tyyppi].push(y);
+                        });
+                        for (const groupName in groups) {
+                            const optgroup = document.createElement('optgroup');
+                            optgroup.label = groupName;
+                            groups[groupName].sort((a, b) => a.kerroin - b.kerroin).forEach(y => {
+                                const option = new Option(`${y.name} (${y.sym})`, y.sym);
+                                if (y.selite) { option.title = y.selite; }
+                                optgroup.appendChild(option);
+                            });
+                            select.appendChild(optgroup);
+                        }
+                    } else {
+                        yksikkoData.sort((a, b) => {
+                            const aHarvinainen = a.tyyppi === 'harvinainen', bHarvinainen = b.tyyppi === 'harvinainen';
+                            if (aHarvinainen && !bHarvinainen) return 1; if (!aHarvinainen && bHarvinainen) return -1;
+                            return a.kerroin - b.kerroin;
+                        });
+                        const yleisetGroup = document.createElement('optgroup'); yleisetGroup.label = 'Yleiset yksiköt';
+                        const harvinaisetGroup = document.createElement('optgroup'); harvinaisetGroup.label = 'Harvinaiset / Erikoiset';
+                        let onHarvinaisia = false;
+                        yksikkoData.forEach(y => {
+                            const option = new Option(y.name, y.sym);
+                            if (y.selite) { option.title = y.selite; }
+                            if (y.tyyppi === 'harvinainen') { harvinaisetGroup.appendChild(option); onHarvinaisia = true; } else { yleisetGroup.appendChild(option); }
+                        });
+                        select.appendChild(yleisetGroup);
+                        if (onHarvinaisia) select.appendChild(harvinaisetGroup);
+                    }
                 });
                 if(mihinSelect.options.length > 1) mihinSelect.selectedIndex = 1;
             }
@@ -279,7 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const kategoriat = {
                 pituus: 'Pituus', massa: 'Massa', apteekkari_massa: 'Massa (Apteekkarin mitat)',
                 voima: 'Voima', pinta_ala: 'Pinta-ala', tilavuus: 'Tilavuus', nopeus: 'Nopeus', aika: 'Aika', data: 'Data',
-                paine: 'Paine', energia: 'Energia', teho: 'Teho', kulma: 'Kulma'
+                paine: 'Paine', energia: 'Energia', teho: 'Teho', kulma: 'Kulma', sahko: 'Sähkö', sateily: 'Säteily'
             };
 
             let html = `<input type="text" id="sanasto-haku" placeholder="Hae yksiköitä nimellä tai lyhenteellä...">`;
@@ -555,6 +575,8 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'teho', func: () => alustaVakioMuunnin('teho', yksikot.teho || []) },
             { id: 'data', func: () => alustaVakioMuunnin('data', yksikot.data || []) },
             { id: 'kulma', func: () => alustaVakioMuunnin('kulma', yksikot.kulma || []) },
+            { id: 'sahko', func: () => alustaVakioMuunnin('sahko', yksikot.sahko || []) },
+            { id: 'sateily', func: () => alustaVakioMuunnin('sateily', yksikot.sateily || []) },
             { id: 'lampotila', func: alustaLampotilaMuunnin }, { id: 'roomalaiset', func: alustaRoomalainenMuunnin }, 
             { id: 'luvut', func: alustaLukujarjestelmaMuunnin }, { id: "ruoanlaitto", func: alustaRuoanlaittoMuunnin }, 
             { id: "verensokeri", func: alustaVerensokeriMuunnin }, { id: "bmi", func: alustaBmiLaskuri }, 
