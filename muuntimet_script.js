@@ -360,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
             luoValitsimet();
         };
 
-const initializers = [
+        const initializers = [
             { id: 'koordinaatit', func: alustaKoordinaattiMuunnin }, { id: 'paivamaarat', func: alustaPaivamaaraLaskuri },
             { id: 'teksti', func: alustaTekstiMuunnin }, { id: 'aika', func: alustaAikaMuunnin },
             { id: 'pituus', func: () => alustaVakioMuunnin('pituus', yksikot.pituus || []) },
@@ -380,6 +380,7 @@ const initializers = [
             { id: 'ruoanlaitto', func: alustaRuoanlaittoMuunnin },
             { id: 'apteekkari_massa', func: () => alustaVakioMuunnin('apteekkari_massa', yksikot.apteekkari_massa || []) },
             { id: 'lampotila', func: alustaLampotilaMuunnin }, 
+            { id: 'polttoaine', func: alustaPolttoaineMuunnin },
             { id: 'roomalaiset', func: alustaRoomalainenMuunnin }, 
             { id: 'luvut', func: alustaLukujarjestelmaMuunnin }, 
             { id: "verensokeri", func: alustaVerensokeriMuunnin }, 
