@@ -1,6 +1,6 @@
 /*
   MK MUUNTIMET
-  Versio 16.0 - Sähkö- ja säteily-muuntimet lisätty
+  Versio 17.0 - Laajennetut yksiköt
 */
 document.addEventListener('DOMContentLoaded', () => {
     
@@ -299,7 +299,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const kategoriat = {
                 pituus: 'Pituus', massa: 'Massa', apteekkari_massa: 'Massa (Apteekkarin mitat)',
                 voima: 'Voima', pinta_ala: 'Pinta-ala', tilavuus: 'Tilavuus', nopeus: 'Nopeus', aika: 'Aika', data: 'Data',
-                paine: 'Paine', energia: 'Energia', teho: 'Teho', kulma: 'Kulma', sahko: 'Sähkö', sateily: 'Säteily'
+                paine: 'Paine', energia: 'Energia', teho: 'Teho', kulma: 'Kulma', sahko: 'Sähkö', sateily: 'Säteily',
+                vanhat_suomalaiset: 'Vanhat Suomalaiset Mitat', valo: 'Valo ja Valaistus'
             };
 
             let html = `<input type="text" id="sanasto-haku" placeholder="Hae yksiköitä nimellä tai lyhenteellä...">`;
@@ -577,6 +578,8 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'kulma', func: () => alustaVakioMuunnin('kulma', yksikot.kulma || []) },
             { id: 'sahko', func: () => alustaVakioMuunnin('sahko', yksikot.sahko || []) },
             { id: 'sateily', func: () => alustaVakioMuunnin('sateily', yksikot.sateily || []) },
+            { id: 'vanhat_suomalaiset', func: () => alustaVakioMuunnin('vanhat_suomalaiset', yksikot.vanhat_suomalaiset || []) },
+            { id: 'valo', func: () => alustaVakioMuunnin('valo', yksikot.valo || []) },
             { id: 'lampotila', func: alustaLampotilaMuunnin }, { id: 'roomalaiset', func: alustaRoomalainenMuunnin }, 
             { id: 'luvut', func: alustaLukujarjestelmaMuunnin }, { id: "ruoanlaitto", func: alustaRuoanlaittoMuunnin }, 
             { id: "verensokeri", func: alustaVerensokeriMuunnin }, { id: "bmi", func: alustaBmiLaskuri }, 
