@@ -1,6 +1,6 @@
 /*
   MK MUUNTIMET
-  Versio 17.0 - Laajennetut yksiköt
+  Versio 18.0 - Loogisempi rakenne ja uudet yksiköt
 */
 document.addEventListener('DOMContentLoaded', () => {
     
@@ -181,13 +181,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const alustaLampotilaMuunnin = () => {
             const id = 'lampotila';
-            alustaVakioMuunnin(id, []);
-            const arvoInput=document.getElementById(`${id}-arvo`),tulosInput=document.getElementById(`${id}-tulos`),mistaSelect=document.getElementById(`${id}-yksikko-mista`),mihinSelect=document.getElementById(`${id}-yksikko-mihin`);
-            mistaSelect.innerHTML='';mihinSelect.innerHTML='';
-            ['Celsius','Fahrenheit','Kelvin'].forEach(key=>{mistaSelect.add(new Option(key,key));mihinSelect.add(new Option(key,key))});
-            mihinSelect.value='Fahrenheit';
-            const laske=()=>{let arvo=parseFloat(arvoInput.value)||0;let tulos;if(mistaSelect.value==='Fahrenheit')arvo=(arvo-32)*5/9;else if(mistaSelect.value==='Kelvin')arvo=arvo-273.15;if(mihinSelect.value==='Celsius')tulos=arvo;else if(mihinSelect.value==='Fahrenheit')tulos=arvo*9/5+32;else if(mihinSelect.value==='Kelvin')tulos=arvo+273.15;tulosInput.value=tulos.toLocaleString('fi-FI',{maximumFractionDigits:2})};
-            [arvoInput,mistaSelect,mihinSelect].forEach(el=>el.addEventListener('input',laske));
+            alustaVakioMuunnin(id, []); // Käytetään tätä luomaan perus-HTML
+            const arvoInput = document.getElementById(`${id}-arvo`), tulosInput = document.getElementById(`${id}-tulos`), mistaSelect = document.getElementById(`${id}-yksikko-mista`), mihinSelect = document.getElementById(`${id}-yksikko-mihin`);
+            
+            const units = [
+                { sym: 'C', name: 'Celsius' },
+                { sym: 'F', name: 'Fahrenheit' },
+                { sym: 'K', name: 'Kelvin' },
+                { sym: 'R', name: 'Rankine' },
+                { sym: 'Re', name: 'Réaumur' }
+            ];
+
+            // Täytä select-kentät
+            [mistaSelect, mihinSelect].forEach(select => {
+                select.innerHTML = '';
+                units.forEach(u => select.add(new Option(u.name, u.sym)));
+            });
+            mihinSelect.value = 'F';
+
+            const muunnokset = {
+                'C': { toBase: c => c, fromBase: c => c },
+                'F': { toBase: f => (f - 32) * 5 / 9, fromBase: c => c * 9 / 5 + 32 },
+                'K': { toBase: k => k - 273.15, fromBase: c => c + 273.15 },
+                'R': { toBase: r => (r - 491.67) * 5 / 9, fromBase: c => (c + 273.15) * 9 / 5 },
+                'Re': { toBase: re => re * 1.25, fromBase: c => c * 0.8 }
+            };
+
+            const laske = () => {
+                const arvo = parseFloat(arvoInput.value) || 0;
+                const mista = mistaSelect.value;
+                const mihin = mihinSelect.value;
+                if (!muunnokset[mista] || !muunnokset[mihin]) return;
+
+                const arvoCelsius = muunnokset[mista].toBase(arvo);
+                const tulos = muunnokset[mihin].fromBase(arvoCelsius);
+                
+                tulosInput.value = tulos.toLocaleString('fi-FI', { maximumFractionDigits: 2 });
+            };
+
+            [arvoInput, mistaSelect, mihinSelect].forEach(el => el.addEventListener('input', laske));
             laske();
         };
 
@@ -300,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 pituus: 'Pituus', massa: 'Massa', apteekkari_massa: 'Massa (Apteekkarin mitat)',
                 voima: 'Voima', pinta_ala: 'Pinta-ala', tilavuus: 'Tilavuus', nopeus: 'Nopeus', aika: 'Aika', data: 'Data',
                 paine: 'Paine', energia: 'Energia', teho: 'Teho', kulma: 'Kulma', sahko: 'Sähkö', sateily: 'Säteily',
-                vanhat_suomalaiset: 'Vanhat Suomalaiset Mitat', valo: 'Valo ja Valaistus'
+                valo: 'Valo ja Valaistus'
             };
 
             let html = `<input type="text" id="sanasto-haku" placeholder="Hae yksiköitä nimellä tai lyhenteellä...">`;
@@ -578,7 +610,6 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'kulma', func: () => alustaVakioMuunnin('kulma', yksikot.kulma || []) },
             { id: 'sahko', func: () => alustaVakioMuunnin('sahko', yksikot.sahko || []) },
             { id: 'sateily', func: () => alustaVakioMuunnin('sateily', yksikot.sateily || []) },
-            { id: 'vanhat_suomalaiset', func: () => alustaVakioMuunnin('vanhat_suomalaiset', yksikot.vanhat_suomalaiset || []) },
             { id: 'valo', func: () => alustaVakioMuunnin('valo', yksikot.valo || []) },
             { id: 'lampotila', func: alustaLampotilaMuunnin }, { id: 'roomalaiset', func: alustaRoomalainenMuunnin }, 
             { id: 'luvut', func: alustaLukujarjestelmaMuunnin }, { id: "ruoanlaitto", func: alustaRuoanlaittoMuunnin }, 
