@@ -45,7 +45,7 @@
 
             <div class="header-flex-container">
                 <img src="https://img.geocaching.com:443/84454fa6-e23a-4aad-a8a4-612b77f23abe.png" alt="Oma logo" class="logo" />
-                <h3 class="paaotsikko">— Geokätköilyn Haastetyökalu 2—</h3>
+                <h3 class="paaotsikko">— Geokätköilyn Haastetyökalu —</h3>
             </div>
             
             <p class="leipateksti" id="instruction-text">
@@ -106,8 +106,18 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script>
+        const ATTRIBUTE_TRANSLATIONS = {
+            '14': { true: 'Koiria', false: 'Ei koiria' }, '15': { true: 'Polkupyörä', false: 'Ei polkupyörää' }, '16': { true: 'Moottoripyörä', false: 'Ei moottoripyörää' }, '17': { true: 'Mönkijä', false: 'Ei mönkijää' }, '18': { true: 'Maastoauto', false: 'Ei maastoautoa' }, '19': { true: 'Lumikelkka', false: 'Ei lumikelkkaa' }, '20': { true: 'Hevosia', false: 'Ei hevosia' }, '57': { true: 'Kuorma-autoilijoille', false: 'Ei kuorma-autoilijoille' }, '38': { true: 'Nuotio', false: 'Ei nuotiota' },
+            '6': { true: 'Suositellaan lapsille' }, '8': { true: 'Alle tunnissa haettavissa' }, '9': { true: 'Maisemakohde' }, '45': { true: 'Vaikea kiipeäminen' }, '13': { true: 'Saatavilla 24/7', false: 'Ei 24/7 saatavilla' }, '21': { true: 'Suositellaan yöllä' }, '12': { true: 'Saatavilla talvella' }, '22': { true: 'Huomaamattomuutta vaaditaan' }, '40': { true: 'Omistajan huomiota pyydetään' }, '56': { true: 'Maastomysteeri' }, '42': { true: 'Yökätkö' }, '43': { true: 'Pysäköi ja nappaa' }, '44': { true: 'Hylätty rakennus' }, '10': { true: 'Lyhyt kävely (<1km)' }, '11': { true: 'Keskipitkä kävely (1-10km)' }, '55': { true: 'Kausittainen pääsy' }, '63': { true: 'Suositellaan turisteille' }, '54': { true: 'Piha (yksityisalue)' }, '47': { true: 'Tiimityötä vaaditaan' }, '61': { true: 'Haastekätkö' }, '62': { true: 'Power trail' }, '53': { true: 'Bonuskätkö' },
+            '51': { true: 'Lost And Found -kiertue' }, '71': { true: 'Kumppanuuskätkö' }, '70': { true: 'GeoTour' }, '72': { true: 'Geocaching.com solution checker' },
+            '2': { true: 'Sisäänpääsy-/parkkimaksu', false: 'Ei maksuja' }, '3': { true: 'Kiipeilyvarusteet', false: 'Ei kiipeilyvarusteita' }, '4': { true: 'Vene', false: 'Ei venettä' }, '5': { true: 'Sukellusvarusteet', false: 'Ei sukellusvarusteita' }, '23': { true: 'Taskulamppu', false: 'Ei taskulamppua' }, '29': { true: 'UV-valo', false: 'Ei UV-valoa' }, '30': { true: 'Lumikengät', false: 'Ei lumikenkiä' }, '31': { true: 'Murtomaasukset', false: 'Ei murtomaasuksia' }, '32': { true: 'Työkaluja', false: 'Ei työkaluja' }, '69': { true: 'Langaton lähetin', false: 'Ei lähetintä' }, '64': { true: 'Puuhun kiipeämistä', false: 'Ei puuhun kiipeämistä' },
+            '35': { true: 'Myrkkykasveja', false: 'Ei myrkkykasveja' }, '36': { true: 'Vaarallisia eläimiä', false: 'Ei vaarallisia eläimiä' }, '37': { true: 'Punkkeja', false: 'Ei punkkeja' }, '39': { true: 'Hylätty kaivos' }, '46': { true: 'Metsästysalue' }, '48': { true: 'Vaarallinen alue' }, '33': { true: 'Karjaa lähellä' }, '49': { true: 'Kallioita/kiviä', false: 'Ei kallioita/kiviä' }, '50': { true: 'Piikkikasveja', false: 'Ei piikkikasveja' },
+            '7': { true: 'Haettavissa pyörätuolilla', false: 'Ei pyörätuolilla' }, '25': { true: 'Parkkipaikka lähellä' }, '26': { true: 'Julkinen liikenne lähellä' }, '27': { true: 'Juomavettä lähellä' }, '28': { true: 'Yleinen WC lähellä' }, '34': { true: 'Puhelin lähellä' }, '52': { true: 'Piknikpöytiä lähellä' }, '41': { true: 'Lastenvaunuilla tavoitettavissa' }, '58': { true: 'Huoltoasema lähellä' }, '59': { true: 'Ruokaa lähellä' }
+        };
+
         let allParsedFinds = [];
         let gpxCreationDate = null;
+        let attributeMap = new Map();
 
         const attributeModal = document.getElementById('attribute-modal');
         document.getElementById('attribute-filter-btn').addEventListener('click', () => attributeModal.showModal());
@@ -308,17 +318,11 @@
             types.forEach(type => typeSelect.innerHTML += `<option value="${type}">${type}</option>`);
             countries.forEach(country => countrySelect.innerHTML += `<option value="${country}">${country}</option>`);
             
-            const attributeMap = new Map();
+            attributeMap.clear();
             allParsedFinds.forEach(find => {
                 find.attributes.forEach(attr => {
                     if (!attributeMap.has(attr.id)) {
-                        attributeMap.set(attr.id, { trueName: null, falseName: null });
-                    }
-                    const entry = attributeMap.get(attr.id);
-                    if (attr.inc) {
-                        if (!entry.trueName) entry.trueName = attr.name;
-                    } else {
-                        if (!entry.falseName) entry.falseName = attr.name;
+                        attributeMap.set(attr.id, { inc: attr.inc, name: attr.name });
                     }
                 });
             });
@@ -328,14 +332,15 @@
             let positiveHtml = '<h4>Kyllä / Päällä</h4>';
             let negativeHtml = '<h4>Ei / Pois päältä</h4>';
             
-            const sortedAttributes = [...attributeMap.entries()].sort((a,b) => (a[1].trueName || a[1].falseName).localeCompare(b[1].trueName || b[1].falseName));
+            const sortedAttributes = [...attributeMap.entries()].sort((a,b) => a[1].name.localeCompare(b[1].name));
 
-            sortedAttributes.forEach(([id, names]) => {
-                if (names.trueName) {
-                    positiveHtml += `<label><input type="checkbox" value="${id}_true" data-name="${names.trueName}"> ${names.trueName}</label>`;
-                }
-                if (names.falseName) {
-                    negativeHtml += `<label><input type="checkbox" value="${id}_false" data-name="${names.falseName}"> ${names.falseName}</label>`;
+            sortedAttributes.forEach(([id, attrData]) => {
+                const finnishName = ATTRIBUTE_TRANSLATIONS[id]?.[attrData.inc] || attrData.name;
+                const checkbox = `<label><input type="checkbox" value="${id}_${attrData.inc}" data-name="${finnishName}"> ${finnishName}</label>`;
+                if (attrData.inc) {
+                    positiveHtml += checkbox;
+                } else {
+                    negativeHtml += checkbox;
                 }
             });
             
@@ -688,18 +693,12 @@
                     attributeCounts.set(key, (attributeCounts.get(key) || 0) + 1);
                 });
             });
-
             let html = '<table><thead><tr><th>Attribuutti</th><th>Määrä</th></tr></thead><tbody>';
-            
-            Object.entries(ATTRIBUTE_DATA).sort((a,b) => (a[1].true || a[1].false).localeCompare(b[1].true || b[1].false)).forEach(([id, names]) => {
-                if (names.true) {
-                    const count = attributeCounts.get(`${id}_true`) || 0;
-                    html += `<tr><td>${names.true}</td><td class="${count > 0 ? 'found' : 'not-found'}">${count > 0 ? count : ''}</td></tr>`;
-                }
-                if (names.false) {
-                    const count = attributeCounts.get(`${id}_false`) || 0;
-                    html += `<tr><td>${names.false}</td><td class="${count > 0 ? 'found' : 'not-found'}">${count > 0 ? count : ''}</td></tr>`;
-                }
+            const sortedAttrs = [...attributeMap.entries()].sort((a,b) => a[1].name.localeCompare(b[1].name));
+            sortedAttrs.forEach(([id, attrData]) => {
+                const finnishName = ATTRIBUTE_TRANSLATIONS[id]?.[attrData.inc] || attrData.name;
+                const count = attributeCounts.get(`${id}_${attrData.inc}`) || 0;
+                html += `<tr><td>${finnishName}</td><td class="${count > 0 ? 'found' : 'not-found'}">${count > 0 ? count : ''}</td></tr>`;
             });
             html += '</tbody></table>';
             container.innerHTML = html;
