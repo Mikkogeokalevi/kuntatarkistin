@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geokätköilyn Haastetyökalu</title>
+    <title> 2 Geokätköilyn Haastetyökalu</title>
     
     <style>
         body{background-color:#1a2015;font-family:'Georgia',serif;margin:0;padding:20px;transition:padding .3s ease}.sisalto-laatikko{max-width:950px;margin:30px auto;padding:10px;background-color:#3D4F2B;border:3px solid #11150C;border-radius:12px;box-shadow:5px 5px 15px rgba(0,0,0,.6);transition:margin .3s ease}.teksti-alue{color:#F8F8F8;line-height:1.8;padding:10px;font-size:1.1em;transition:font-size .3s ease}.logo{width:120px;height:120px;border:2px solid #90EE90;border-radius:50%;box-shadow:1px 1px 3px rgba(0,0,0,.4);background-color:#3D4F2B;padding:3px}.paaotsikko{color:#90EE90;text-align:center;margin:0;text-shadow:1px 1px 2px rgba(0,0,0,.8);font-size:1.6em;letter-spacing:.5px}.leipateksti{margin:15px 0;color:#FFFFFF;font-size:1.2em}.valinnat-laatikko{background-color:#2A381C;padding:15px;border-radius:8px;margin:20px 0;border:1px dashed #90EE90}.valinnat-laatikko label{margin-right:20px;font-size:1.1em;cursor:pointer;display:inline-block;margin-bottom:10px;min-width:150px}.valinnat-laatikko input{vertical-align:middle;margin-right:5px}#zip-input-container{margin:20px 0}#zip-input{font-size:1.1em}#export-button{font-size:1em;padding:8px 12px;margin-top:10px;background-color:#90EE90;color:#11150C;border:none;border-radius:5px;cursor:pointer}#export-button:hover{background-color:#7CFC00}#status{font-weight:700;min-height:25px;color:#FFD700}.grid-container{overflow-x:auto}.grid-container table{border-collapse:collapse;margin-top:15px;margin-bottom:15px;width:100%}.grid-container td,.grid-container th{border:1px solid #90EE90;text-align:center;padding:5px;font-size:.9em}.grid-container th{background-color:#2A381C}.grid-container td.found{background-color:#90ee90;color:#114e11;font-weight:700}.grid-container td.not-found{background-color:rgba(0,0,0,.2)}.grid-container ul{list-style-type:none;padding-left:0;columns:2;gap:20px}.grid-container h4{color:#90EE90;margin-top:20px}.suodatus-paneeli{background-color:#2A381C;padding:20px;border-radius:8px;margin:20px 0;border:1px dashed #90EE90;display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end;}.suodatus-paneeli .filter-group{display:flex;flex-direction:column}.suodatus-paneeli label{font-size:.9em;color:#90EE90;margin-bottom:5px}.suodatus-paneeli select, .suodatus-paneeli input[type=date], .suodatus-paneeli button{font-size:1em;padding:5px;background-color:#F8F8F8;border:1px solid #90EE90;border-radius:4px}
@@ -26,12 +26,11 @@
         #update-data-link { font-size: 0.9em; margin-left: 20px; color: #90EE90; }
         .filter-summary { font-size: 0.8em; font-style: italic; color: #ccc; margin-bottom: -10px; margin-top: 5px; }
 
-        /* Attribuutti-ikkunan tyylit */
         #attribute-modal { background-color: #3D4F2B; color: white; border: 2px solid #90EE90; border-radius: 8px; max-width: 800px; }
         #attribute-modal::backdrop { background: rgba(0, 0, 0, 0.7); }
-        .attribute-columns { display: flex; gap: 20px; }
+        .attribute-columns { display: flex; gap: 40px; }
         .attribute-column { flex: 1; }
-        .attribute-column h4 { color: #90EE90; }
+        .attribute-category h4 { color: #90EE90; border-bottom: 1px solid #90EE90; padding-bottom: 5px; margin-top: 20px; margin-bottom: 10px; }
         .attribute-column label { display: block; margin-bottom: 5px; cursor: pointer; }
         .modal-buttons { margin-top: 20px; text-align: right; }
         .modal-buttons button { margin-left: 10px; }
@@ -96,12 +95,8 @@
         <h3>Valitse suodatettavat attribuutit</h3>
         <p>Tilastot näyttävät kätköt, joilla on KAIKKI valitsemasi attribuutit.</p>
         <div class="attribute-columns">
-            <div class="attribute-column" id="attribute-col-positive">
-                <h4>Kyllä / Päällä</h4>
-            </div>
-            <div class="attribute-column" id="attribute-col-negative">
-                <h4>Ei / Pois päältä</h4>
-            </div>
+            <div class="attribute-column" id="attribute-col-positive"></div>
+            <div class="attribute-column" id="attribute-col-negative"></div>
         </div>
         <div class="modal-buttons">
             <button id="attribute-clear-btn">Tyhjennä valinnat</button>
@@ -111,6 +106,28 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script>
+        // Käännökset ja kategoriat attribuuteille
+        const ATTRIBUTE_CATEGORIES = [
+            { name: "Oikeudet", attributes: {
+                '14': { true: 'Koiria', false: 'Ei koiria' }, '15': { true: 'Polkupyörä', false: 'Ei polkupyörää' }, '16': { true: 'Moottoripyörä', false: 'Ei moottoripyörää' }, '17': { true: 'Mönkijä', false: 'Ei mönkijää' }, '18': { true: 'Maastoauto', false: 'Ei maastoautoa' }, '19': { true: 'Lumikelkka', false: 'Ei lumikelkkaa' }, '20': { true: 'Hevosia', false: 'Ei hevosia' }, '57': { true: 'Kuorma-autoilijoille', false: 'Ei kuorma-autoilijoille' }
+            }},
+            { name: "Ehdot", attributes: {
+                '6': { true: 'Suositellaan lapsille' }, '8': { true: 'Alle tunnissa haettavissa' }, '9': { true: 'Maisemakohde' }, '47': { true: 'Tiimityötä vaaditaan' }, '13': { true: 'Saatavilla 24/7' }, '12': { true: 'Saatavilla talvella' }, '21': { true: 'Suositellaan yöllä' }, '22': { true: 'Huomaamattomuutta vaaditaan' }, '40': { true: 'Omistajan huomiota pyydetään' }, '56': { true: 'Maastomysteeri' }, '42': { true: 'Yökätkö' }, '43': { true: 'Pysäköi ja nappaa' }, '44': { true: 'Hylätty rakennus' }, '10': { true: 'Lyhyt kävely (<1 km)' }, '11': { true: 'Keskipitkä kävely (1-10 km)' }, '12': { true: 'Pitkä kävely (>10 km)' }, '55': { true: 'Kausittainen pääsy' }, '63': { true: 'Suositellaan turisteille' }, '54': { true: 'Piha (yksityisalue)' }, '61': { true: 'Haastekätkö' }, '62': { true: 'Power trail' }, '53': { true: 'Bonuskätkö' },
+            }},
+            { name: "Erikoisuudet", attributes: {
+                '51': { true: 'Lost And Found -kiertue' }, '71': { true: 'Kumppanuuskätkö' }, '70': { true: 'GeoTour' }, '72': { true: 'Geocaching.com solution checker' }
+            }},
+            { name: "Varusteet", attributes: {
+                '2': { true: 'Sisäänpääsy-/parkkimaksu', false: 'Ei maksuja' }, '3': { true: 'Kiipeilyvarusteet', false: 'Ei kiipeilyvarusteita' }, '4': { true: 'Vene', false: 'Ei venettä' }, '5': { true: 'Sukellusvarusteet', false: 'Ei sukellusvarusteita' }, '23': { true: 'Taskulamppu', false: 'Ei taskulamppua' }, '29': { true: 'UV-valo', false: 'Ei UV-valoa' }, '30': { true: 'Lumikengät', false: 'Ei lumikenkiä' }, '31': { true: 'Murtomaasukset', false: 'Ei murtomaasuksia' }, '32': { true: 'Työkaluja', false: 'Ei työkaluja' }, '69': { true: 'Langaton lähetin', false: 'Ei lähetintä' }, '64': { true: 'Puuhun kiipeämistä', false: 'Ei puuhun kiipeämistä' }
+            }},
+            { name: "Vaaroja", attributes: {
+                '35': { true: 'Myrkkykasveja', false: 'Ei myrkkykasveja' }, '36': { true: 'Vaarallisia eläimiä', false: 'Ei vaarallisia eläimiä' }, '37': { true: 'Punkkeja', false: 'Ei punkkeja' }, '39': { true: 'Hylätty kaivos', false: 'Ei hylättyä kaivosta' }, '45': { true: 'Kallioita/kiviä', false: 'Ei kallioita/kiviä' }, '46': { true: 'Metsästysalue', false: 'Ei metsästysaluetta' }, '48': { true: 'Vaarallinen alue', false: 'Ei vaarallista aluetta' }, '34': { true: 'Piikkikasveja', false: 'Ei piikkikasveja' }
+            }},
+            { name: "Palvelut", attributes: {
+                '7': { true: 'Haettavissa pyörätuolilla', false: 'Ei pyörätuolilla' }, '25': { true: 'Parkkipaikka lähellä' }, '26': { true: 'Julkinen liikenne lähellä' }, '27': { true: 'Juomavettä lähellä' }, '28': { true: 'Yleinen WC lähellä' }, '34': { true: 'Puhelin lähellä' }, '29': { true: 'Piknikpöytiä lähellä' }, '33': { true: 'Leiriytymisalue lähellä' }, '41': { true: 'Lastenvaunuilla tavoitettavissa' }, '58': { true: 'Huoltoasema lähellä' }, '59': { true: 'Ruokaa lähellä' }
+            }},
+        ];
+
         let allParsedFinds = [];
         let gpxCreationDate = null;
 
@@ -125,7 +142,6 @@
             updateAttributeButtonText();
         });
         attributeModal.addEventListener('change', updateAttributeButtonText);
-
 
         document.addEventListener('DOMContentLoaded', loadInitialData);
         document.getElementById('zip-input').addEventListener('change', handleFileSelect, false);
@@ -314,33 +330,29 @@
             types.forEach(type => typeSelect.innerHTML += `<option value="${type}">${type}</option>`);
             countries.forEach(country => countrySelect.innerHTML += `<option value="${country}">${country}</option>`);
             
-            // Attribuuttien populointi
-            const attributeMap = new Map();
-            allParsedFinds.forEach(find => {
-                find.attributes.forEach(attr => {
-                    if (!attributeMap.has(attr.id)) {
-                        attributeMap.set(attr.id, { trueName: null, falseName: null });
-                    }
-                    const entry = attributeMap.get(attr.id);
-                    if (attr.inc) entry.trueName = attr.name; else entry.falseName = attr.name;
-                });
-            });
-
             const positiveCol = document.getElementById('attribute-col-positive');
             const negativeCol = document.getElementById('attribute-col-negative');
-            let positiveHtml = '<h4>Kyllä / Päällä</h4>';
-            let negativeHtml = '<h4>Ei / Pois päältä</h4>';
-            
-            const sortedAttributes = [...attributeMap.entries()].sort((a,b) => (a[1].trueName || a[1].falseName).localeCompare(b[1].trueName || b[1].falseName));
+            let positiveHtml = '';
+            let negativeHtml = '';
 
-            sortedAttributes.forEach(([id, names]) => {
-                if (names.trueName) {
-                    positiveHtml += `<label><input type="checkbox" value="${id}_true" data-name="${names.trueName}"> ${names.trueName}</label>`;
-                }
-                if (names.falseName) {
-                    negativeHtml += `<label><input type="checkbox" value="${id}_false" data-name="${names.falseName}"> ${names.falseName}</label>`;
-                }
+            ATTRIBUTE_CATEGORIES.forEach(category => {
+                positiveHtml += `<div class="attribute-category"><h4>${category.name}</h4>`;
+                negativeHtml += `<div class="attribute-category"><h4>${category.name}</h4>`;
+                
+                const sortedAttrs = Object.entries(category.attributes).sort((a,b) => a[1].true.localeCompare(b[1].true));
+
+                sortedAttrs.forEach(([id, names]) => {
+                    if (names.true) {
+                        positiveHtml += `<label><input type="checkbox" value="${id}_true" data-name="${names.true}"> ${names.true}</label>`;
+                    }
+                    if (names.false) {
+                        negativeHtml += `<label><input type="checkbox" value="${id}_false" data-name="${names.false}"> ${names.false}</label>`;
+                    }
+                });
+                positiveHtml += `</div>`;
+                negativeHtml += `</div>`;
             });
+            
             positiveCol.innerHTML = positiveHtml;
             negativeCol.innerHTML = negativeHtml;
 
@@ -670,13 +682,20 @@
             if (!container) return;
             const foundAttributes = new Set();
             finds.forEach(find => { find.attributes.forEach(attr => { foundAttributes.add(`${attr.id}_${attr.inc}`); }); });
-            const allAttributes = [
-                { id: '1', name: 'Koirat sallittu', inc: true }, { id: '1', name: 'Ei koiria', inc: false }, { id: '2', name: 'Pääsymaksu/lupa', inc: true }, { id: '2', name: 'Ei pääsymaksua', inc: false }, { id: '7', name: 'Pyörätuolilla saavutettavissa', inc: true }, { id: '7', name: 'Ei pyörätuolilla', inc: false }, { id: '10', name: 'Vesikulkuneuvo vaaditaan', inc: true }, { id: '10', name: 'Ei vesikulkuneuvoa', inc: false }, { id: '13', name: '24/7 saatavilla', inc: true }, { id: '13', name: 'Ei 24/7 saatavilla', inc: false }, { id: '42', name: 'Puuhamoottori', inc: true }, {id: '42', name: 'Ei puuhamoottoria', inc: false}, { id: '47', name: 'Ryhmätyöskentelyä', inc: true }, { id: '47', name: 'Ei ryhmätyöskentelyä', inc: false }
-            ];
             let html = '<table><thead><tr><th>Attribuutti</th><th>Löytynyt</th></tr></thead><tbody>';
-            allAttributes.forEach(attr => {
-                const isFound = foundAttributes.has(`${attr.id}_${attr.inc}`);
-                html += `<tr><td>${attr.name}</td><td class="${isFound ? 'found' : 'not-found'}">${isFound ? '✓' : ''}</td></tr>`;
+            ATTRIBUTE_CATEGORIES.forEach(category => {
+                html += `<tr><th colspan="2" style="background-color: #1E2D12;">${category.name}</th></tr>`;
+                const sortedAttrs = Object.entries(category.attributes).sort((a,b) => a[1].true.localeCompare(b[1].true));
+                sortedAttrs.forEach(([id, names]) => {
+                    if (names.true) {
+                        const isFound = foundAttributes.has(`${id}_true`);
+                        html += `<tr><td>${names.true}</td><td class="${isFound ? 'found' : 'not-found'}">${isFound ? '✓' : ''}</td></tr>`;
+                    }
+                    if (names.false) {
+                        const isFound = foundAttributes.has(`${id}_false`);
+                        html += `<tr><td>${names.false}</td><td class="${isFound ? 'found' : 'not-found'}">${isFound ? '✓' : ''}</td></tr>`;
+                    }
+                });
             });
             html += '</tbody></table>';
             container.innerHTML = html;
