@@ -44,22 +44,13 @@
             </p>
             
             <div class="suodatus-paneeli" id="filter-panel" style="display: none;">
-                <div class="filter-group">
-                    <label for="filter-start-date">Alkupvm</label>
-                    <input type="date" id="filter-start-date" class="filter-select">
-                </div>
-                <div class="filter-group">
-                    <label for="filter-end-date">Loppupvm</label>
-                    <input type="date" id="filter-end-date" class="filter-select">
-                </div>
-                <div class="filter-group">
-                    <label for="filter-type">Kätkötyyppi</label>
-                    <select id="filter-type" class="filter-select"></select>
-                </div>
-                <div class="filter-group">
-                    <label for="filter-country">Maa</label>
-                    <select id="filter-country" class="filter-select"></select>
-                </div>
+                <div class="filter-group"><label for="filter-start-date">Alkupvm</label><input type="date" id="filter-start-date" class="filter-select"></div>
+                <div class="filter-group"><label for="filter-end-date">Loppupvm</label><input type="date" id="filter-end-date" class="filter-select"></div>
+                <div class="filter-group"><label for="filter-year">Vuosi</label><select id="filter-year" class="filter-select"></select></div>
+                <div class="filter-group"><label for="filter-month">Kuukausi</label><select id="filter-month" class="filter-select"><option value="all">Kaikki</option><option value="0">Tammi</option><option value="1">Helmi</option><option value="2">Maalis</option><option value="3">Huhti</option><option value="4">Touko</option><option value="5">Kesä</option><option value="6">Heinä</option><option value="7">Elo</option><option value="8">Syys</option><option value="9">Loka</option><option value="10">Marras</option><option value="11">Joulu</option></select></div>
+                <div class="filter-group"><label for="filter-weekday">Viikonpäivä</label><select id="filter-weekday" class="filter-select"><option value="all">Kaikki</option><option value="1">Maanantai</option><option value="2">Tiistai</option><option value="3">Keskiviikko</option><option value="4">Torstai</option><option value="5">Perjantai</option><option value="6">Lauantai</option><option value="0">Sunnuntai</option></select></div>
+                <div class="filter-group"><label for="filter-type">Kätkötyyppi</label><select id="filter-type" class="filter-select"></select></div>
+                <div class="filter-group"><label for="filter-country">Maa</label><select id="filter-country" class="filter-select"></select></div>
             </div>
 
             <div class="valinnat-laatikko">
@@ -210,6 +201,9 @@
             let parts = [];
             const startDate = document.getElementById('filter-start-date').value;
             const endDate = document.getElementById('filter-end-date').value;
+            const year = document.getElementById('filter-year');
+            const month = document.getElementById('filter-month');
+            const weekday = document.getElementById('filter-weekday');
             const type = document.getElementById('filter-type');
             const country = document.getElementById('filter-country');
 
@@ -218,6 +212,9 @@
                 const end = endDate ? new Date(endDate).toLocaleDateString('fi-FI') : '...';
                 parts.push(`Aikaväli: ${start} - ${end}`);
             }
+            if (year.value !== 'all') parts.push(`Vuosi: ${year.options[year.selectedIndex].text}`);
+            if (month.value !== 'all') parts.push(`Kuukausi: ${month.options[month.selectedIndex].text}`);
+            if (weekday.value !== 'all') parts.push(`Viikonpäivä: ${weekday.options[weekday.selectedIndex].text}`);
             if (type.value !== 'all') parts.push(`Tyyppi: ${type.options[type.selectedIndex].text}`);
             if (country.value !== 'all') parts.push(`Maa: ${country.options[country.selectedIndex].text}`);
 
@@ -248,20 +245,30 @@
         }
 
         function populateFilterOptions() {
+            const yearSelect = document.getElementById('filter-year');
             const typeSelect = document.getElementById('filter-type');
             const countrySelect = document.getElementById('filter-country');
+            const years = [...new Set(allParsedFinds.map(f => f.findDate.getFullYear()))].sort((a, b) => b - a);
             const types = [...new Set(allParsedFinds.map(f => f.type))].sort();
             const countries = [...new Set(allParsedFinds.map(f => f.country).filter(c => c !== 'N/A'))].sort();
+            
+            yearSelect.innerHTML = '<option value="all">Kaikki</option>';
             typeSelect.innerHTML = '<option value="all">Kaikki</option>';
             countrySelect.innerHTML = '<option value="all">Kaikki</option>';
+            
+            years.forEach(year => yearSelect.innerHTML += `<option value="${year}">${year}</option>`);
             types.forEach(type => typeSelect.innerHTML += `<option value="${type}">${type}</option>`);
             countries.forEach(country => countrySelect.innerHTML += `<option value="${country}">${country}</option>`);
+            
             document.getElementById('filter-panel').style.display = 'flex';
         }
 
         function getFilteredFinds() {
             const startDateValue = document.getElementById('filter-start-date').value;
             const endDateValue = document.getElementById('filter-end-date').value;
+            const year = document.getElementById('filter-year').value;
+            const month = document.getElementById('filter-month').value;
+            const weekday = document.getElementById('filter-weekday').value;
             const type = document.getElementById('filter-type').value;
             const country = document.getElementById('filter-country').value;
             
@@ -277,8 +284,12 @@
                 endDate.setHours(23, 59, 59, 999);
                 filteredFinds = filteredFinds.filter(f => f.findDate <= endDate);
             }
+            if (year !== 'all') { filteredFinds = filteredFinds.filter(f => f.findDate.getFullYear() == year); }
+            if (month !== 'all') { filteredFinds = filteredFinds.filter(f => f.findDate.getMonth() == month); }
+            if (weekday !== 'all') { filteredFinds = filteredFinds.filter(f => f.findDate.getDay() == weekday); }
             if (type !== 'all') { filteredFinds = filteredFinds.filter(f => f.type === type); }
             if (country !== 'all') { filteredFinds = filteredFinds.filter(f => f.country === country); }
+            
             return filteredFinds;
         }
 
