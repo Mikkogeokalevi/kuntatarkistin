@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> 2 Geokätköilyn Haastetyökalu</title>
+    <title>Geokätköilyn Haastetyökalu</title>
     
     <style>
         body{background-color:#1a2015;font-family:'Georgia',serif;margin:0;padding:20px;transition:padding .3s ease}.sisalto-laatikko{max-width:950px;margin:30px auto;padding:10px;background-color:#3D4F2B;border:3px solid #11150C;border-radius:12px;box-shadow:5px 5px 15px rgba(0,0,0,.6);transition:margin .3s ease}.teksti-alue{color:#F8F8F8;line-height:1.8;padding:10px;font-size:1.1em;transition:font-size .3s ease}.logo{width:120px;height:120px;border:2px solid #90EE90;border-radius:50%;box-shadow:1px 1px 3px rgba(0,0,0,.4);background-color:#3D4F2B;padding:3px}.paaotsikko{color:#90EE90;text-align:center;margin:0;text-shadow:1px 1px 2px rgba(0,0,0,.8);font-size:1.6em;letter-spacing:.5px}.leipateksti{margin:15px 0;color:#FFFFFF;font-size:1.2em}.valinnat-laatikko{background-color:#2A381C;padding:15px;border-radius:8px;margin:20px 0;border:1px dashed #90EE90}.valinnat-laatikko label{margin-right:20px;font-size:1.1em;cursor:pointer;display:inline-block;margin-bottom:10px;min-width:150px}.valinnat-laatikko input{vertical-align:middle;margin-right:5px}#zip-input-container{margin:20px 0}#zip-input{font-size:1.1em}#export-button{font-size:1em;padding:8px 12px;margin-top:10px;background-color:#90EE90;color:#11150C;border:none;border-radius:5px;cursor:pointer}#export-button:hover{background-color:#7CFC00}#status{font-weight:700;min-height:25px;color:#FFD700}.grid-container{overflow-x:auto}.grid-container table{border-collapse:collapse;margin-top:15px;margin-bottom:15px;width:100%}.grid-container td,.grid-container th{border:1px solid #90EE90;text-align:center;padding:5px;font-size:.9em}.grid-container th{background-color:#2A381C}.grid-container td.found{background-color:#90ee90;color:#114e11;font-weight:700}.grid-container td.not-found{background-color:rgba(0,0,0,.2)}.grid-container ul{list-style-type:none;padding-left:0;columns:2;gap:20px}.grid-container h4{color:#90EE90;margin-top:20px}.suodatus-paneeli{background-color:#2A381C;padding:20px;border-radius:8px;margin:20px 0;border:1px dashed #90EE90;display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end;}.suodatus-paneeli .filter-group{display:flex;flex-direction:column}.suodatus-paneeli label{font-size:.9em;color:#90EE90;margin-bottom:5px}.suodatus-paneeli select, .suodatus-paneeli input[type=date], .suodatus-paneeli button{font-size:1em;padding:5px;background-color:#F8F8F8;border:1px solid #90EE90;border-radius:4px}
@@ -106,27 +106,9 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script>
-        // Käännökset ja kategoriat attribuuteille
-        const ATTRIBUTE_CATEGORIES = [
-            { name: "Oikeudet", attributes: {
-                '14': { true: 'Koiria', false: 'Ei koiria' }, '15': { true: 'Polkupyörä', false: 'Ei polkupyörää' }, '16': { true: 'Moottoripyörä', false: 'Ei moottoripyörää' }, '17': { true: 'Mönkijä', false: 'Ei mönkijää' }, '18': { true: 'Maastoauto', false: 'Ei maastoautoa' }, '19': { true: 'Lumikelkka', false: 'Ei lumikelkkaa' }, '20': { true: 'Hevosia', false: 'Ei hevosia' }, '57': { true: 'Kuorma-autoilijoille', false: 'Ei kuorma-autoilijoille' }
-            }},
-            { name: "Ehdot", attributes: {
-                '6': { true: 'Suositellaan lapsille' }, '8': { true: 'Alle tunnissa haettavissa' }, '9': { true: 'Maisemakohde' }, '47': { true: 'Tiimityötä vaaditaan' }, '13': { true: 'Saatavilla 24/7' }, '12': { true: 'Saatavilla talvella' }, '21': { true: 'Suositellaan yöllä' }, '22': { true: 'Huomaamattomuutta vaaditaan' }, '40': { true: 'Omistajan huomiota pyydetään' }, '56': { true: 'Maastomysteeri' }, '42': { true: 'Yökätkö' }, '43': { true: 'Pysäköi ja nappaa' }, '44': { true: 'Hylätty rakennus' }, '10': { true: 'Lyhyt kävely (<1 km)' }, '11': { true: 'Keskipitkä kävely (1-10 km)' }, '12': { true: 'Pitkä kävely (>10 km)' }, '55': { true: 'Kausittainen pääsy' }, '63': { true: 'Suositellaan turisteille' }, '54': { true: 'Piha (yksityisalue)' }, '61': { true: 'Haastekätkö' }, '62': { true: 'Power trail' }, '53': { true: 'Bonuskätkö' },
-            }},
-            { name: "Erikoisuudet", attributes: {
-                '51': { true: 'Lost And Found -kiertue' }, '71': { true: 'Kumppanuuskätkö' }, '70': { true: 'GeoTour' }, '72': { true: 'Geocaching.com solution checker' }
-            }},
-            { name: "Varusteet", attributes: {
-                '2': { true: 'Sisäänpääsy-/parkkimaksu', false: 'Ei maksuja' }, '3': { true: 'Kiipeilyvarusteet', false: 'Ei kiipeilyvarusteita' }, '4': { true: 'Vene', false: 'Ei venettä' }, '5': { true: 'Sukellusvarusteet', false: 'Ei sukellusvarusteita' }, '23': { true: 'Taskulamppu', false: 'Ei taskulamppua' }, '29': { true: 'UV-valo', false: 'Ei UV-valoa' }, '30': { true: 'Lumikengät', false: 'Ei lumikenkiä' }, '31': { true: 'Murtomaasukset', false: 'Ei murtomaasuksia' }, '32': { true: 'Työkaluja', false: 'Ei työkaluja' }, '69': { true: 'Langaton lähetin', false: 'Ei lähetintä' }, '64': { true: 'Puuhun kiipeämistä', false: 'Ei puuhun kiipeämistä' }
-            }},
-            { name: "Vaaroja", attributes: {
-                '35': { true: 'Myrkkykasveja', false: 'Ei myrkkykasveja' }, '36': { true: 'Vaarallisia eläimiä', false: 'Ei vaarallisia eläimiä' }, '37': { true: 'Punkkeja', false: 'Ei punkkeja' }, '39': { true: 'Hylätty kaivos', false: 'Ei hylättyä kaivosta' }, '45': { true: 'Kallioita/kiviä', false: 'Ei kallioita/kiviä' }, '46': { true: 'Metsästysalue', false: 'Ei metsästysaluetta' }, '48': { true: 'Vaarallinen alue', false: 'Ei vaarallista aluetta' }, '34': { true: 'Piikkikasveja', false: 'Ei piikkikasveja' }
-            }},
-            { name: "Palvelut", attributes: {
-                '7': { true: 'Haettavissa pyörätuolilla', false: 'Ei pyörätuolilla' }, '25': { true: 'Parkkipaikka lähellä' }, '26': { true: 'Julkinen liikenne lähellä' }, '27': { true: 'Juomavettä lähellä' }, '28': { true: 'Yleinen WC lähellä' }, '34': { true: 'Puhelin lähellä' }, '29': { true: 'Piknikpöytiä lähellä' }, '33': { true: 'Leiriytymisalue lähellä' }, '41': { true: 'Lastenvaunuilla tavoitettavissa' }, '58': { true: 'Huoltoasema lähellä' }, '59': { true: 'Ruokaa lähellä' }
-            }},
-        ];
+        const ATTRIBUTE_DATA = {
+            '1': { true: 'Pääsymaksu/lupa', false: 'Ei pääsymaksua' }, '2': { true: 'Kiipeilyvarusteet', false: 'Ei kiipeilyvarusteita' }, '3': { true: 'Vene', false: 'Ei venettä' }, '4': { true: 'Sukellusvarusteet', false: 'Ei sukellusvarusteita' }, '5': { true: 'Suositellaan lapsille' }, '6': { true: 'Alle tunnissa haettavissa' }, '7': { true: 'Haettavissa pyörätuolilla', false: 'Ei pyörätuolilla' }, '8': { true: 'Maisemakohde' }, '9': { true: 'Lyhyt kävely (<1km)' }, '10': { true: 'Keskipitkä kävely (1-10km)' }, '11': { true: 'Pitkä kävely (>10km)' }, '12': { true: 'Saatavilla talvella' }, '13': { true: 'Saatavilla 24/7', false: 'Ei 24/7 saatavilla' }, '14': { true: 'Koiria', false: 'Ei koiria' }, '15': { true: 'Polkupyörä', false: 'Ei polkupyörää' }, '16': { true: 'Moottoripyörä', false: 'Ei moottoripyörää' }, '17': { true: 'Mönkijä', false: 'Ei mönkijää' }, '18': { true: 'Maastoauto', false: 'Ei maastoautoa' }, '19': { true: 'Lumikelkka', false: 'Ei lumikelkkaa' }, '20': { true: 'Hevosia', false: 'Ei hevosia' }, '21': { true: 'Suositellaan yöllä' }, '22': { true: 'Huomaamattomuutta vaaditaan' }, '23': { true: 'Taskulamppu', false: 'Ei taskulamppua' }, '25': { true: 'Parkkipaikka lähellä' }, '26': { true: 'Julkinen liikenne lähellä' }, '27': { true: 'Juomavettä lähellä' }, '28': { true: 'Yleinen WC lähellä' }, '29': { true: 'Piknikpöytiä lähellä' }, '30': { true: 'Leiriytymisalue lähellä' }, '31': { true: 'Lastenvaunuilla tavoitettavissa' }, '32': { true: 'Työkaluja', false: 'Ei työkaluja' }, '33': { true: 'Karjaa lähellä' }, '34': { true: 'Myrkkykasveja', false: 'Ei myrkkykasveja' }, '35': { true: 'Vaarallisia eläimiä', false: 'Ei vaarallisia eläimiä' }, '36': { true: 'Punkkeja', false: 'Ei punkkeja' }, '37': { true: 'Hylätty kaivos' }, '38': { true: 'Nuotio', false: 'Ei nuotiota' }, '39': { true: 'Kallioita/kiviä' }, '40': { true: 'Omistajan huomiota pyydetään' }, '42': { true: 'Yökätkö' }, '43': { true: 'Pysäköi ja nappaa' }, '44': { true: 'Hylätty rakennus' }, '45': { true: 'Vaikea kiipeäminen' }, '46': { true: 'Metsästysalue' }, '47': { true: 'Tiimityötä vaaditaan' }, '48': { true: 'Vaarallinen alue' }, '51': { true: 'Lost And Found -kiertue' }, '53': { true: 'Bonuskätkö' }, '54': { true: 'Piha (yksityisalue)' }, '55': { true: 'Kausittainen pääsy' }, '56': { true: 'Maastomysteeri' }, '57': { true: 'Kuorma-autoilijoille' }, '58': { true: 'Huoltoasema lähellä' }, '59': { true: 'Ruokaa lähellä' }, '61': { true: 'Haastekätkö' }, '62': { true: 'Power trail' }, '63': { true: 'Suositellaan turisteille' }, '64': { true: 'Puuhun kiipeämistä', false: 'Ei puuhun kiipeämistä' }, '69': { true: 'Langaton lähetin', false: 'Ei lähetintä' }, '70': { true: 'GeoTour' }, '71': { true: 'Kumppanuuskätkö' }, '72': { true: 'Geocaching.com solution checker' }
+        };
 
         let allParsedFinds = [];
         let gpxCreationDate = null;
@@ -335,26 +317,17 @@
             let positiveHtml = '';
             let negativeHtml = '';
 
-            ATTRIBUTE_CATEGORIES.forEach(category => {
-                positiveHtml += `<div class="attribute-category"><h4>${category.name}</h4>`;
-                negativeHtml += `<div class="attribute-category"><h4>${category.name}</h4>`;
-                
-                const sortedAttrs = Object.entries(category.attributes).sort((a,b) => a[1].true.localeCompare(b[1].true));
-
-                sortedAttrs.forEach(([id, names]) => {
-                    if (names.true) {
-                        positiveHtml += `<label><input type="checkbox" value="${id}_true" data-name="${names.true}"> ${names.true}</label>`;
-                    }
-                    if (names.false) {
-                        negativeHtml += `<label><input type="checkbox" value="${id}_false" data-name="${names.false}"> ${names.false}</label>`;
-                    }
-                });
-                positiveHtml += `</div>`;
-                negativeHtml += `</div>`;
+            Object.entries(ATTRIBUTE_DATA).sort((a,b) => (a[1].true || a[1].false).localeCompare(b[1].true || b[1].false)).forEach(([id, names]) => {
+                if (names.true) {
+                    positiveHtml += `<label><input type="checkbox" value="${id}_true" data-name="${names.true}"> ${names.true}</label>`;
+                }
+                if (names.false) {
+                    negativeHtml += `<label><input type="checkbox" value="${id}_false" data-name="${names.false}"> ${names.false}</label>`;
+                }
             });
             
-            positiveCol.innerHTML = positiveHtml;
-            negativeCol.innerHTML = negativeHtml;
+            positiveCol.innerHTML = `<h4>Kyllä / Päällä</h4>${positiveHtml}`;
+            negativeCol.innerHTML = `<h4>Ei / Pois päältä</h4>${negativeHtml}`;
 
             document.getElementById('filter-panel').style.display = 'flex';
         }
@@ -435,7 +408,8 @@
                             if (attributesNode) {
                                 const attributeNodes = attributesNode.querySelectorAll('groundspeak\\:attribute, *|attribute');
                                 attributeNodes.forEach(attr => {
-                                    findAttributes.push({ id: attr.getAttribute('id'), inc: attr.getAttribute('inc') === '1', name: attr.textContent.trim() });
+                                    const incValue = attr.getAttribute('inc')?.toLowerCase();
+                                    findAttributes.push({ id: attr.getAttribute('id'), inc: (incValue === '1' || incValue === 'true'), name: attr.textContent.trim() });
                                 });
                             }
                             finds.push({
@@ -683,19 +657,15 @@
             const foundAttributes = new Set();
             finds.forEach(find => { find.attributes.forEach(attr => { foundAttributes.add(`${attr.id}_${attr.inc}`); }); });
             let html = '<table><thead><tr><th>Attribuutti</th><th>Löytynyt</th></tr></thead><tbody>';
-            ATTRIBUTE_CATEGORIES.forEach(category => {
-                html += `<tr><th colspan="2" style="background-color: #1E2D12;">${category.name}</th></tr>`;
-                const sortedAttrs = Object.entries(category.attributes).sort((a,b) => a[1].true.localeCompare(b[1].true));
-                sortedAttrs.forEach(([id, names]) => {
-                    if (names.true) {
-                        const isFound = foundAttributes.has(`${id}_true`);
-                        html += `<tr><td>${names.true}</td><td class="${isFound ? 'found' : 'not-found'}">${isFound ? '✓' : ''}</td></tr>`;
-                    }
-                    if (names.false) {
-                        const isFound = foundAttributes.has(`${id}_false`);
-                        html += `<tr><td>${names.false}</td><td class="${isFound ? 'found' : 'not-found'}">${isFound ? '✓' : ''}</td></tr>`;
-                    }
-                });
+            Object.entries(ATTRIBUTE_DATA).sort((a,b) => (a[1].true || a[1].false).localeCompare(b[1].true || b[1].false)).forEach(([id, names]) => {
+                if (names.true) {
+                    const isFound = foundAttributes.has(`${id}_true`);
+                    html += `<tr><td>${names.true}</td><td class="${isFound ? 'found' : 'not-found'}">${isFound ? '✓' : ''}</td></tr>`;
+                }
+                if (names.false) {
+                    const isFound = foundAttributes.has(`${id}_false`);
+                    html += `<tr><td>${names.false}</td><td class="${isFound ? 'found' : 'not-found'}">${isFound ? '✓' : ''}</td></tr>`;
+                }
             });
             html += '</tbody></table>';
             container.innerHTML = html;
