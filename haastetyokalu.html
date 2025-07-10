@@ -91,7 +91,6 @@
         });
         document.getElementById('update-data-link').addEventListener('click', (e) => {
             e.preventDefault();
-            localStorage.removeItem('geocachingToolData');
             document.getElementById('zip-input-container').style.display = 'block';
             document.getElementById('instruction-text').style.display = 'block';
             document.getElementById('update-data-link').style.display = 'none';
@@ -102,23 +101,11 @@
                 const response = await fetch('my_finds_data.json');
                 if (!response.ok) throw new Error('Etä-JSON-dataa ei löytynyt.');
                 const data = await response.json();
-                setupAndRun(data.finds, data.creationDate, "etätiedostosta");
+                setupAndRun(data.finds, data.creationDate, "etätiedostosta (GitHub)");
                 document.getElementById('instruction-text').style.display = 'none';
             } catch (error) {
                 console.log(error.message);
-                const localDataString = localStorage.getItem('geocachingToolData');
-                if (localDataString) {
-                    try {
-                        const data = JSON.parse(localDataString);
-                        setupAndRun(data.finds, data.creationDate, "selaimen muistista");
-                        document.getElementById('instruction-text').style.display = 'none';
-                    } catch (e) {
-                         updateStatusText(null, null, 'Valitse .zip-tiedosto aloittaaksesi.');
-                         localStorage.removeItem('geocachingToolData');
-                    }
-                } else {
-                    updateStatusText(null, null, 'Valitse .zip-tiedosto aloittaaksesi.');
-                }
+                updateStatusText(null, null, 'Valitse .zip-tiedosto aloittaaksesi.');
             }
         }
 
@@ -141,9 +128,6 @@
                 updateStatusText(null, null, 'Jäsennetään GPX-dataa...');
                 await new Promise(resolve => setTimeout(resolve, 50));
                 const parsedResult = parseGpxFiles(allGpx);
-                
-                localStorage.setItem('geocachingToolData', JSON.stringify({ finds: parsedResult.finds, creationDate: parsedResult.creationDate }));
-                
                 setupAndRun(parsedResult.finds, parsedResult.creationDate, "ladatusta .zip-tiedostosta");
                 document.getElementById('export-button').style.display = 'inline-block';
             } catch (error) {
